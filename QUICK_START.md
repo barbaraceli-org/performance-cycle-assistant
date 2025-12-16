@@ -1,12 +1,6 @@
 # Quick Start
 
-## First Time Setup
-
-**Need to configure Atlassian Rovo MCP?** → [Setup Guide](docs/SETUP.md) (~2 min)
-
-Already configured? Continue below ↓
-
----
+> **Note:** The Atlassian Rovo MCP is automatically configured via `mcp.json`. Just open Cursor and start!
 
 ## Generate Your Report
 

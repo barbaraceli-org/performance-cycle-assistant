@@ -1,6 +1,6 @@
 # Usage Guide
 
-> **First time?** See the [Setup Guide](SETUP.md) to configure Atlassian Rovo MCP.
+> **Note:** The Atlassian Rovo MCP is automatically configured via `mcp.json` in this project. No setup required!
 
 ## How to Use
 
@@ -40,10 +40,11 @@ The assistant will:
 ## Troubleshooting
 
 **Jira issues not found:**
-- Verify Atlassian Rovo MCP is configured ([Setup Guide](SETUP.md))
+- Ensure you're logged into Atlassian in your browser
 - Test: "Show me my recent Jira issues"
 - Check date format: YYYY-MM-DD
-- Ensure you're logged into Atlassian in your browser
+- Restart Cursor if MCP connection fails
+- See [Setup Guide](SETUP.md) for manual configuration if needed
 
 **Report incomplete:**
 ```

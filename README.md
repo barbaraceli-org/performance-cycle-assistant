@@ -20,11 +20,11 @@ That's it! The assistant will:
 
 ## Prerequisites
 
-- **Cursor IDE** with Atlassian Rovo MCP configured ([Setup Guide](docs/SETUP.md))
+- **Cursor IDE** (latest version)
 - **Jira Cloud** access to your workspace
 - **Atlassian account** with appropriate permissions
 
-> **First time?** Follow the [Setup Guide](docs/SETUP.md) to configure Atlassian Rovo MCP (takes ~2 minutes).
+> **Note:** The Atlassian Rovo MCP is automatically configured via `mcp.json` in this project. No manual setup required!
 
 ## Available Levels
 
@@ -71,10 +71,10 @@ Also include:
 ## Troubleshooting
 
 **Jira issues not found?**
-- Verify Atlassian Rovo MCP is configured ([Setup Guide](docs/SETUP.md))
+- Ensure you're logged into Atlassian in your browser
 - Test with: "Show me my recent Jira issues"
 - Check date format: YYYY-MM-DD
-- Ensure you're logged into Atlassian in your browser
+- Restart Cursor if MCP connection fails
 
 **Report seems incomplete?**
 - Add non-Jira activities in your request
@@ -82,10 +82,10 @@ Also include:
 
 ## Documentation
 
-- **[Setup Guide](docs/SETUP.md)** - Configure Atlassian Rovo MCP (~2 min setup)
 - **[Quick Start](QUICK_START.md)** - One-page reference guide
 - **[Usage Guide](docs/USAGE_GUIDE.md)** - Detailed instructions and tips
 - **[Examples](examples/example-request.md)** - More sample requests
+- **[Setup Guide](docs/SETUP.md)** - MCP configuration reference (if needed)
 
 ## Customization
 
@@ -102,12 +102,13 @@ Also include:
 performance-cycle/
 ├── .cursorrules                              # Assistant configuration
 ├── .gitignore                                # Git ignore rules
+├── mcp.json                                  # Atlassian MCP auto-configuration
 ├── README.md                                 # This file
 ├── QUICK_START.md                            # One-page reference
 ├── context/
 │   └── Technical writer career path.csv      # LX expectations (L1-L3)
 ├── docs/
-│   ├── SETUP.md                              # Atlassian Rovo MCP setup
+│   ├── SETUP.md                              # MCP configuration reference
 │   └── USAGE_GUIDE.md                        # Detailed usage guide
 ├── examples/
 │   └── example-request.md                    # Sample requests

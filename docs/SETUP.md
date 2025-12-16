@@ -2,13 +2,47 @@
 
 ## Atlassian Rovo MCP Configuration
 
-This project requires the Atlassian Rovo MCP (Model Context Protocol) server to automatically fetch Jira and Confluence data.
+> **✅ Automatic Setup:** This project includes `mcp.json` which automatically configures the Atlassian Rovo MCP. No manual setup required!
+
+The Atlassian Rovo MCP (Model Context Protocol) server automatically fetches Jira and Confluence data.
 
 ### Prerequisites
 
 - Cursor IDE (latest version)
 - Jira Cloud account with access to your workspace
 - Atlassian account with appropriate permissions
+
+### Automatic Configuration
+
+The `mcp.json` file in this project automatically configures the Atlassian MCP when you open the project in Cursor:
+
+```json
+{
+  "mcpServers": {
+    "Atlassian-MCP-Server": {
+      "url": "https://mcp.atlassian.com/v1/sse"
+    }
+  }
+}
+```
+
+**No additional setup needed!** Cursor will handle authentication automatically through your Atlassian account.
+
+### Verify Configuration
+
+Test the connection in Cursor Chat:
+
+```
+Show me my recent Jira issues
+```
+
+If configured correctly, you should see a list of your Jira issues.
+
+---
+
+## Manual Configuration (Only if Needed)
+
+If the automatic configuration doesn't work, you can manually configure the MCP:
 
 ### Step 1: Open Cursor's MCP Settings Panel
 
@@ -61,17 +95,7 @@ If the above doesn't work, try this alternative configuration:
 2. **Restart** Cursor's AI assistant or tools pane
 3. Cursor will handle authentication automatically through your Atlassian account
 
-### Step 4: Verify Configuration
-
-Test the connection in Cursor Chat:
-
-```
-Show me my recent Jira issues
-```
-
-If configured correctly, you should see a list of your Jira issues.
-
-### Alternative: Manual Configuration File
+### Alternative: Direct Configuration File Edit
 
 You can also edit the MCP config file directly:
 
