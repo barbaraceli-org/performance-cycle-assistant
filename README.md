@@ -86,7 +86,6 @@ Also include:
 - **[Quick Start](QUICK_START.md)** - One-page reference guide
 - **[Usage Guide](docs/USAGE_GUIDE.md)** - Detailed instructions and tips
 - **[Examples](examples/example-request.md)** - More sample requests
-- **[Changelog](CHANGELOG.md)** - Version history and updates
 
 ## Customization
 
@@ -103,7 +102,6 @@ Also include:
 performance-cycle/
 ├── .cursorrules                              # Assistant configuration
 ├── .gitignore                                # Git ignore rules
-├── CHANGELOG.md                              # Version history
 ├── README.md                                 # This file
 ├── QUICK_START.md                            # One-page reference
 ├── context/

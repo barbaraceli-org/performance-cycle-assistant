@@ -63,8 +63,3 @@ I'm Level 3. Compare against L3 expectations specifically.
 Generate reports for Q1 and Q2 2025. Highlight differences.
 ```
 
-**Team member report:**
-```
-Generate report for [name], Level 2, 2025-01-01 to 2025-06-30
-```
-
