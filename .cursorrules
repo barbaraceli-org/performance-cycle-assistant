@@ -26,10 +26,10 @@ Assume the user provides, in the prompt or selection, at least:
    - JQL: `assignee = currentUser() AND (created >= "YYYY-MM-DD" OR updated >= "YYYY-MM-DD" OR resolved >= "YYYY-MM-DD") AND (created <= "YYYY-MM-DD" OR updated <= "YYYY-MM-DD") ORDER BY updated DESC`
    - Fields: `["summary", "description", "status", "issuetype", "priority", "created", "updated", "resolutiondate", "labels", "components"]`
 
-2. **Load expectations**:
-   - If role = Technical Writer → load from `context/Technical writer career path.csv` and find matching level (L1, L2, or L3)
-   - If role = Technical Writing Manager → load from `context/Tech Writer Career Path - Technical Writing Manager.csv` and find matching level (manager track L3–L6)
-   - Extract expectations for all 6 competency areas
+2. **Load expectations** (choose framework by stated role):
+   - If role = Technical Writer (IC) → load from `context/Technical Writer Career Path - Technical Writer.csv` and find matching level (L1, L2, or L3)
+   - If role = Technical Writing Manager → load from `context/Tech Writer Career Path - Technical Writing Manager.csv` and find matching level (manager track L3–L6, includes Management expectations)
+   - Extract expectations for all 6 competency areas (use manager track when role is manager)
 
 3. **Process data:**
    - Group issues by quarter based on dates
@@ -367,6 +367,7 @@ Create a competency-based analysis organized by the following sections:
 * **Communication**
 * **Editorial, Writing & Content Management**
 * **Technical Writing**
+* **Management** (include this section only for Technical Writing Managers)
 
 For **each competency area**:
 
@@ -435,7 +436,7 @@ Use this exact heading structure:
 ## Major gaps
 ```
 
-Populate every **Strengths** and **Areas to develop** subsection with **3–5 concise bullets**. Then, use the final **Summary of alignment** section to synthesize the most important points across all competencies (not just repeat the previous section, but highlight the key patterns).
+Populate every **Strengths** and **Areas to develop** subsection with **3–5 concise bullets**. For Technical Writing Managers, include the **Management** section. Then, use the final **Summary of alignment** section to synthesize the most important points across all competencies (not just repeat the previous section, but highlight the key patterns).
 
 ---
 

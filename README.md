@@ -3,11 +3,14 @@
 Generates performance-cycle reports for Technical Writers and Managers using Jira data and the LX competency frameworks. Reports are fully formatted and saved automatically.
 
 ## 🚀 Quick start
-- Open Cursor Chat (`Ctrl+L` or `Cmd+L`) and paste:
+
+- Open Cursor Chat (`Ctrl+L` or `Cmd+L`) and write your request. For example:
+
   ```
   Generate my performance cycle report for 2025-01-01 to 2025-06-30.
   I'm a Level 2 Technical Writer.
   ```
+
 - The assistant fetches Jira activity, calculates metrics, writes accomplishments and unfinished work by quarter/work area, compares to level expectations, and saves two Markdown files in `reports/`.
 
 > **Important:** Always state whether you are an individual contributor or a manager. IC (Technical Writer) tops out at **L3**; the manager track also starts at **L3**. You can say “technical writer”, “tech writer”, “ic”, or “individual collaborator” for IC roles, and “technical writing manager” or “manager” for manager roles.
@@ -36,8 +39,10 @@ Generates performance-cycle reports for Technical Writers and Managers using Jir
 - **[Example report](examples/example-report-with-metrics.md)** — full sample output
 - **[Changelog](CHANGELOG.md)** — release history
 
+> **Framework selection:** Always state IC vs manager. IC requests use `context/Technical Writer Career Path - Technical Writer.csv`; manager requests use `context/Tech Writer Career Path - Technical Writing Manager.csv` (includes Management expectations). The agent picks the framework based on your stated role.
+
 ## Customization
-- Replace competency frameworks: `context/Technical writer career path.csv` (writers) or `context/Tech Writer Career Path - Technical Writing Manager.csv` (managers).
+- Replace competency frameworks: `context/Technical Writer Career Path - Technical Writer.csv` (writers) or `context/Tech Writer Career Path - Technical Writing Manager.csv` (managers).
 - Adjust report format and metrics in `.cursorrules` (sections 4.1 and 4.2).
 - Tweak JQL filters in `.cursorrules` section 1 if your Jira workflow differs.
 
@@ -58,8 +63,8 @@ performance-cycle/
 ├── METRICS_GUIDE.md                           # Quantitative metrics explained
 │
 ├── context/
-│   ├── Technical writer career path.csv                       # LX expectations (writers L1–L3)
-│   └── Tech Writer Career Path - Technical Writing Manager.csv # Manager expectations (L3–L6)
+│   ├── Technical Writer Career Path - Technical Writer.csv      # LX expectations (writers L1–L3)
+│   └── Tech Writer Career Path - Technical Writing Manager.csv  # Manager expectations (L3–L6)
 ├── CHANGELOG.md                               # Release history
 │
 ├── docs/

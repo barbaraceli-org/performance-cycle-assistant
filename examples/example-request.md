@@ -172,9 +172,10 @@ Highlight differences in volume and focus areas.
 
 ## 💡 Pro Tips
 
-**Tip 1: Be specific about your level**
+**Tip 1: Be specific about your level and role**
 ```
-I'm Level 2. Compare against L2 expectations specifically.
+I'm a Level 2 Technical Writer (IC). Compare against the IC framework.
+I'm a Level 3 Technical Writing Manager. Use the manager framework.
 ```
 
 **Tip 2: Mention blockers and challenges**

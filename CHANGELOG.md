@@ -18,4 +18,4 @@
 - Generated two Markdown reports: work summary and performance analysis for Technical Writers (L1–L3).
 - Pulled Jira activity within a date range and grouped by quarter and work area.
 - Included accomplishments and unfinished tasks with blocker analysis.
-- Loaded LX Technical Writer expectations from `context/Technical writer career path.csv` for competency comparison.
+- Loaded LX Technical Writer expectations from `context/Technical Writer Career Path - Technical Writer.csv` for competency comparison.

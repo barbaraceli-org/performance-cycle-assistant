@@ -4,7 +4,7 @@
 >
 > **Callout:** Always state whether you are an individual contributor or a manager. IC (Technical Writer) levels end at **L3**; the manager track starts at **L3**. Use “technical writer”, “tech writer”, “ic”, or “individual collaborator” for IC roles, and “technical writing manager” or “manager” for manager roles.
 >
-> **Frameworks:** IC requests use the Technical Writer competency framework; manager requests use the Technical Writing Manager framework. Your stated role selects the correct competencies for analysis.
+> **Frameworks:** IC requests use `context/Technical Writer Career Path - Technical Writer.csv`; manager requests use `context/Tech Writer Career Path - Technical Writing Manager.csv` (includes Management expectations). Your stated role selects the correct competencies for analysis.
 
 ## How to Use
 
@@ -120,7 +120,7 @@ See **[METRICS_GUIDE.md](../METRICS_GUIDE.md)** for complete details on:
 ### For Your Organization
 
 1. **Replace or extend the competency frameworks:**
-   - Edit `context/Technical writer career path.csv` (writers)
+   - Edit `context/Technical Writer Career Path - Technical Writer.csv` (writers)
    - Edit `context/Tech Writer Career Path - Technical Writing Manager.csv` (managers L3–L6)
    - Add your organization's levels and expectations
 
@@ -192,7 +192,7 @@ A: Yes! Request multiple reports and ask for comparison analysis.
 A: Reports are saved as Markdown files in `reports/`. Share them directly or convert to PDF.
 
 **Q: Can I customize the competency framework?**  
-A: Yes! Replace `context/Technical writer career path.csv` with your organization's framework.
+A: Yes! Replace `context/Technical Writer Career Path - Technical Writer.csv` with your organization's framework.
 
 **Q: What if my level isn't L1, L2, or L3?**  
 A: Update the CSV file with your organization's levels and expectations.
