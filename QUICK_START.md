@@ -1,9 +1,9 @@
 # ⚡ Quick Start
 
 > **Note:** The Atlassian Rovo MCP is automatically configured via `mcp.json`. Just open Cursor and start!
-
-**Need more detail?** → See **[NAVIGATION.md](NAVIGATION.md)** for all documentation.
-**Release history?** → See **[CHANGELOG.md](CHANGELOG.md)** for version updates.
+> **More detail?** See the **[Usage Guide](docs/USAGE_GUIDE.md)**.
+> **Release history?** See the **[CHANGELOG.md](CHANGELOG.md)**.
+> **Callout:** Specify whether you are an individual contributor or a manager. IC (Technical Writer) goes up to **L3**; the manager track begins at **L3**. Use “technical writer”, “tech writer”, “ic”, or “individual collaborator” for IC, and “technical writing manager” or “manager” for managers.
 
 ## Generate Your Report
 
