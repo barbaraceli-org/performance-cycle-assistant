@@ -1,6 +1,14 @@
 # Changelog
 
 ## Unreleased
+- None.
+
+## v2.1.0 — 2025-12-17
+- Added guidance to specify role (Technical Writer vs Technical Writing Manager) and level in report requests.
+- Documented manager track availability (manager track starts at L3) across Quick Start, README, Usage Guide, and Navigation.
+- Updated `.cursorrules` to load expectations from both writer and manager career-path CSVs based on role.
+- Simplified documentation (removed redundant Navigation doc, refreshed README/Quick Start) and aligned writer CSV filename with documented path.
+- Clarified that competency frameworks differ for ICs and managers, and the correct one is chosen based on the stated role.
 - Added guidance to specify role (Technical Writer vs Technical Writing Manager) and level in report requests.
 - Documented manager track availability (manager track starts at L3) across Quick Start, README, Usage Guide, and Navigation.
 - Updated `.cursorrules` to load expectations from both writer and manager career-path CSVs based on role.
