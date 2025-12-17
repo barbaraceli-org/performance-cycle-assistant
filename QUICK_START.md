@@ -1,10 +1,12 @@
 # ⚡ Quick Start
 
 > **Note:** The Atlassian Rovo MCP is automatically configured via `mcp.json`. Just open Cursor and start!
-> 
+>
 > **More detail?** See the **[Usage Guide](docs/USAGE_GUIDE.md)**.
-> 
+>
 > **Release history?** See the **[CHANGELOG.md](CHANGELOG.md)**.
+>
+> **Frameworks:** IC requests use the Technical Writer competency framework; manager requests use the Technical Writing Manager framework. Your stated role selects the correct one.
 
 ## Generate Your Report
 

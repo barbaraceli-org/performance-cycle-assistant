@@ -20,6 +20,8 @@ Generates performance-cycle reports for Technical Writers and Managers using Jir
 - **Technical Writers:** L1 (Technical Writer I), L2 (Technical Writer II), L3 (Senior Technical Writer)
 - **Technical Writing Managers:** L3–L6 (manager track starts at L3)
 
+> **Competency frameworks differ by role:** IC requests use the Technical Writer framework; manager requests use the Technical Writing Manager framework. Always specify whether you’re an IC or a manager so the right competencies are applied.
+
 ## Prerequisites
 - Cursor IDE (latest)
 - Jira Cloud access with appropriate permissions
