@@ -38,6 +38,8 @@ I'm a Level 3 Technical Writing Manager.
 2025, manager, L3
 ```
 
+> **Managers:** include Management evidence that isn’t in Jira (team outcomes, health signals, escalations, process leadership, stakeholder comms, coaching, strategy/roadmap decisions, incident leadership, and links to plans/retros/dashboards) so the Management competency is fully covered.
+
 That's it!
 
 ## Levels

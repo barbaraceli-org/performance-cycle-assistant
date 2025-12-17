@@ -17,6 +17,8 @@
    I'm a Level 3 Technical Writer.
    ```
 
+   > **Managers:** include Management evidence that isn’t in Jira (team outcomes, health signals, escalations, process leadership, stakeholder comms, coaching, strategy/roadmap decisions, incident leadership, and links to plans/retros/dashboards) so the Management competency is fully covered.
+
 3. **Review and refine:**
    - Ask for more detail: "Expand the Q2 accomplishments"
    - Add context: "Include these activities: [list]"
