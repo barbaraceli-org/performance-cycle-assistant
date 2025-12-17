@@ -12,13 +12,13 @@ Assume the user provides, in the prompt or selection, at least:
 
 * A **list of work activities** during that date range, including tasks, projects, achievements, and any available metrics. These may come from task systems, calendars, documents, or notes.
 
-* The **LX Technical Writer expectations** for the user's current **Tech writer level** (L1, L2, or L3). The expectations are defined in `context/Technical writer career path.csv` and will be automatically referenced.
+* The **LX expectations** for the user's current **role and level**. Roles: **Technical Writer** (levels L1, L2, L3) or **Technical Writing Manager** (levels L3–L6). Expectations are defined in `context/Technical writer career path.csv` (writers) and `context/Tech Writer Career Path - Technical Writing Manager.csv` (managers) and will be automatically referenced.
 
 * Any additional contextual information the user may add (for example: specific goals, extra commentary, non-Jira activities, etc.).
 
 ### Automatic Data Retrieval
 
-**IMPORTANT:** When the user provides a date range and level, automatically:
+**IMPORTANT:** When the user provides a date range, role, and level, automatically:
 
 1. **Fetch Jira activities** using Atlassian MCP:
    - Get Cloud ID: `mcp_Atlassian-MCP-Server_getAccessibleAtlassianResources`
@@ -26,8 +26,9 @@ Assume the user provides, in the prompt or selection, at least:
    - JQL: `assignee = currentUser() AND (created >= "YYYY-MM-DD" OR updated >= "YYYY-MM-DD" OR resolved >= "YYYY-MM-DD") AND (created <= "YYYY-MM-DD" OR updated <= "YYYY-MM-DD") ORDER BY updated DESC`
    - Fields: `["summary", "description", "status", "issuetype", "priority", "created", "updated", "resolutiondate", "labels", "components"]`
 
-2. **Load expectations** from `context/Technical writer career path.csv`:
-   - Find the row matching the user's level (L1, L2, or L3)
+2. **Load expectations**:
+   - If role = Technical Writer → load from `context/Technical writer career path.csv` and find matching level (L1, L2, or L3)
+   - If role = Technical Writing Manager → load from `context/Tech Writer Career Path - Technical Writing Manager.csv` and find matching level (manager track L3–L6)
    - Extract expectations for all 6 competency areas
 
 3. **Process data:**

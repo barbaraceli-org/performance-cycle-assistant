@@ -44,9 +44,16 @@ That's it! The assistant will:
 
 ## Available Levels
 
+**Technical Writers**
 - **L1** - Technical Writer I
 - **L2** - Technical Writer II  
 - **L3** - Senior Technical Writer
+
+**Technical Writing Managers**
+- **L3** - Technical Writing Manager I (manager track starts at L3)
+- **L4** - Technical Writing Manager II
+- **L5** - Senior Manager, Technical Writing
+- **L6** - Head of Education & Documentation
 
 ## What You Get
 
@@ -89,6 +96,13 @@ Also include:
 - Mentored 2 junior writers
 ```
 
+**Manager example:**
+```
+Generate my 2025-01-01 to 2025-06-30 report.
+I'm a Level 3 Technical Writing Manager.
+Focus on team leadership outcomes.
+```
+
 ## Troubleshooting
 
 **Jira issues not found?**
@@ -114,16 +128,17 @@ Also include:
 
 **Understanding Results:**
 - **[Metrics Guide](METRICS_GUIDE.md)** - Quantitative metrics explained
+- **[CHANGELOG](CHANGELOG.md)** - Release history and updates
 
 ## Customization
 
 **For Your Organization:**
 
-1. **Competency Framework:** Replace `context/Technical writer career path.csv` with your organization's framework
+1. **Competency Frameworks:** Replace `context/Technical writer career path.csv` (writers) and/or `context/Tech Writer Career Path - Technical Writing Manager.csv` (managers) with your organization's frameworks
 2. **Report Structure:** Edit `.cursorrules` to customize report format, sections, or bullet point counts
 3. **Metrics:** Modify `.cursorrules` section 4.2 to adjust which metrics are calculated and displayed
 4. **Jira Queries:** Modify the JQL in `.cursorrules` (section 1) to adjust filters or fields
-5. **Levels:** Update the CSV and `.cursorrules` to add or modify writer levels
+5. **Levels:** Update the CSVs and `.cursorrules` to add or modify levels for writers or managers
 
 ## 📁 Project Structure
 
@@ -139,7 +154,9 @@ performance-cycle/
 ├── 📊 METRICS_GUIDE.md                       # Quantitative metrics explained
 │
 ├── context/
-│   └── Technical writer career path.csv      # LX expectations (L1-L3)
+│   ├── Technical writer career path.csv                      # LX expectations (Writers L1-L3)
+│   └── Tech Writer Career Path - Technical Writing Manager.csv  # Manager expectations (Managers start at L3)
+├── CHANGELOG.md                               # Release history
 │
 ├── docs/
 │   ├── SETUP.md                              # MCP configuration

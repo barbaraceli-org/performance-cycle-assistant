@@ -12,6 +12,9 @@ Quick guide to finding what you need in this project.
 ### Understand the Metrics
 → **[METRICS_GUIDE.md](METRICS_GUIDE.md)** - Complete guide to quantitative metrics
 
+### See Release History
+→ **[CHANGELOG.md](CHANGELOG.md)** - Version history and updates
+
 ### Learn Advanced Features
 → **[docs/USAGE_GUIDE.md](docs/USAGE_GUIDE.md)** - Detailed instructions and best practices
 
@@ -45,7 +48,9 @@ performance-cycle/
 │   └── example-report-with-metrics.md  Complete example report
 │
 ├── context/
-│   └── Technical writer career path.csv  Competency framework
+│   ├── Technical writer career path.csv                     Competency framework (writers L1–L3)
+│   └── Tech Writer Career Path - Technical Writing Manager.csv  Competency framework (managers L3–L6)
+├── CHANGELOG.md                         Release history
 │
 └── reports/                    Your generated reports (auto-created)
 ```

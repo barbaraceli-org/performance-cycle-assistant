@@ -3,6 +3,7 @@
 > **Note:** The Atlassian Rovo MCP is automatically configured via `mcp.json`. Just open Cursor and start!
 
 **Need more detail?** → See **[NAVIGATION.md](NAVIGATION.md)** for all documentation.
+**Release history?** → See **[CHANGELOG.md](CHANGELOG.md)** for version updates.
 
 ## Generate Your Report
 
@@ -10,16 +11,29 @@ Open Cursor Chat (`Ctrl+L` or `Cmd+L`) and say:
 
 ```
 Generate my performance cycle report for 2025-01-01 to 2025-06-30.
-I'm Level 2.
+I'm a Level 2 Technical Writer.
+```
+
+Managers: specify your manager role and level explicitly:
+```
+Generate my performance cycle report for 2025-01-01 to 2025-06-30.
+I'm a Level 3 Technical Writing Manager.
 ```
 
 That's it!
 
 ## Levels
 
+**Technical Writers**
 - **L1** - Technical Writer I
 - **L2** - Technical Writer II
 - **L3** - Senior Technical Writer
+
+**Technical Writing Managers**
+- **L3** - Technical Writing Manager I (first manager level)
+- **L4** - Technical Writing Manager II
+- **L5** - Senior Manager, Technical Writing
+- **L6** - Head of Education & Documentation
 
 ## What You Get
 

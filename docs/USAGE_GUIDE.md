@@ -8,8 +8,8 @@
 
 2. **Make your request:**
    ```
-   Generate my performance cycle report for 2025-01-01 to 2025-06-30.
-   I'm Level 3.
+Generate my performance cycle report for 2025-01-01 to 2025-06-30.
+I'm a Level 3 Technical Writer.
    ```
 
 3. **Review and refine:**
@@ -34,7 +34,7 @@ The assistant will:
 
 1. **Keep Jira updated** - Add meaningful descriptions, labels, and components
 2. **Provide context** - Mention non-Jira activities, special projects, challenges
-3. **Be specific** - Use exact level (L1, L2, or L3)
+3. **Be specific** - State your role and exact level (Technical Writer L1/L2/L3 or Technical Writing Manager L3/L4/L5/L6)
 4. **Review and iterate** - Ask for refinements or additional detail
 
 ## Troubleshooting
@@ -52,9 +52,9 @@ Also include these activities not in Jira:
 - [Your activities]
 ```
 
-**Wrong level analysis:**
+**Wrong role/level analysis:**
 ```
-I'm Level 3. Compare against L3 expectations specifically.
+I'm a Level 3 Technical Writing Manager. Compare against manager expectations.
 ```
 
 ## Advanced Usage
@@ -114,8 +114,9 @@ See **[METRICS_GUIDE.md](../METRICS_GUIDE.md)** for complete details on:
 
 ### For Your Organization
 
-1. **Replace the competency framework:**
-   - Edit `context/Technical writer career path.csv`
+1. **Replace or extend the competency frameworks:**
+   - Edit `context/Technical writer career path.csv` (writers)
+   - Edit `context/Tech Writer Career Path - Technical Writing Manager.csv` (managers L3–L6)
    - Add your organization's levels and expectations
 
 2. **Adjust metrics:**
@@ -197,3 +198,4 @@ A: Update the CSV file with your organization's levels and expectations.
 - **[Examples](../examples/example-report-with-metrics.md)** - See a complete example report
 - **[Quick Start](../QUICK_START.md)** - Quick reference guide
 - **[README](../README.md)** - Full project documentation
+- **[CHANGELOG](../CHANGELOG.md)** - Release history and updates
