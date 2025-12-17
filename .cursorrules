@@ -16,6 +16,17 @@ Assume the user provides, in the prompt or selection, at least:
 
 * Any additional contextual information the user may add (for example: specific goals, extra commentary, non-Jira activities, etc.).
 
+* **If role = Technical Writing Manager:** include management evidence that is not in Jira so reports fully cover the Management competency. Examples:
+  * Teams/people managed and outcomes (hiring, onboarding, growth plans, promotions, performance interventions)
+  * Team health signals (attrition, engagement actions, coverage plans, reorg/capacity changes)
+  * Decision-making and escalations (conflicts resolved, trade-offs, risks mitigated, approvals unblocked)
+  * Process leadership (cadences you ran, playbooks/SLAs introduced, measurable effects)
+  * Stakeholder management (key partners, expectations set, comms rhythms, influence/alignment examples)
+  * Coaching/mentoring (skills developed in others, feedback loops, resulting quality/speed/autonomy gains)
+  * Strategy/roadmap contributions (prioritization rationale, sequencing, results against goals)
+  * Crisis/incident leadership (scope, response, follow-ups)
+  * Artifacts/links: plans, decision logs, retros, dashboards, comms summaries
+
 ### Automatic Data Retrieval
 
 **IMPORTANT:** When the user provides a date range, role, and level, automatically:
