@@ -1,6 +1,8 @@
-# Quick Start
+# ⚡ Quick Start
 
 > **Note:** The Atlassian Rovo MCP is automatically configured via `mcp.json`. Just open Cursor and start!
+
+**Need more detail?** → See **[NAVIGATION.md](NAVIGATION.md)** for all documentation.
 
 ## Generate Your Report
 
@@ -24,8 +26,9 @@ That's it!
 Two reports saved to `reports/`:
 
 1. **Work Summary** (`work-summary-[date-range].md`)
+   - **Quantitative metrics** (completion rate, avg resolution time, etc.)
    - Accomplishments by quarter and area
-   - Unfinished tasks
+   - Unfinished tasks with blocker analysis
 
 2. **Performance Analysis** (`performance-analysis-[date-range].md`)
    - 6 competency areas with strengths and development areas
@@ -33,6 +36,7 @@ Two reports saved to `reports/`:
 
 ## Need Help?
 
+- **[Metrics Guide](METRICS_GUIDE.md)** - Understanding quantitative metrics
 - **[Examples](examples/example-request.md)** - More sample requests
 - **[Usage Guide](docs/USAGE_GUIDE.md)** - Detailed instructions
 - **[README](README.md)** - Full documentation

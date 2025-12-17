@@ -34,6 +34,17 @@ Assume the user provides, in the prompt or selection, at least:
    - Group issues by quarter based on dates
    - Cluster into work areas using components, labels, themes
    - Identify accomplishments (completed) vs unfinished tasks (in progress/blocked)
+   - Calculate quantitative metrics:
+     * Total issues worked on (all statuses within date range)
+     * Issues completed (status = Done/Resolved/Closed)
+     * Issues in progress (status = In Progress/In Review)
+     * Issues blocked or unfinished (status = Blocked/On Hold)
+     * Completion rate: (completed / total) × 100
+     * Average resolution time: avg(resolutiondate - created) for completed issues
+     * Issue type distribution: count by issuetype
+     * Priority distribution: count by priority
+     * Per-quarter metrics: same calculations scoped to each quarter
+     * Per-work-area metrics: same calculations scoped to each work area
 
 4. **Save the reports:**
    - Create a `reports/` folder if it doesn't exist
@@ -135,64 +146,112 @@ Using the activities within the [[date range]]:
 
 ### 4.1 Output format for Work Summary
 
-Use this structure, adjusting the quarters and Work Areas to match the actual data. Do **not** leave placeholder text like “Accomplishment 1”; always replace with concrete bullets.
+Use this structure, adjusting the quarters and Work Areas to match the actual data. Do **not** leave placeholder text like "Accomplishment 1"; always replace with concrete bullets.
+
+**IMPORTANT: Include quantitative metrics** at three levels:
+1. **Overall metrics** (right after the title)
+2. **Per-quarter metrics** (before each quarter's work areas)
+3. **Per-work-area metrics** (in each work area header, when meaningful)
 
 ```markdown
 # Work summary
 
+**Period:** [[date range]]
+
+## Overview Metrics
+- **Total issues worked on:** X
+- **Issues completed:** Y
+- **Issues in progress:** Z
+- **Issues blocked/unfinished:** W
+- **Completion rate:** N%
+- **Average resolution time:** M days
+- **Work areas covered:** K major areas
+
+**Issue type breakdown:**
+- Documentation: X (Y%)
+- Bug fixes: X (Y%)
+- Tasks: X (Y%)
+- Stories: X (Y%)
+- [Other types as applicable]
+
+**Priority distribution:**
+- High: X (Y%)
+- Medium: X (Y%)
+- Low: X (Y%)
+
 ## Accomplishments
 
 ### Quarter 1
+**Q1 Metrics:** X issues completed | Y in progress | Z% completion rate
 
 #### Work Area 1
+**Metrics:** X completed | Y in progress | Avg resolution: Z days
+
 **Accomplishments:**
 - &lt;Concrete accomplishment bullet&gt;
 - &lt;Concrete accomplishment bullet&gt;
 - &lt;Concrete accomplishment bullet&gt;
 
 #### Work Area 2
+**Metrics:** X completed | Y in progress | Avg resolution: Z days
+
 **Accomplishments:**
 - &lt;Concrete accomplishment bullet&gt;
 - &lt;Concrete accomplishment bullet&gt;
 - &lt;Concrete accomplishment bullet&gt;
 
 ### Quarter 2
+**Q2 Metrics:** X issues completed | Y in progress | Z% completion rate
 
 #### Work Area 1
+**Metrics:** X completed | Y in progress | Avg resolution: Z days
+
 **Accomplishments:**
 - &lt;Concrete accomplishment bullet&gt;
 - &lt;Concrete accomplishment bullet&gt;
 - &lt;Concrete accomplishment bullet&gt;
 
 #### Work Area 2
+**Metrics:** X completed | Y in progress | Avg resolution: Z days
+
 **Accomplishments:**
 - &lt;Concrete accomplishment bullet&gt;
 - &lt;Concrete accomplishment bullet&gt;
 - &lt;Concrete accomplishment bullet&gt;
 
 ### Quarter 3
+**Q3 Metrics:** X issues completed | Y in progress | Z% completion rate
 
 #### Work Area 1
+**Metrics:** X completed | Y in progress | Avg resolution: Z days
+
 **Accomplishments:**
 - &lt;Concrete accomplishment bullet&gt;
 - &lt;Concrete accomplishment bullet&gt;
 - &lt;Concrete accomplishment bullet&gt;
 
 #### Work Area 2
+**Metrics:** X completed | Y in progress | Avg resolution: Z days
+
 **Accomplishments:**
 - &lt;Concrete accomplishment bullet&gt;
 - &lt;Concrete accomplishment bullet&gt;
 - &lt;Concrete accomplishment bullet&gt;
 
 ### Quarter 4
+**Q4 Metrics:** X issues completed | Y in progress | Z% completion rate
 
 #### Work Area 1
+**Metrics:** X completed | Y in progress | Avg resolution: Z days
+
 **Accomplishments:**
 - &lt;Concrete accomplishment bullet&gt;
 - &lt;Concrete accomplishment bullet&gt;
 - &lt;Concrete accomplishment bullet&gt;
 
 #### Work Area 2
+**Metrics:** X completed | Y in progress | Avg resolution: Z days
+
 **Accomplishments:**
 - &lt;Concrete accomplishment bullet&gt;
 - &lt;Concrete accomplishment bullet&gt;
@@ -200,13 +259,24 @@ Use this structure, adjusting the quarters and Work Areas to match the actual da
 
 ## What couldn't be finished
 
+**Unfinished work metrics:**
+- **Total unfinished issues:** X
+- **In progress:** Y (Z%)
+- **Blocked:** W (V%)
+- **Average age of unfinished items:** N days
+- **Primary blockers:** [List top 3-5 blocker categories with counts]
+
 #### Work Area 1
+**Metrics:** X unfinished issues | Avg age: Y days
+
 **Unfinished tasks:**
 - &lt;Concrete unfinished task bullet&gt;
 - &lt;Concrete unfinished task bullet&gt;
 - &lt;Concrete unfinished task bullet&gt;
 
 #### Work Area 2
+**Metrics:** X unfinished issues | Avg age: Y days
+
 **Unfinished tasks:**
 - &lt;Concrete unfinished task bullet&gt;
 - &lt;Concrete unfinished task bullet&gt;
@@ -216,8 +286,68 @@ Use this structure, adjusting the quarters and Work Areas to match the actual da
 Adapt:
 
 * Only include quarters that intersect the actual [[date range]].
-* Add or remove Work Areas to reflect the user’s real projects.
-* Ensure all bullets are specific to the user’s activities.
+* Add or remove Work Areas to reflect the user's real projects.
+* Ensure all bullets are specific to the user's activities.
+
+### 4.2 Calculating and presenting metrics
+
+When generating the work summary, calculate and include these quantitative metrics:
+
+#### Overall metrics (top of report)
+
+1. **Total issues worked on**: Count all issues where any activity occurred during [[date range]]
+2. **Issues completed**: Count issues with status in [Done, Resolved, Closed, Completed] and resolutiondate within [[date range]]
+3. **Issues in progress**: Count issues with status in [In Progress, In Review, In Development] at end of [[date range]]
+4. **Issues blocked/unfinished**: Count issues with status in [Blocked, On Hold, Backlog] at end of [[date range]]
+5. **Completion rate**: (Issues completed / Total issues worked on) × 100, rounded to nearest whole number
+6. **Average resolution time**: For completed issues, calculate avg(resolutiondate - created) in days, rounded to 1 decimal place
+7. **Work areas covered**: Count of distinct work area clusters identified
+8. **Issue type breakdown**: Group by issuetype field, show count and percentage for each type
+9. **Priority distribution**: Group by priority field, show count and percentage for each priority level
+
+#### Per-quarter metrics
+
+For each quarter, calculate the same metrics scoped to issues active during that quarter:
+- Issues completed in quarter
+- Issues in progress at end of quarter
+- Completion rate for quarter
+
+Format: `**Q[N] Metrics:** X issues completed | Y in progress | Z% completion rate`
+
+#### Per-work-area metrics
+
+For each work area within each quarter, calculate:
+- Issues completed in this work area
+- Issues in progress in this work area
+- Average resolution time for completed issues in this work area
+
+Format: `**Metrics:** X completed | Y in progress | Avg resolution: Z days`
+
+If a work area has fewer than 3 issues, the metrics line is optional.
+
+#### Unfinished work metrics
+
+For the "What couldn't be finished" section, calculate:
+1. **Total unfinished issues**: Count of all non-completed issues
+2. **In progress**: Count and percentage of issues with In Progress/In Review status
+3. **Blocked**: Count and percentage of issues with Blocked/On Hold status
+4. **Average age**: For unfinished issues, calculate avg(current_date - created) in days
+5. **Primary blockers**: Analyze issue descriptions, comments, or labels to identify top 3-5 blocker categories (e.g., "External dependencies", "Awaiting product input", "Resource constraints")
+
+For each work area in unfinished section:
+- Count of unfinished issues
+- Average age of unfinished issues in days
+
+Format: `**Metrics:** X unfinished issues | Avg age: Y days`
+
+#### Metric calculation rules
+
+- Round percentages to nearest whole number (e.g., 83%)
+- Round days to 1 decimal place (e.g., 8.5 days)
+- If a metric cannot be calculated (e.g., no completed issues for avg resolution time), omit that metric or show "N/A"
+- Use conservative rounding (round down for completion rates, round up for time metrics)
+- Show "0" explicitly rather than omitting zero-value metrics
+- For percentages, ensure all categories sum to 100% (adjust rounding if needed)
 
 ---
 
@@ -318,11 +448,16 @@ Structure:
 ```markdown
 # Work summary
 
+**Period:** [[date range]]
+
+## Overview Metrics
+[Overall quantitative metrics including totals, completion rate, issue types, priorities]
+
 ## Accomplishments
-[Quarters and Work Areas with accomplishments]
+[Quarters with quarter-level metrics, and Work Areas with work-area-level metrics and accomplishments]
 
 ## What couldn't be finished
-[Work Areas with unfinished tasks]
+[Unfinished work metrics summary, followed by Work Areas with metrics and unfinished tasks]
 ```
 
 ### Report 2: Performance Analysis (`performance-analysis-[date-range].md`)
