@@ -1,6 +1,7 @@
 # Usage Guide
 
 > **Note:** The Atlassian Rovo MCP is automatically configured via `mcp.json` in this project. No setup required!
+> 
 > **Callout:** Always state whether you are an individual contributor or a manager. IC (Technical Writer) levels end at **L3**; the manager track starts at **L3**. Use “technical writer”, “tech writer”, “ic”, or “individual collaborator” for IC roles, and “technical writing manager” or “manager” for manager roles.
 
 ## How to Use
@@ -8,9 +9,10 @@
 1. **Open Cursor Chat:** `Ctrl+L` or `Cmd+L`
 
 2. **Make your request:**
+
    ```
-Generate my performance cycle report for 2025-01-01 to 2025-06-30.
-I'm a Level 3 Technical Writer.
+   Generate my performance cycle report for 2025-01-01 to 2025-06-30.
+   I'm a Level 3 Technical Writer.
    ```
 
 3. **Review and refine:**
