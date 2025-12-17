@@ -427,6 +427,13 @@ Use this exact heading structure:
 ## Areas to develop
 
 
+# Management (include only for Technical Writing Managers)
+
+## Strengths
+
+## Areas to develop
+
+
 # Summary of alignment
 
 ## Areas of complete alignment
@@ -468,7 +475,7 @@ Structure:
 ```markdown
 # Performance analysis
 
-This work summary documents activities and outcomes during the specified review period. The analysis is based on the **VTEX Technical Writer Career Path**, which defines expectations across six competency areas: Abstraction & Modeling, Responsibility & Scope, Autonomy & Execution, Communication, Editorial Writing & Content Management, and Technical Writing. This framework provides the foundation for evaluating alignment between documented work and level-specific expectations.
+This work summary documents activities and outcomes during the specified review period. The analysis is based on the **VTEX Technical Writer Career Path**, selecting the **Technical Writer** framework for IC roles and the **Technical Writing Manager** framework for manager roles. The manager track includes an additional **Management** competency. These frameworks define expectations across the relevant competency areas and provide the basis for evaluating alignment to the stated level.
 
 # Abstraction & Modeling
 ## Strengths
@@ -491,6 +498,10 @@ This work summary documents activities and outcomes during the specified review 
 ## Areas to develop
 
 # Technical Writing
+## Strengths
+## Areas to develop
+
+# Management (include only for Technical Writing Managers)
 ## Strengths
 ## Areas to develop
 
