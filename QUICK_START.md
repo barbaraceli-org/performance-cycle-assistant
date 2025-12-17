@@ -1,23 +1,39 @@
 # ⚡ Quick Start
 
 > **Note:** The Atlassian Rovo MCP is automatically configured via `mcp.json`. Just open Cursor and start!
+> 
 > **More detail?** See the **[Usage Guide](docs/USAGE_GUIDE.md)**.
+> 
 > **Release history?** See the **[CHANGELOG.md](CHANGELOG.md)**.
-> **Callout:** Specify whether you are an individual contributor or a manager. IC (Technical Writer) goes up to **L3**; the manager track begins at **L3**. Use “technical writer”, “tech writer”, “ic”, or “individual collaborator” for IC, and “technical writing manager” or “manager” for managers.
 
 ## Generate Your Report
 
-Open Cursor Chat (`Ctrl+L` or `Cmd+L`) and say:
+Open Cursor Chat (`Ctrl+L` or `Cmd+L`) and specify the date range, role, and level. See the examples below:
+
+> Specify whether you are an individual contributor or a manager. The IC (Technical Writer) track progresses up to **L3**, while the manager track starts at **L3**. Use "technical writer", "tech writer", "ic", or "individual collaborator" for IC, and "technical writing manager" or "manager" for managers.
+
+**Technical writer**
 
 ```
 Generate my performance cycle report for 2025-01-01 to 2025-06-30.
-I'm a Level 2 Technical Writer.
+I'm a Level 2 IC.
 ```
 
-Managers: specify your manager role and level explicitly:
+```
+H1 2025
+Tech writer
+L3
+```
+
+**Technical writing manager**
+
 ```
 Generate my performance cycle report for 2025-01-01 to 2025-06-30.
 I'm a Level 3 Technical Writing Manager.
+```
+
+```
+2025, manager, L3
 ```
 
 That's it!
@@ -40,7 +56,7 @@ That's it!
 Two reports saved to `reports/`:
 
 1. **Work Summary** (`work-summary-[date-range].md`)
-   - **Quantitative metrics** (completion rate, avg resolution time, etc.)
+   - Quantitative metrics (completion rate, avg resolution time, etc.)
    - Accomplishments by quarter and area
    - Unfinished tasks with blocker analysis
 
@@ -54,4 +70,3 @@ Two reports saved to `reports/`:
 - **[Examples](examples/example-request.md)** - More sample requests
 - **[Usage Guide](docs/USAGE_GUIDE.md)** - Detailed instructions
 - **[README](README.md)** - Full documentation
-
