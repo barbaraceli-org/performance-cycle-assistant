@@ -6,7 +6,7 @@
 >
 > **Release history?** See the **[CHANGELOG.md](CHANGELOG.md)**.
 >
-> **Frameworks:** IC requests use the Technical Writer competency framework (`context/Technical Writer Career Path - Technical Writer.csv`); manager requests use the Technical Writing Manager framework (`context/Tech Writer Career Path - Technical Writing Manager.csv`, includes Management expectations). Your stated role selects the correct one.
+> **Frameworks:** IC requests use the Technical Writer competency framework (`context/technical-writer-career-path.json`); manager requests use the Technical Writing Manager framework (`context/technical-writing-manager-career-path.json`, includes Management expectations). Your stated role selects the correct one.
 
 ## Generate Your Report
 

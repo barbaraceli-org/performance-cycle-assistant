@@ -12,7 +12,7 @@ Assume the user provides, in the prompt or selection, at least:
 
 * A **list of work activities** during that date range, including tasks, projects, achievements, and any available metrics. These may come from task systems, calendars, documents, or notes.
 
-* The **LX expectations** for the user's current **role and level**. Roles: **Technical Writer** (levels L1, L2, L3) or **Technical Writing Manager** (levels L3–L6). Expectations are defined in `context/Technical writer career path.csv` (writers) and `context/Tech Writer Career Path - Technical Writing Manager.csv` (managers) and will be automatically referenced.
+* The **LX expectations** for the user's current **role and level**. Roles: **Technical Writer** (levels L1, L2, L3) or **Technical Writing Manager** (levels L3–L6). Expectations are defined in `context/technical-writer-career-path.json` (writers) and `context/technical-writing-manager-career-path.json` (managers) and will be automatically referenced.
 
 * Any additional contextual information the user may add (for example: specific goals, extra commentary, non-Jira activities, etc.).
 
@@ -35,11 +35,12 @@ Assume the user provides, in the prompt or selection, at least:
    - Get Cloud ID: `mcp_Atlassian-MCP-Server_getAccessibleAtlassianResources`
    - Search issues: `mcp_Atlassian-MCP-Server_searchJiraIssuesUsingJql`
    - JQL: `assignee = currentUser() AND (created >= "YYYY-MM-DD" OR updated >= "YYYY-MM-DD" OR resolved >= "YYYY-MM-DD") AND (created <= "YYYY-MM-DD" OR updated <= "YYYY-MM-DD") ORDER BY updated DESC`
-   - Fields: `["summary", "description", "status", "issuetype", "priority", "created", "updated", "resolutiondate", "labels", "components"]`
+   - Fields: `["summary", "description", "status", "issuetype", "priority", "created", "updated", "resolutiondate", "labels", "components", "changelog"]`
+   - Note: To calculate "in progress" date, extract from changelog the first time status changed to "In Progress" (or "In Review", "In Development"). If changelog is not available, use the `updated` date when status is "In Progress" as a fallback.
 
 2. **Load expectations** (choose framework by stated role):
-   - If role = Technical Writer (IC) → load from `context/Technical Writer Career Path - Technical Writer.csv` and find matching level (L1, L2, or L3)
-   - If role = Technical Writing Manager → load from `context/Tech Writer Career Path - Technical Writing Manager.csv` and find matching level (manager track L3–L6, includes Management expectations)
+   - If role = Technical Writer (IC) → load from `context/technical-writer-career-path.json` and find matching level (L1, L2, or L3)
+   - If role = Technical Writing Manager → load from `context/technical-writing-manager-career-path.json` and find matching level (manager track L3–L6, includes Management expectations)
    - Extract expectations for all 6 competency areas (use manager track when role is manager)
 
 3. **Process data:**
@@ -52,7 +53,7 @@ Assume the user provides, in the prompt or selection, at least:
      * Issues in progress (status = In Progress/In Review)
      * Issues blocked or unfinished (status = Blocked/On Hold)
      * Completion rate: (completed / total) × 100
-     * Average resolution time: avg(resolutiondate - created) for completed issues
+     * Average resolution time: avg(resolutiondate - in_progress_date) for completed issues, where in_progress_date is when the issue first moved to "In Progress" status (extracted from changelog or status change history)
      * Issue type distribution: count by issuetype
      * Priority distribution: count by priority
      * Per-quarter metrics: same calculations scoped to each quarter
@@ -312,7 +313,7 @@ When generating the work summary, calculate and include these quantitative metri
 3. **Issues in progress**: Count issues with status in [In Progress, In Review, In Development] at end of [[date range]]
 4. **Issues blocked/unfinished**: Count issues with status in [Blocked, On Hold, Backlog] at end of [[date range]]
 5. **Completion rate**: (Issues completed / Total issues worked on) × 100, rounded to nearest whole number
-6. **Average resolution time**: For completed issues, calculate avg(resolutiondate - created) in days, rounded to 1 decimal place
+6. **Average resolution time**: For completed issues, calculate avg(resolutiondate - in_progress_date) in days, rounded to 1 decimal place, where in_progress_date is when the issue first moved to "In Progress" status (extracted from changelog/status change history). This measures actual work time, not total issue lifetime. If in_progress_date is not available, use the `updated` date when status is "In Progress" as a fallback.
 7. **Work areas covered**: Count of distinct work area clusters identified
 8. **Issue type breakdown**: Group by issuetype field, show count and percentage for each type
 9. **Priority distribution**: Group by priority field, show count and percentage for each priority level
@@ -331,7 +332,7 @@ Format: `**Q[N] Metrics:** X issues completed | Y in progress | Z% completion ra
 For each work area within each quarter, calculate:
 - Issues completed in this work area
 - Issues in progress in this work area
-- Average resolution time for completed issues in this work area
+- Average resolution time for completed issues in this work area (calculated from in_progress_date to resolutiondate)
 
 Format: `**Metrics:** X completed | Y in progress | Avg resolution: Z days`
 

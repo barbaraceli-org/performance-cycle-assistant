@@ -23,7 +23,7 @@ These appear at the top of your work summary report:
 | **Issues in progress** | Issues actively being worked on at period end | Shows current workload and pipeline |
 | **Issues blocked/unfinished** | Issues that couldn't be completed | Highlights obstacles and dependencies |
 | **Completion rate** | (Completed ÷ Total) × 100 | Measures efficiency and delivery success |
-| **Average resolution time** | Mean time from creation to completion (days) | Indicates velocity and complexity |
+| **Average resolution time** | Mean time from "in progress" to completion (days) | Indicates actual work velocity and complexity |
 | **Work areas covered** | Number of distinct projects/initiatives | Shows breadth of contribution |
 
 ### Issue Type Breakdown
@@ -64,7 +64,7 @@ Each work area (project/initiative) includes:
 
 - **Completed** - Issues finished in this area
 - **In progress** - Issues currently active
-- **Avg resolution** - Mean time to complete issues (days)
+- **Avg resolution** - Mean time from "in progress" to completion (days)
 
 Format: `**Metrics:** 15 completed | 2 in progress | Avg resolution: 6 days`
 
@@ -102,6 +102,28 @@ Issues are included if they had **any activity** during the review period, regar
 - **Zero values**: Shown explicitly as "0" rather than omitted
 - **Rounding**: Conservative (round down for rates, round up for time)
 
+### Average Resolution Time Calculation
+
+**Important:** Average resolution time measures **actual work time**, not total issue lifetime.
+
+**Formula:** `avg(resolutiondate - in_progress_date)` for completed issues
+
+**How "in progress" date is determined:**
+1. **Primary method**: Extract from Jira changelog the first time the issue status changed to "In Progress" (or "In Review", "In Development")
+2. **Fallback method**: If changelog is unavailable, use the `updated` date when the issue status is "In Progress"
+
+**Why this matters:**
+- More accurately reflects your actual work velocity
+- Excludes time when issues were waiting in backlog or not yet assigned
+- Aligns with the principle that metrics should reflect "when the task was on your plate"
+- Provides fairer comparison across different work types and dependencies
+
+**Example:**
+- Issue created: 2025-01-01
+- Moved to "In Progress": 2025-01-15 (14 days in backlog)
+- Completed: 2025-01-25
+- **Resolution time**: 10 days (not 24 days)
+
 ### Status Mapping
 
 **Completed statuses**: Done, Resolved, Closed, Completed
@@ -136,9 +158,9 @@ Issues are included if they had **any activity** during the review period, regar
 
 **Lower completion rate (<70%)**: May indicate scope creep, dependencies, or overly ambitious planning (not necessarily negative)
 
-**Fast average resolution (<5 days)**: Shows efficiency, may indicate simpler tasks or strong expertise
+**Fast average resolution (<5 days)**: Shows efficiency, may indicate simpler tasks or strong expertise. Note: This measures time from "in progress" to completion, not total issue lifetime.
 
-**Slow average resolution (>15 days)**: May indicate complex work, dependencies, or need for process improvement
+**Slow average resolution (>15 days)**: May indicate complex work, dependencies, or need for process improvement. Remember: This reflects actual work time, so longer times may indicate genuinely complex tasks.
 
 **Many blocked issues**: Highlights need for stakeholder engagement or dependency management
 

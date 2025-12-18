@@ -41,10 +41,10 @@ Generates performance-cycle reports for Technical Writers and Managers using Jir
 - **[Example report](examples/example-report-with-metrics.md)** — full sample output
 - **[Changelog](CHANGELOG.md)** — release history
 
-> **Framework selection:** Always state IC vs manager. IC requests use `context/Technical Writer Career Path - Technical Writer.csv`; manager requests use `context/Tech Writer Career Path - Technical Writing Manager.csv` (includes Management expectations). The agent picks the framework based on your stated role.
+> **Framework selection:** Always state IC vs manager. IC requests use `context/technical-writer-career-path.json`; manager requests use `context/technical-writing-manager-career-path.json` (includes Management expectations). The agent picks the framework based on your stated role.
 
 ## Customization
-- Replace competency frameworks: `context/Technical Writer Career Path - Technical Writer.csv` (writers) or `context/Tech Writer Career Path - Technical Writing Manager.csv` (managers).
+- Replace competency frameworks: `context/technical-writer-career-path.json` (writers) or `context/technical-writing-manager-career-path.json` (managers).
 - Adjust report format and metrics in `.cursorrules` (sections 4.1 and 4.2).
 - Tweak JQL filters in `.cursorrules` section 1 if your Jira workflow differs.
 
@@ -65,8 +65,8 @@ performance-cycle/
 ├── METRICS_GUIDE.md                           # Quantitative metrics explained
 │
 ├── context/
-│   ├── Technical Writer Career Path - Technical Writer.csv      # LX expectations (writers L1–L3)
-│   └── Tech Writer Career Path - Technical Writing Manager.csv  # Manager expectations (L3–L6)
+│   ├── technical-writer-career-path.json                        # LX expectations (writers L1–L3)
+│   └── technical-writing-manager-career-path.json               # Manager expectations (L3–L6)
 ├── CHANGELOG.md                               # Release history
 │
 ├── docs/

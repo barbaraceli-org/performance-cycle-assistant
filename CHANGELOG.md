@@ -1,18 +1,13 @@
 # Changelog
 
 ## Unreleased
-- None.
+- Changed average resolution time calculation to use "in progress" date instead of creation date. This measures actual work time (from when the user started actively working) rather than total issue lifetime, providing a more accurate reflection of work velocity. The "in progress" date is extracted from Jira changelog (when status first changed to "In Progress") with a fallback to the `updated` date when status is "In Progress".
 
 ## v2.1.0 — 2025-12-17
 - Added guidance to specify role (Technical Writer vs Technical Writing Manager) and level in report requests.
 - Documented manager track availability (manager track starts at L3) across Quick Start, README, Usage Guide, and Navigation.
-- Updated `.cursorrules` to load expectations from both writer and manager career-path CSVs based on role.
-- Simplified documentation (removed redundant Navigation doc, refreshed README/Quick Start) and aligned writer CSV filename with documented path.
-- Clarified that competency frameworks differ for ICs and managers, and the correct one is chosen based on the stated role.
-- Added guidance to specify role (Technical Writer vs Technical Writing Manager) and level in report requests.
-- Documented manager track availability (manager track starts at L3) across Quick Start, README, Usage Guide, and Navigation.
-- Updated `.cursorrules` to load expectations from both writer and manager career-path CSVs based on role.
-- Simplified documentation (removed redundant Navigation doc, refreshed README/Quick Start) and aligned writer CSV filename with documented path.
+- Updated `.cursorrules` to load expectations from both writer and manager career-path JSON files based on role.
+- Simplified documentation (removed redundant Navigation doc, refreshed README/Quick Start) and aligned writer JSON filename with documented path.
 - Clarified that competency frameworks differ for ICs and managers, and the correct one is chosen based on the stated role.
 
 ## v2.0.0 — Quantitative Metrics and Competency Analysis
@@ -26,4 +21,4 @@
 - Generated two Markdown reports: work summary and performance analysis for Technical Writers (L1–L3).
 - Pulled Jira activity within a date range and grouped by quarter and work area.
 - Included accomplishments and unfinished tasks with blocker analysis.
-- Loaded LX Technical Writer expectations from `context/Technical Writer Career Path - Technical Writer.csv` for competency comparison.
+- Loaded LX Technical Writer expectations from `context/technical-writer-career-path.json` for competency comparison.
