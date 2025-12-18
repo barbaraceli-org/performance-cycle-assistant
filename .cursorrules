@@ -16,6 +16,19 @@ Assume the user provides, in the prompt or selection, at least:
 
 * Any additional contextual information the user may add (for example: specific goals, extra commentary, non-Jira activities, etc.).
 
+* **If role = Technical Writer (IC):** include activities beyond Jira that demonstrate impact across competencies. Examples:
+  * Mentoring/onboarding support (peer mentoring, new hire support, knowledge sharing)
+  * Chapter/community participation (guild involvement, community contributions, knowledge sharing sessions)
+  * Process improvements driven (documentation workflows, tooling enhancements, efficiency gains)
+  * Cross-team collaboration (partnerships with Engineering, Product, Design; joint initiatives)
+  * Documentation strategy work (content planning, information architecture, user research)
+  * Content audits/reorganizations (gap analysis, restructuring projects, quality improvements)
+  * User research (user interviews, feedback analysis, usability testing)
+  * Speaking/presentations (all-hands, workshops, training sessions, conference talks)
+  * Writing guidelines/standards (style guides, templates, best practices documentation)
+  * Tools/automation built (scripts, integrations, workflow automation)
+  * Artifacts/links: style guides, templates, research findings, metrics dashboards, presentations
+
 * **If role = Technical Writing Manager:** include management evidence that is not in Jira so reports fully cover the Management competency. Examples:
   * Teams/people managed and outcomes (hiring, onboarding, growth plans, promotions, performance interventions)
   * Team health signals (attrition, engagement actions, coverage plans, reorg/capacity changes)

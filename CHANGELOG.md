@@ -1,7 +1,11 @@
 # Changelog
 
 ## Unreleased
-- Changed average resolution time calculation to use "in progress" date instead of creation date. This measures actual work time (from when the user started actively working) rather than total issue lifetime, providing a more accurate reflection of work velocity. The "in progress" date is extracted from Jira changelog (when status first changed to "In Progress") with a fallback to the `updated` date when status is "In Progress".
+
+## v2.2.0 — 2025-12-18
+- Added IC guidance prompting users to include non-Jira activities (mentoring, process improvements, cross-team collaboration, documentation strategy, user research, presentations, tools/automation).
+- Added recommendation to generate reports by shorter periods (quarters, semesters, months) instead of full years.
+- Changed average resolution time calculation from creation date to "in progress" date (extracted from Jira changelog).
 
 ## v2.1.0 — 2025-12-17
 - Added guidance to specify role (Technical Writer vs Technical Writing Manager) and level in report requests.

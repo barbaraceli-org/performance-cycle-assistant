@@ -13,9 +13,11 @@ Generates performance-cycle reports for Technical Writers and Managers using Jir
 
 - The assistant fetches Jira activity, calculates metrics, writes accomplishments and unfinished work by quarter/work area, compares to level expectations, and saves two Markdown files in `reports/`.
 
-> **Important:** Always state whether you are an individual contributor or a manager. IC (Technical Writer) tops out at **L3**; the manager track also starts at **L3**. You can say “technical writer”, “tech writer”, “ic”, or “individual collaborator” for IC roles, and “technical writing manager” or “manager” for manager roles.
+> **Important:** Always state whether you are an individual contributor or a manager. IC (Technical Writer) tops out at **L3**; the manager track also starts at **L3**. You can say "technical writer", "tech writer", "ic", or "individual collaborator" for IC roles, and "technical writing manager" or "manager" for manager roles.
 >
-> **Managers:** include Management evidence that isn’t in Jira (team outcomes, health signals, escalations, process leadership, stakeholder comms, coaching, strategy/roadmap decisions, incident leadership, and links to plans/retros/dashboards) so the Management competency is fully covered.
+> **ICs:** include activities beyond Jira that demonstrate your impact across competencies: mentoring/onboarding support, chapter/community participation, process improvements you drove, cross-team collaboration, documentation strategy work, content audits/reorganizations, user research, speaking/presentations, writing guidelines/standards, tools/automation you built, and links to key artifacts (style guides, templates, research findings, metrics dashboards).
+>
+> **Managers:** include Management evidence that isn't in Jira (team outcomes, health signals, escalations, process leadership, stakeholder comms, coaching, strategy/roadmap decisions, incident leadership, and links to plans/retros/dashboards) so the Management competency is fully covered.
 
 ## What you get
 - **Work Summary** (`work-summary-[date-range].md`): overall, per-quarter, and per-work-area metrics; accomplishments; unfinished tasks with blocker analysis.

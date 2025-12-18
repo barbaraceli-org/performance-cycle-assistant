@@ -27,6 +27,9 @@ Tech writer
 L3
 ```
 
+> **ICs:** include activities beyond Jira that demonstrate your impact across competencies: mentoring/onboarding support, chapter/community participation, process improvements you drove, cross-team collaboration, documentation strategy work, content audits/reorganizations, user research, speaking/presentations, writing guidelines/standards, tools/automation you built, and links to key artifacts (style guides, templates, research findings, metrics dashboards).
+
+
 **Technical writing manager**
 
 ```
@@ -35,10 +38,38 @@ I'm a Level 3 Technical Writing Manager.
 ```
 
 ```
-2025, manager, L3
+Q2 2025, manager, L3
 ```
 
-> **Managers:** include Management evidence that isn’t in Jira (team outcomes, health signals, escalations, process leadership, stakeholder comms, coaching, strategy/roadmap decisions, incident leadership, and links to plans/retros/dashboards) so the Management competency is fully covered.
+> **Managers:** include Management evidence that isn't in Jira (team outcomes, health signals, escalations, process leadership, stakeholder comms, coaching, strategy/roadmap decisions, incident leadership, and links to plans/retros/dashboards) so the Management competency is fully covered.
+
+## 📋 Best Practice: Generate Reports by Period
+
+**Recommendation:** Generate reports for **shorter periods** rather than an entire year.
+
+**Why?**
+- More manageable data volume
+- Clearer quarterly patterns and trends
+- Easier to review and validate
+- Better alignment with typical performance review cycles
+
+**Suggested periods:**
+- **By quarter:** Q1, Q2, Q3, Q4
+- **By semester:** H1 (Jan-Jun), H2 (Jul-Dec)
+- **By month:** For detailed monthly tracking
+
+**Example:**
+Instead of:
+```
+Generate my report for 2025
+```
+
+Do this:
+```
+Generate my report for Q1 2025
+```
+
+> **Tip:** You can still review a full year by generating and reviewing quarterly reports together.
 
 That's it!
 

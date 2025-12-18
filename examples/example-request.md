@@ -160,6 +160,10 @@ Highlight differences in volume and focus areas.
 - **Special projects** not tracked in Jira
 - **Context** about challenges or achievements
 
+> **ICs:** include activities beyond Jira that demonstrate your impact across competencies: mentoring/onboarding support, chapter/community participation, process improvements you drove, cross-team collaboration, documentation strategy work, content audits/reorganizations, user research, speaking/presentations, writing guidelines/standards, tools/automation you built, and links to key artifacts (style guides, templates, research findings, metrics dashboards).
+
+> **Managers:** include Management evidence that isn't in Jira (team outcomes, health signals, escalations, process leadership, stakeholder comms, coaching, strategy/roadmap decisions, incident leadership, and links to plans/retros/dashboards) so the Management competency is fully covered.
+
 ### ❌ DON'T Need To:
 
 - List Jira issues manually (automatic)
