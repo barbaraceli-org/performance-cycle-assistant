@@ -17,9 +17,7 @@
    I'm a Level 3 Technical Writer.
    ```
 
-   > **ICs:** include activities beyond Jira that demonstrate your impact across competencies: mentoring/onboarding support, chapter/community participation, process improvements you drove, cross-team collaboration, documentation strategy work, content audits/reorganizations, user research, speaking/presentations, writing guidelines/standards, tools/automation you built, and links to key artifacts (style guides, templates, research findings, metrics dashboards).
-   
-   > **Managers:** include Management evidence that isn't in Jira (team outcomes, health signals, escalations, process leadership, stakeholder comms, coaching, strategy/roadmap decisions, incident leadership, and links to plans/retros/dashboards) so the Management competency is fully covered.
+   > **Tip:** Jira and GitHub data are fetched automatically. Mention additional activities not tracked in systems (mentoring, presentations, process improvements, team outcomes, etc.).
 
 3. **Review and refine:**
    - Ask for more detail: "Expand the Q2 accomplishments"
@@ -30,19 +28,20 @@
 
 The assistant will:
 1. Fetch your Jira issues (created, updated, or resolved in date range)
-2. Group by calendar quarters (Q1-Q4)
-3. Cluster into work areas (based on components, labels, themes)
-4. Generate accomplishment bullets per area
-5. Identify unfinished tasks
-6. Analyze 6 competency areas with strengths and development areas
-7. Save two separate reports to `reports/`:
+2. Fetch your GitHub activity (if configured): PRs, commits, reviews
+3. Group by calendar quarters (Q1-Q4)
+4. Cluster into work areas (based on components, labels, themes, repositories)
+5. Generate accomplishment bullets per area
+6. Identify unfinished tasks
+7. Analyze competency areas with strengths and development areas
+8. Save two separate reports to `reports/`:
    - `work-summary-[date-range].md`
    - `performance-analysis-[date-range].md`
 
 ## Tips for Best Results
 
 1. **Keep Jira updated** - Add meaningful descriptions, labels, and components
-2. **Provide context** - Mention non-Jira activities, special projects, challenges
+2. **Provide context** - Mention non-Jira/GitHub activities, special projects, challenges
 3. **Be specific** - State your role and exact level (Technical Writer L1/L2/L3 or Technical Writing Manager L3/L4/L5/L6)
 4. **Review and iterate** - Ask for refinements or additional detail
 
@@ -57,9 +56,14 @@ The assistant will:
 
 **Report incomplete:**
 ```
-Also include these activities not in Jira:
+Also include these activities not in Jira/GitHub:
 - [Your activities]
 ```
+
+**No GitHub data:**
+- GitHub integration is optional
+- See [Setup Guide](SETUP.md) for GitHub MCP configuration
+- Verify `GITHUB_TOKEN` environment variable is set
 
 **Wrong role/level analysis:**
 ```
@@ -103,7 +107,7 @@ Expand the "Communication" competency section with more specific examples.
 ### Performance Analysis Report
 
 **Structure:**
-- **6 Competency Areas** - Strengths and development areas for each
+- **Competency Areas** - Strengths and development areas for each
 - **Summary of Alignment** - Overall assessment against level expectations
 
 **Use for:**
@@ -166,7 +170,7 @@ Generate my report with extra detail on:
 
 ### Provide Context
 
-Include non-Jira activities:
+Include non-Jira/GitHub activities:
 - Presentations and workshops
 - Mentoring and training
 - Process improvements

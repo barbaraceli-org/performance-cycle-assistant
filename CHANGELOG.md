@@ -2,6 +2,36 @@
 
 ## Unreleased
 
+## v2.3.0 — 2025-12-18
+### Added
+- **GitHub MCP integration** for tracking pull requests, code reviews, and documentation commits
+  - Automatically fetches PRs authored and reviewed
+  - Tracks documentation commits (*.md, docs/, README files)
+  - Calculates GitHub metrics: PR merge time, lines changed, repositories contributed to
+  - Merges GitHub activity with Jira data in work areas
+- **Enhanced metrics** in work summary reports:
+  - GitHub activity metrics (PRs, commits, reviews, repositories)
+  - Per-repository contribution breakdown
+  - Documentation file type analysis
+- **Security enhancements**:
+  - Updated `.gitignore` to protect GitHub tokens (*.token, secrets/, mcp.json.local)
+  - Documented secure token management using environment variables
+  - Added comprehensive GitHub MCP setup guide in docs/SETUP.md
+- **Documentation updates**:
+  - Added GitHub integration section to README, QUICK_START, and USAGE_GUIDE
+  - Expanded METRICS_GUIDE with GitHub-specific metrics and calculations
+  - Added GitHub examples to example-request.md
+  - Updated all guides to reflect optional GitHub integration
+
+### Changed
+- `.cursorrules` now includes GitHub MCP data retrieval alongside Jira
+- Work summary template includes separate sections for Jira and GitHub metrics
+- Data processing now merges GitHub PRs with Jira issues when related
+
+### Security
+- **IMPORTANT**: Never commit GitHub tokens to Git. Use environment variables (`GITHUB_TOKEN`)
+- GitHub MCP configuration should be in global `~/.cursor/mcp.json`, not project files
+
 ## v2.2.0 — 2025-12-18
 - Added IC guidance prompting users to include non-Jira activities (mentoring, process improvements, cross-team collaboration, documentation strategy, user research, presentations, tools/automation).
 - Added recommendation to generate reports by shorter periods (quarters, semesters, months) instead of full years.

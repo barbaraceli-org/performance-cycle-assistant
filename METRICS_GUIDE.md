@@ -4,17 +4,24 @@ This guide explains the quantitative metrics automatically included in your work
 
 ## Overview
 
-The Performance Cycle Report Assistant automatically calculates and includes quantitative metrics at three levels:
+The Performance Cycle Report Assistant automatically calculates and includes quantitative metrics from Jira and GitHub (if configured) at three levels:
 
 1. **Overall metrics** - Summary of all work during the review period
 2. **Per-quarter metrics** - Breakdown by calendar quarter
 3. **Per-work-area metrics** - Detailed metrics for each project/initiative
 
+## Data Sources
+
+- **Jira** (required): Task tracking, issue management, project work
+- **GitHub** (optional): Pull requests, code reviews, documentation commits
+  - Automatically included if GitHub MCP server is configured
+  - See [Setup Guide](docs/SETUP.md) for GitHub configuration
+
 ## Metric Definitions
 
-### Overall Metrics
+### Jira Metrics
 
-These appear at the top of your work summary report:
+These metrics track your Jira activity:
 
 | Metric | Definition | Why It Matters |
 |--------|------------|----------------|
@@ -47,6 +54,31 @@ Shows how work was prioritized:
 - **Low** - Nice-to-have improvements
 
 Helps demonstrate focus on high-impact work.
+
+### GitHub Metrics (Optional)
+
+These metrics track your GitHub contributions when GitHub MCP is configured:
+
+| Metric | Definition | Why It Matters |
+|--------|------------|----------------|
+| **Pull requests authored** | PRs you created (total, merged, open) | Shows documentation contributions in code repos |
+| **Pull requests reviewed** | PRs you reviewed for others | Demonstrates collaboration and technical review skills |
+| **Documentation commits** | Commits to .md, docs/, README files | Tracks direct documentation updates |
+| **Repositories contributed to** | Distinct repos where you contributed | Shows breadth of impact across projects |
+| **Average PR merge time** | Mean time from PR creation to merge (days) | Indicates efficiency and collaboration speed |
+| **Lines changed** | Lines added/deleted in documentation files | Shows volume of documentation work |
+
+**Documentation file types tracked:**
+- Markdown files (*.md)
+- README files
+- API documentation
+- Contributing guides
+- Documentation site content
+
+**Per-repository breakdown:**
+- Contributions by repository
+- PR counts per repo
+- Documentation files modified per repo
 
 ### Per-Quarter Metrics
 
@@ -102,6 +134,15 @@ Issues are included if they had **any activity** during the review period, regar
 - **Zero values**: Shown explicitly as "0" rather than omitted
 - **Rounding**: Conservative (round down for rates, round up for time)
 
+### GitHub-Specific Calculation Rules
+
+- **PR merge time**: Calculated only for merged PRs (created_at to merged_at)
+- **Documentation commits**: Filtered by file patterns (*.md, docs/**, README*, CONTRIBUTING*, etc.)
+- **Lines changed**: Sum of additions and deletions in documentation files only
+- **Repository counting**: Each distinct repository where you had activity counts once
+- **Review counting**: Includes all review types (approve, request changes, comment)
+- **Date filtering**: GitHub activities included if they occurred during the review period
+
 ### Average Resolution Time Calculation
 
 **Important:** Average resolution time measures **actual work time**, not total issue lifetime.
@@ -139,18 +180,21 @@ Issues are included if they had **any activity** during the review period, regar
 ### What Metrics Show
 
 ✅ **Good indicators:**
-- Volume and consistency of work
+- Volume and consistency of work (Jira + GitHub)
 - Efficiency and velocity
-- Breadth of contribution
+- Breadth of contribution across systems
 - Ability to complete work
 - Focus on priorities
+- Collaboration through code reviews (GitHub)
+- Technical engagement with repositories (GitHub)
 
 ❌ **What metrics DON'T show:**
 - Quality of work (requires qualitative review)
 - Complexity or difficulty
 - Strategic impact
-- Collaboration and communication
+- Communication effectiveness
 - Learning and growth
+- Impact of mentoring or leadership
 
 ### Interpreting Your Metrics
 
@@ -167,6 +211,14 @@ Issues are included if they had **any activity** during the review period, regar
 **High work area count**: Demonstrates versatility and broad contribution
 
 **Low work area count**: May indicate deep focus and specialization (not necessarily negative)
+
+**High PR count (GitHub)**: Shows active engagement with code repositories and developer workflows
+
+**High review count (GitHub)**: Demonstrates collaboration, technical expertise, and team support
+
+**Fast PR merge time (GitHub)**: Indicates efficient collaboration and clear documentation
+
+**Many repositories (GitHub)**: Shows broad impact across multiple projects or teams
 
 
 ## Example Interpretation

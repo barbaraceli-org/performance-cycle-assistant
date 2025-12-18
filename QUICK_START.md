@@ -1,6 +1,6 @@
 # ⚡ Quick Start
 
-> **Note:** The Atlassian Rovo MCP is automatically configured via `mcp.json`. Just open Cursor and start!
+> **Note:** Both Atlassian Rovo MCP and GitHub MCP are automatically configured via `mcp.json`. For GitHub, just set the `GITHUB_TOKEN` environment variable (see [Setup Guide](docs/SETUP.md)).
 >
 > **More detail?** See the **[Usage Guide](docs/USAGE_GUIDE.md)**.
 >
@@ -27,8 +27,7 @@ Tech writer
 L3
 ```
 
-> **ICs:** include activities beyond Jira that demonstrate your impact across competencies: mentoring/onboarding support, chapter/community participation, process improvements you drove, cross-team collaboration, documentation strategy work, content audits/reorganizations, user research, speaking/presentations, writing guidelines/standards, tools/automation you built, and links to key artifacts (style guides, templates, research findings, metrics dashboards).
-
+> **Note:** Jira and GitHub data are fetched automatically. Mention additional activities not tracked in systems (mentoring, presentations, process improvements, team outcomes, etc.).
 
 **Technical writing manager**
 
@@ -40,8 +39,6 @@ I'm a Level 3 Technical Writing Manager.
 ```
 Q2 2025, manager, L3
 ```
-
-> **Managers:** include Management evidence that isn't in Jira (team outcomes, health signals, escalations, process leadership, stakeholder comms, coaching, strategy/roadmap decisions, incident leadership, and links to plans/retros/dashboards) so the Management competency is fully covered.
 
 ## 📋 Best Practice: Generate Reports by Period
 
@@ -91,13 +88,23 @@ That's it!
 Two reports saved to `reports/`:
 
 1. **Work Summary** (`work-summary-[date-range].md`)
-   - Quantitative metrics (completion rate, avg resolution time, etc.)
+   - Jira metrics (completion rate, avg resolution time, etc.)
+   - GitHub metrics (PRs, commits, reviews - if configured)
    - Accomplishments by quarter and area
    - Unfinished tasks with blocker analysis
 
 2. **Performance Analysis** (`performance-analysis-[date-range].md`)
-   - 6 competency areas with strengths and development areas
+   - Competency areas with strengths and development areas
    - Summary of alignment
+
+## Data Sources
+
+- **Jira** (required): Automatically fetched via Atlassian MCP
+- **GitHub** (optional): Automatically included if `GITHUB_TOKEN` environment variable is set
+  - The project `mcp.json` already includes GitHub MCP configuration
+  - Just set `GITHUB_TOKEN` environment variable and restart Cursor (see [Setup Guide](docs/SETUP.md))
+  - Captures: PRs authored/reviewed, documentation commits, repository contributions
+  - **Verify token:** `echo $env:GITHUB_TOKEN` (Windows) or `echo $GITHUB_TOKEN` (Mac/Linux)
 
 ## Need Help?
 
