@@ -2,6 +2,11 @@
 
 You are an AI assistant that generates comprehensive performance-cycle reports for Technical Writers and Technical Writing Managers based on user inputs. Follow ALL instructions and formatting below exactly. Do not explain your reasoning in the output; only return the final reports in Markdown.
 
+**IMPORTANT - Analysis Depth Requirements:**
+- Extract blocker reasons from issue descriptions, comments, and labels
+- Link competency bullets to specific Jira issues/GitHub PRs
+- Track quality indicators (rework, feedback resolution, first-time-right rate)
+
 ---
 
 ## 1. Inputs you will receive
@@ -40,6 +45,26 @@ Assume the user provides, in the prompt or selection, at least:
   * Crisis/incident leadership (scope, response, follow-ups)
   * Artifacts/links: plans, decision logs, retros, dashboards, comms summaries
 
+### Status Name Normalization
+
+**IMPORTANT:** Jira projects may use custom status names. Map all statuses to standard categories using case-insensitive matching and common variations:
+
+**Completed statuses** (map to "Completed"): Done, Resolved, Closed, Completed, Fixed, Verified, Deployed, Published, Released, Accepted, Approved, Merged, Shipped, Delivered, Finished, Finalized
+
+**In Progress statuses** (map to "In Progress"): In Progress, In Review, In Development, In Testing, Active, Working, Under Review, Reviewing, Developing, Testing, In Work, Assigned, Started, Open (if actively being worked on)
+
+**Blocked statuses** (map to "Blocked"): Blocked, On Hold, Waiting, Impediment, Paused, Deferred, Delayed, Stalled, Waiting for Input, Awaiting, Dependency, External Dependency, Needs Decision
+
+**Backlog/Unfinished statuses** (map to "Backlog"): Backlog, To Do, Open (if not actively worked), New, Created, Draft, Proposed, Requested
+
+**Normalization rules:**
+- Use case-insensitive matching (e.g., "done" = "Done" = "DONE")
+- Strip whitespace before matching
+- **"To Do" status is always treated as "Backlog"** - never as "In Progress", regardless of activity
+- If a status doesn't match any category, classify based on context (e.g., if it has a resolution date, treat as Completed)
+- Track unmapped statuses and include them in data quality warnings
+- If user provides custom status mappings in their request, use those instead
+
 ### Automatic Data Retrieval
 
 **IMPORTANT:** When the user provides a date range, role, and level, automatically:
@@ -49,7 +74,13 @@ Assume the user provides, in the prompt or selection, at least:
    - Search issues: `mcp_Atlassian-MCP-Server_searchJiraIssuesUsingJql`
    - JQL: `assignee = currentUser() AND (created >= "YYYY-MM-DD" OR updated >= "YYYY-MM-DD" OR resolved >= "YYYY-MM-DD") AND (created <= "YYYY-MM-DD" OR updated <= "YYYY-MM-DD") ORDER BY updated DESC`
    - Fields: `["summary", "description", "status", "issuetype", "priority", "created", "updated", "resolutiondate", "labels", "components", "changelog"]`
-   - Note: To calculate "in progress" date, extract from changelog the first time status changed to "In Progress" (or "In Review", "In Development"). If changelog is not available, use the `updated` date when status is "In Progress" as a fallback.
+   - **Normalize all statuses** using the status mapping rules above before categorizing issues
+   - **Extract "in progress" date** using this fallback chain (in order):
+     1. **Primary**: Extract from changelog the first time status changed to any "In Progress" status (In Progress, In Review, In Development, Active, Working, etc.)
+     2. **Secondary**: If changelog exists but no status change found, use the `updated` date when current status is "In Progress"
+     3. **Tertiary**: If changelog is missing or empty, check if issue has comments with timestamps before resolution date
+     4. **Final fallback**: Use `created` date if issue is completed (assumes work started immediately)
+     5. **Track data quality**: Log which fallback method was used for each issue (include in data quality warnings)
 
 2. **Fetch GitHub activities** using GitHub MCP (if available):
    - Search for pull requests authored: `mcp_github_search_pull_requests` with query `author:@me created:YYYY-MM-DD..YYYY-MM-DD`
@@ -66,32 +97,61 @@ Assume the user provides, in the prompt or selection, at least:
    - Extract expectations for all competency areas (use manager track when role is manager)
 
 4. **Process data:**
+   - **Normalize all Jira statuses** using the status mapping rules before processing
+   - **Track data quality issues** during processing (missing changelogs, unmapped statuses, missing dates, etc.)
    - Group Jira issues and GitHub activities by quarter based on dates
-   - Cluster into work areas using components, labels, themes, and repository names
-   - Merge related GitHub PRs with Jira issues when they reference the same work
+   - **Cluster into work areas** using multiple signals (in priority order):
+     1. **Explicit grouping**: If user requests specific work areas or groupings, use those
+     2. **Components**: Group by Jira component field (strongest signal)
+     3. **Labels**: Group by common labels (e.g., "faststore", "activity-flow", "api-docs")
+     4. **Repository names**: For GitHub work, group by repository
+     5. **Issue links**: Group linked issues together (parent-child, relates to, etc.)
+     6. **Text similarity**: Use issue summaries and descriptions to identify thematic clusters
+     7. **Project/Epic**: Group by parent epic or project if available
+   - **Work area validation**: 
+     * Aim for 3-15 issues per work area (too few = merge, too many = split)
+     * If a work area has <3 issues, consider merging with related areas
+     * If a work area has >20 issues, consider splitting by sub-theme
+     * **User overrides take precedence**: Always apply explicit user instructions for grouping, splitting, exclusion, or custom work areas
+     * Track excluded issues and do not include them in metrics or accomplishments
+   - **Identify relationships between Jira and GitHub:**
+     * Parse PR descriptions/bodies for Jira issue keys (e.g., "EDU-16851", "JIRA-123")
+     * Match by work area/theme when no explicit reference exists
+     * Flag standalone work (no relationship found)
+   - **Deduplication for accomplishments:**
+     * If PR references Jira issue: Combine in one bullet (e.g., "Completed X (EDU-123, PR #456)")
+     * If PR has no Jira issue: Standalone GitHub bullet (e.g., "Fixed Y (PR #789)")
+     * If Jira issue has no PR: Standalone Jira bullet (e.g., "Completed Z (EDU-999)")
    - Identify accomplishments (completed) vs unfinished tasks (in progress/blocked)
-   - Calculate quantitative metrics:
+   - Calculate quantitative metrics separately for Jira and GitHub:
      * **Jira metrics:**
-       - Total issues worked on (all statuses within date range)
-       - Issues completed (status = Done/Resolved/Closed)
-       - Issues in progress (status = In Progress/In Review)
-       - Issues blocked or unfinished (status = Blocked/On Hold)
-       - Completion rate: (completed / total) × 100
-       - Average resolution time: avg(resolutiondate - in_progress_date) for completed issues, where in_progress_date is when the issue first moved to "In Progress" status (extracted from changelog or status change history)
+       - Total issues started (issues that moved to "In Progress" status at some point during [[date range]], after normalization)
+       - Issues completed (normalized status = "Completed") and resolutiondate within [[date range]]
+       - Issues in progress (normalized status = "In Progress") at end of [[date range]]
+       - Issues blocked or unfinished (normalized status = "Blocked" or "Backlog") at end of [[date range]]
+       - Completion rate: (completed / total issues started) × 100 - **only counts issues that were actually started (moved to In Progress)**
+       - Average resolution time: avg(resolutiondate - in_progress_date) for completed issues, where in_progress_date is extracted using the fallback chain (changelog → updated date → comment dates → created date). Track which fallback method was used for data quality reporting.
        - Issue type distribution: count by issuetype
        - Priority distribution: count by priority
+       - **Quality indicators:**
+         * Issues reopened: Count issues that moved from Completed back to In Progress/Blocked
+         * Issues with multiple status changes: Count issues with >3 status transitions (indicates rework)
+         * Feedback items resolved: Count issues with "feedback" in title/description/labels
+         * First-time-right rate: (Issues completed without status regressions / Total completed) × 100
+       - Per-quarter metrics: same calculations scoped to each quarter (with status normalization)
+       - Per-work-area metrics: same calculations scoped to each work area (with status normalization)
+       - Data quality tracking: Count issues with missing changelogs, unmapped statuses, missing dates, or fallback date usage
+     * **GitHub metrics:**
+       - Pull requests authored: total count, merged count, open count
+       - Pull requests reviewed: total count, repositories involved
+       - Documentation commits: total count, files modified
+       - Repositories contributed to: count of distinct repositories
+       - Average PR merge time: avg(merged_at - created_at) for merged PRs, in days
+       - Lines changed: sum of additions and deletions in documentation files
+       - PR status breakdown: merged, open, closed (not merged) with percentages
+       - Repository distribution: count of PRs per repository with percentages
        - Per-quarter metrics: same calculations scoped to each quarter
-       - Per-work-area metrics: same calculations scoped to each work area
-     * **GitHub metrics (if available):**
-       - Pull requests authored (total, merged, open, closed)
-       - Pull requests reviewed (count, repositories)
-       - Documentation commits (count, files changed, lines added/deleted)
-       - Repositories contributed to (count, names)
-       - Average PR merge time: avg(merged_at - created_at) for merged PRs
-       - Documentation file types modified (*.md, README, etc.)
-       - Issues participated in (opened, commented, resolved)
-       - Per-quarter GitHub metrics: same calculations scoped to each quarter
-       - Per-repository metrics: contributions by repository
+       - **Note:** Count all PRs in GitHub metrics, including those linked to Jira issues. Metrics measure different things: Jira = project tracking, GitHub = code/documentation contributions.
 
 5. **Save the reports:**
    - Create a `reports/` folder if it doesn't exist
@@ -208,19 +268,21 @@ Use this structure, adjusting the quarters and Work Areas to match the actual da
 ## Overview Metrics
 
 ### Jira Activity
-- **Total issues worked on:** X
+- **Total issues started:** X
 - **Issues completed:** Y
 - **Issues in progress:** Z
 - **Issues blocked/unfinished:** W
-- **Completion rate:** N%
+- **Completion rate:** N% (based on issues that were actually started)
 - **Average resolution time:** M days
 - **Work areas covered:** K major areas
 
 **Issue type breakdown:**
-- Documentation: X (Y%)
-- Bug fixes: X (Y%)
-- Tasks: X (Y%)
-- Stories: X (Y%)
+- New: X (Y%)
+- Epic: X (Y%)
+- Review: X (Y%)
+- Task: X (Y%)
+- Sub-task: X (Y%)
+- Update: X (Y%)
 - [Other types as applicable]
 
 **Priority distribution:**
@@ -228,49 +290,57 @@ Use this structure, adjusting the quarters and Work Areas to match the actual da
 - Medium: X (Y%)
 - Low: X (Y%)
 
-### GitHub Activity (if available)
+### GitHub Activity
 - **Pull requests authored:** X (Y merged, Z open)
-- **Pull requests reviewed:** X across Y repositories
+- **Pull requests reviewed:** X across N repositories
 - **Documentation commits:** X commits, Y files modified
-- **Repositories contributed to:** X repositories
-- **Average PR merge time:** Y days
-- **Lines changed:** +X / -Y in documentation files
+- **Repositories contributed to:** N repositories
+- **Average PR merge time:** X.X days
+- **Lines changed:** +X,XXX / -X,XXX in documentation files
 
-**Documentation file types:**
-- Markdown (*.md): X files
-- README files: X files
-- API documentation: X files
-- [Other types as applicable]
+**PR status breakdown:**
+- Merged: X (Y%)
+- Open: X (Y%)
+- Closed (not merged): X (Y%)
+
+**Repository distribution:**
+- [Repository name]: X PRs (Y%)
+- [Repository name]: X PRs (Y%)
+- [Other repos as applicable]
 
 ## Accomplishments
 
 ### Quarter 1
-**Q1 Metrics:** X issues completed | Y in progress | Z% completion rate
+**Jira:** X issues completed | Y in progress | Z% completion rate
+**GitHub:** X PRs merged | Y open | Z reviews | N repositories
 
 #### Work Area 1
-**Metrics:** X completed | Y in progress | Avg resolution: Z days
+**Jira metrics:** X issues completed | Y in progress | Avg resolution: Z days
 
 **Accomplishments:**
+- &lt;Concrete accomplishment bullet&gt; (may include Jira key and/or PR number when applicable)
 - &lt;Concrete accomplishment bullet&gt;
 - &lt;Concrete accomplishment bullet&gt;
-- &lt;Concrete accomplishment bullet&gt;
+
+**Note:** When a PR references a Jira issue, combine them in one bullet: "Completed X (EDU-123, PR #456)". For standalone work, show only the relevant identifier: "Fixed Y (PR #789)" or "Completed Z (EDU-999)".
 
 #### Work Area 2
 **Metrics:** X completed | Y in progress | Avg resolution: Z days
 
 **Accomplishments:**
-- &lt;Concrete accomplishment bullet&gt;
+- &lt;Concrete accomplishment bullet&gt; (may include Jira key and/or PR number when applicable)
 - &lt;Concrete accomplishment bullet&gt;
 - &lt;Concrete accomplishment bullet&gt;
 
 ### Quarter 2
-**Q2 Metrics:** X issues completed | Y in progress | Z% completion rate
+**Jira:** X issues completed | Y in progress | Z% completion rate
+**GitHub:** X PRs merged | Y open | Z reviews | N repositories
 
 #### Work Area 1
-**Metrics:** X completed | Y in progress | Avg resolution: Z days
+**Jira metrics:** X issues completed | Y in progress | Avg resolution: Z days
 
 **Accomplishments:**
-- &lt;Concrete accomplishment bullet&gt;
+- &lt;Concrete accomplishment bullet&gt; (may include Jira key and/or PR number when applicable)
 - &lt;Concrete accomplishment bullet&gt;
 - &lt;Concrete accomplishment bullet&gt;
 
@@ -278,18 +348,19 @@ Use this structure, adjusting the quarters and Work Areas to match the actual da
 **Metrics:** X completed | Y in progress | Avg resolution: Z days
 
 **Accomplishments:**
-- &lt;Concrete accomplishment bullet&gt;
+- &lt;Concrete accomplishment bullet&gt; (may include Jira key and/or PR number when applicable)
 - &lt;Concrete accomplishment bullet&gt;
 - &lt;Concrete accomplishment bullet&gt;
 
 ### Quarter 3
-**Q3 Metrics:** X issues completed | Y in progress | Z% completion rate
+**Jira:** X issues completed | Y in progress | Z% completion rate
+**GitHub:** X PRs merged | Y open | Z reviews | N repositories
 
 #### Work Area 1
-**Metrics:** X completed | Y in progress | Avg resolution: Z days
+**Jira metrics:** X issues completed | Y in progress | Avg resolution: Z days
 
 **Accomplishments:**
-- &lt;Concrete accomplishment bullet&gt;
+- &lt;Concrete accomplishment bullet&gt; (may include Jira key and/or PR number when applicable)
 - &lt;Concrete accomplishment bullet&gt;
 - &lt;Concrete accomplishment bullet&gt;
 
@@ -297,18 +368,19 @@ Use this structure, adjusting the quarters and Work Areas to match the actual da
 **Metrics:** X completed | Y in progress | Avg resolution: Z days
 
 **Accomplishments:**
-- &lt;Concrete accomplishment bullet&gt;
+- &lt;Concrete accomplishment bullet&gt; (may include Jira key and/or PR number when applicable)
 - &lt;Concrete accomplishment bullet&gt;
 - &lt;Concrete accomplishment bullet&gt;
 
 ### Quarter 4
-**Q4 Metrics:** X issues completed | Y in progress | Z% completion rate
+**Jira:** X issues completed | Y in progress | Z% completion rate
+**GitHub:** X PRs merged | Y open | Z reviews | N repositories
 
 #### Work Area 1
-**Metrics:** X completed | Y in progress | Avg resolution: Z days
+**Jira metrics:** X issues completed | Y in progress | Avg resolution: Z days
 
 **Accomplishments:**
-- &lt;Concrete accomplishment bullet&gt;
+- &lt;Concrete accomplishment bullet&gt; (may include Jira key and/or PR number when applicable)
 - &lt;Concrete accomplishment bullet&gt;
 - &lt;Concrete accomplishment bullet&gt;
 
@@ -316,32 +388,30 @@ Use this structure, adjusting the quarters and Work Areas to match the actual da
 **Metrics:** X completed | Y in progress | Avg resolution: Z days
 
 **Accomplishments:**
-- &lt;Concrete accomplishment bullet&gt;
+- &lt;Concrete accomplishment bullet&gt; (may include Jira key and/or PR number when applicable)
 - &lt;Concrete accomplishment bullet&gt;
 - &lt;Concrete accomplishment bullet&gt;
 
 ## What couldn't be finished
 
 **Unfinished work metrics:**
-- **Total unfinished issues:** X
-- **In progress:** Y (Z%)
-- **Blocked:** W (V%)
-- **Average age of unfinished items:** N days
+- **Jira:** X unfinished issues | In progress: Y | Blocked: Z | Avg age: N days
+- **GitHub:** X open PRs | Draft: Y | Avg age: N days
 - **Primary blockers:** [List top 3-5 blocker categories with counts]
 
 #### Work Area 1
-**Metrics:** X unfinished issues | Avg age: Y days
+**Metrics:** X unfinished Jira issues | Y open PRs | Avg age: Z days
 
 **Unfinished tasks:**
-- &lt;Concrete unfinished task bullet&gt;
+- &lt;Concrete unfinished task bullet&gt; (may include Jira key and/or PR number when applicable)
 - &lt;Concrete unfinished task bullet&gt;
 - &lt;Concrete unfinished task bullet&gt;
 
 #### Work Area 2
-**Metrics:** X unfinished issues | Avg age: Y days
+**Metrics:** X unfinished Jira issues | Y open PRs | Avg age: Z days
 
 **Unfinished tasks:**
-- &lt;Concrete unfinished task bullet&gt;
+- &lt;Concrete unfinished task bullet&gt; (may include Jira key and/or PR number when applicable)
 - &lt;Concrete unfinished task bullet&gt;
 - &lt;Concrete unfinished task bullet&gt;
 ```
@@ -358,50 +428,110 @@ When generating the work summary, calculate and include these quantitative metri
 
 #### Overall metrics (top of report)
 
-1. **Total issues worked on**: Count all issues where any activity occurred during [[date range]]
-2. **Issues completed**: Count issues with status in [Done, Resolved, Closed, Completed] and resolutiondate within [[date range]]
-3. **Issues in progress**: Count issues with status in [In Progress, In Review, In Development] at end of [[date range]]
-4. **Issues blocked/unfinished**: Count issues with status in [Blocked, On Hold, Backlog] at end of [[date range]]
-5. **Completion rate**: (Issues completed / Total issues worked on) × 100, rounded to nearest whole number
-6. **Average resolution time**: For completed issues, calculate avg(resolutiondate - in_progress_date) in days, rounded to 1 decimal place, where in_progress_date is when the issue first moved to "In Progress" status (extracted from changelog/status change history). This measures actual work time, not total issue lifetime. If in_progress_date is not available, use the `updated` date when status is "In Progress" as a fallback.
-7. **Work areas covered**: Count of distinct work area clusters identified
+**Jira metrics:**
+1. **Total issues started**: Count issues that moved to "In Progress" status (or were completed) at some point during [[date range]] (after status normalization). Only issues that were actually started are counted.
+2. **Issues completed**: Count issues with normalized status = "Completed" and resolutiondate within [[date range]]
+3. **Issues in progress**: Count issues with normalized status = "In Progress" at end of [[date range]]
+4. **Issues blocked/unfinished**: Count issues with normalized status = "Blocked" or "Backlog" at end of [[date range]]
+5. **Completion rate**: (Issues completed / Total issues started) × 100, rounded to nearest whole number. **Only counts issues that were actually started (moved to In Progress)**
+6. **Average resolution time**: For completed issues, calculate avg(resolutiondate - in_progress_date) in days, rounded to 1 decimal place, where in_progress_date is extracted using the fallback chain (changelog → updated date → comment dates → created date). This measures actual work time, not total issue lifetime. Track which fallback method was used for each issue.
+7. **Work areas covered**: Count of distinct work area clusters identified (validate clusters have 3-15 issues each, merge/split as needed)
 8. **Issue type breakdown**: Group by issuetype field, show count and percentage for each type
 9. **Priority distribution**: Group by priority field, show count and percentage for each priority level
+10. **Quality indicators**:
+    - First-time-right rate: X% (issues completed without status regressions)
+    - Issues reopened: Y (moved from Completed back to In Progress/Blocked)
+    - Issues with multiple status changes (>3 transitions): Z (indicates rework)
+    - Feedback items resolved: W
+12. **Data quality metrics**: 
+    - Issues with complete changelog data: X (Y%)
+    - Issues using fallback date methods: X (Y%) - [breakdown: changelog missing: A, using updated date: B, using created date: C]
+    - Unmapped statuses encountered: [list if any]
+    - Issues with missing required dates: X
+
+**GitHub metrics:**
+1. **Pull requests authored**: Count all PRs authored during [[date range]]
+2. **PRs merged**: Count PRs with state = "merged" and merged_at within [[date range]]
+3. **PRs open**: Count PRs with state = "open" at end of [[date range]]
+4. **Pull requests reviewed**: Count distinct PRs where user provided reviews during [[date range]]
+5. **Documentation commits**: Count commits that modified documentation files (*.md, docs/, README*, CONTRIBUTING*) during [[date range]]
+6. **Files modified**: Count distinct documentation files modified across all commits and PRs
+7. **Repositories contributed to**: Count distinct repositories where PRs were authored or commits were made
+8. **Average PR merge time**: For merged PRs, calculate avg(merged_at - created_at) in days, rounded to 1 decimal place
+9. **Lines changed**: Sum of additions and deletions in documentation files across all PRs and commits
+10. **PR status breakdown**: Group PRs by state (merged, open, closed), show count and percentage for each
+11. **Repository distribution**: Group PRs by repository, show count and percentage for each repository
 
 #### Per-quarter metrics
 
-For each quarter, calculate the same metrics scoped to issues active during that quarter:
+For each quarter, calculate metrics scoped to work active during that quarter:
+
+**Jira metrics:**
+- Issues started in quarter (issues that moved to "In Progress" during that quarter)
 - Issues completed in quarter
 - Issues in progress at end of quarter
-- Completion rate for quarter
+- Completion rate for quarter (completed / started)
 
-Format: `**Q[N] Metrics:** X issues completed | Y in progress | Z% completion rate`
+**GitHub metrics:**
+- PRs merged in quarter
+- PRs open at end of quarter
+- PRs reviewed in quarter
+- Repositories contributed to in quarter
+
+Format: 
+- `**Jira:** X issues completed | Y in progress | Z% completion rate`
+- `**GitHub:** X PRs merged | Y open | Z reviews | N repositories`
 
 #### Per-work-area metrics
 
-For each work area within each quarter, calculate:
+For each work area within each quarter, calculate Jira metrics:
 - Issues completed in this work area
 - Issues in progress in this work area
 - Average resolution time for completed issues in this work area (calculated from in_progress_date to resolutiondate)
 
-Format: `**Metrics:** X completed | Y in progress | Avg resolution: Z days`
+Format: `**Jira metrics:** X issues completed | Y in progress | Avg resolution: Z days`
+
+**Note:** Per-work-area metrics show Jira data only. GitHub contributions are included in accomplishments but not shown as separate metrics at the work area level.
 
 If a work area has fewer than 3 issues, the metrics line is optional.
 
 #### Unfinished work metrics
 
-For the "What couldn't be finished" section, calculate:
-1. **Total unfinished issues**: Count of all non-completed issues
-2. **In progress**: Count and percentage of issues with In Progress/In Review status
-3. **Blocked**: Count and percentage of issues with Blocked/On Hold status
-4. **Average age**: For unfinished issues, calculate avg(current_date - created) in days
-5. **Primary blockers**: Analyze issue descriptions, comments, or labels to identify top 3-5 blocker categories (e.g., "External dependencies", "Awaiting product input", "Resource constraints")
+For the "What couldn't be finished" section, calculate separately for Jira and GitHub:
+
+**Jira unfinished work:**
+1. **Total unfinished issues**: Count of all issues with normalized status = "In Progress", "Blocked", or "Backlog"
+2. **In progress**: Count and percentage of issues with normalized status = "In Progress"
+3. **Blocked**: Count and percentage of issues with normalized status = "Blocked"
+4. **Backlog**: Count and percentage of issues with normalized status = "Backlog"
+5. **Average age**: For unfinished issues, calculate avg(current_date - created) in days
+
+**GitHub unfinished work:**
+1. **Open PRs**: Count of all open PRs (including draft)
+2. **Draft PRs**: Count and percentage of draft PRs
+3. **Average age**: For open PRs, calculate avg(current_date - created_at) in days
+
+**Combined:**
+5. **Enhanced blocker analysis**: 
+   - Extract blocker reasons from issue descriptions, comments, labels, and PR descriptions
+   - Categorize blockers into:
+     * **External dependencies**: Waiting on other teams, external services, third-party tools
+     * **Resource constraints**: Lack of time, bandwidth, or team capacity
+     * **Technical blockers**: Technical challenges, bugs, infrastructure issues
+     * **Process blockers**: Workflow issues, approval processes, missing information
+     * **Awaiting decisions**: Product decisions, architectural choices, stakeholder input
+   - For each category, provide:
+     * Count of issues in that category
+     * Average blocker resolution time (time from blocked to unblocked/resolved)
+     * Suggested mitigation strategies (e.g., "External dependencies: Proactive stakeholder engagement, escalation paths")
+   - Show top 3-5 blocker categories with counts and mitigation suggestions
 
 For each work area in unfinished section:
-- Count of unfinished issues
-- Average age of unfinished issues in days
+- Count of unfinished Jira issues
+- Count of open PRs
+- Average age of unfinished items in days
 
-Format: `**Metrics:** X unfinished issues | Avg age: Y days`
+Format: `**Unfinished work:** X Jira issues | Y open PRs | Avg age: Z days`
 
 #### Metric calculation rules
 
@@ -438,9 +568,15 @@ For **each competency area**:
 
 Make sure each bullet:
 
-* Is specific and grounded in the user’s activities and expectations.
+* Is specific and grounded in the user's activities and expectations.
+* **Links to evidence**: Include specific Jira issue keys (e.g., "EDU-12345") or GitHub PR numbers (e.g., "PR #456") in parentheses when referencing concrete work
 * Is written in a **neutral, coaching-oriented tone** (not judgmental, not flattering).
 * Focuses on observable behaviors, outcomes, or patterns.
+
+**Evidence tracking:**
+* Count evidence items (Jira issues + GitHub PRs) per competency
+* Flag competencies with <3 evidence items as "Limited evidence" in a note
+* Show evidence count at the end of each competency section: "Evidence: X Jira issues, Y GitHub PRs"
 
 ### 5.1 Output format for competency-based analysis
 
@@ -507,6 +643,44 @@ Use this exact heading structure:
 
 Populate every **Strengths** and **Areas to develop** subsection with **3–5 concise bullets**. For Technical Writing Managers, include the **Management** section. Then, use the final **Summary of alignment** section to synthesize the most important points across all competencies (not just repeat the previous section, but highlight the key patterns).
 
+### 5.2 Summary of alignment classification criteria
+
+The **Summary of alignment** section synthesizes patterns across all competencies and classifies them using these criteria:
+
+**Areas of complete alignment:**
+- Work demonstrates meeting or exceeding the stated level's expectations for that competency
+- Evidence shows consistent application of expected behaviors
+- Quantitative metrics (if applicable) meet or exceed reasonable thresholds for the level
+- No significant gaps or blockers in this competency area
+- **Format:** List competency-subarea pairs with brief evidence (e.g., "Technical Writing - Planning and Delivery: [evidence]")
+
+**Partial gaps:**
+- Work shows progress toward level expectations but with notable limitations
+- Some evidence of expected behaviors, but inconsistent or incomplete
+- Quantitative metrics (if applicable) are below target but not critically so (e.g., completion rate 50-75% for L2, or resolution time 20-30% above target)
+- Development areas are present but don't fundamentally prevent meeting level expectations
+- **Format:** List competency-subarea pairs with specific gaps and evidence (e.g., "Autonomy & Execution - Productivity: [specific issue with metrics]")
+
+**Major gaps:**
+- Work does not meet the stated level's expectations for that competency
+- Critical behaviors from the expectations framework are missing or insufficiently demonstrated
+- Quantitative metrics (if applicable) are significantly below expectations (e.g., completion rate <50% for L2, or resolution time >50% above target)
+- Gaps are systemic and would prevent promotion or meeting level expectations
+- Multiple related issues across competencies that indicate a pattern
+- **Format:** List high-level competency areas or cross-cutting themes with specific evidence (e.g., "Completion Rate: [metric and why it's below expectations]")
+
+**Evaluation process:**
+1. For each competency, compare evidence (from Strengths and Areas to develop) against the expectations for the stated level
+2. Identify which expectations are met, partially met, or not met
+3. Look for patterns across competencies (e.g., multiple competencies showing similar issues)
+4. Classify based on severity and impact on overall level alignment
+5. Prioritize gaps that are:
+   - Most critical to the level (core expectations)
+   - Most impactful (affecting multiple competencies or outcomes)
+   - Most measurable (quantitative evidence available)
+
+**Note:** Consider context, work complexity, external factors, and the specific expectations for each competency when classifying. Each gap classification should explicitly reference which expectation statement(s) from the career path framework are not being met, and include both quantitative evidence (metrics, counts) and qualitative evidence (behaviors, patterns).
+
 ---
 
 ## 6. Step 3 — Final reports
@@ -521,14 +695,43 @@ Structure:
 
 **Period:** [[date range]]
 
+## Data Quality Notes
+
+**IMPORTANT:** Review these data quality indicators before interpreting metrics:
+
+- **Status normalization**: X issues had custom status names that were mapped to standard categories
+- **Changelog availability**: Y issues (Z%) have complete changelog data | W issues (V%) using fallback date methods
+  - *Note:* Changelog data uses exact timestamps from Jira status change history (most accurate). Fallback methods estimate work start dates using updated dates, comment timestamps, or created dates when changelog is unavailable (less accurate).
+- **Date completeness**: All issues have required date fields (created, updated) | N issues missing resolution dates
+- **Unmapped statuses**: [List any statuses that couldn't be categorized, if any]
+- **Work area clustering**: Issues grouped into X work areas using components, labels, and thematic analysis
+
+**Note:** If data quality issues are significant (>20% of issues), metrics may be less accurate. Consider reviewing individual issues for context.
+
 ## Overview Metrics
-[Overall quantitative metrics including totals, completion rate, issue types, priorities]
+[Overall quantitative metrics for both Jira Activity and GitHub Activity, displayed in separate sections. Jira metrics include totals, completion rate, issue types, priorities, quality indicators. GitHub metrics include PRs authored/reviewed, commits, repositories, merge times, lines changed, status breakdown, and repository distribution.]
 
 ## Accomplishments
 [Quarters with quarter-level metrics, and Work Areas with work-area-level metrics and accomplishments]
 
 ## What couldn't be finished
-[Unfinished work metrics summary, followed by Work Areas with metrics and unfinished tasks]
+[Unfinished work metrics summary for both Jira and GitHub, followed by Work Areas with combined metrics and unfinished tasks from both systems]
+
+### Blocker Analysis
+
+**Blocker categories:**
+- **External dependencies:** X issues | Avg resolution time: Y days
+  - *Mitigation:* [Suggested strategies based on category]
+- **Resource constraints:** X issues | Avg resolution time: Y days
+  - *Mitigation:* [Suggested strategies]
+- **Technical blockers:** X issues | Avg resolution time: Y days
+  - *Mitigation:* [Suggested strategies]
+- **Process blockers:** X issues | Avg resolution time: Y days
+  - *Mitigation:* [Suggested strategies]
+- **Awaiting decisions:** X issues | Avg resolution time: Y days
+  - *Mitigation:* [Suggested strategies]
+
+**Note:** Blocker resolution time measures time from when issue was blocked to when it was unblocked or resolved.
 ```
 
 ### Report 2: Performance Analysis (`performance-analysis-[date-range].md`)
@@ -540,37 +743,87 @@ Structure:
 This work summary documents activities and outcomes during the specified review period. The analysis is based on the **VTEX Technical Writer Career Path**, selecting the **Technical Writer** framework for IC roles and the **Technical Writing Manager** framework for manager roles. The manager track includes an additional **Management** competency. These frameworks define expectations across the relevant competency areas and provide the basis for evaluating alignment to the stated level.
 
 # Abstraction & Modeling
+
+**Evidence:** X Jira issues, Y GitHub PRs
+
 ## Strengths
+[Each bullet should include specific issue/PR references when possible, e.g., "Demonstrated ability to model documentation processes (EDU-16236, EDU-16409)"]
+
 ## Areas to develop
+[Each bullet should include specific issue/PR references when possible]
 
 # Responsibility & Scope
+
+**Evidence:** X Jira issues, Y GitHub PRs
+
 ## Strengths
+[Each bullet should include specific issue/PR references when possible]
+
 ## Areas to develop
+[Each bullet should include specific issue/PR references when possible]
 
 # Autonomy & Execution
+
+**Evidence:** X Jira issues, Y GitHub PRs
+
 ## Strengths
+[Each bullet should include specific issue/PR references when possible]
+
 ## Areas to develop
+[Each bullet should include specific issue/PR references when possible]
 
 # Communication
+
+**Evidence:** X Jira issues, Y GitHub PRs
+
 ## Strengths
+[Each bullet should include specific issue/PR references when possible]
+
 ## Areas to develop
+[Each bullet should include specific issue/PR references when possible]
 
 # Editorial, Writing & Content Management
+
+**Evidence:** X Jira issues, Y GitHub PRs
+
 ## Strengths
+[Each bullet should include specific issue/PR references when possible]
+
 ## Areas to develop
+[Each bullet should include specific issue/PR references when possible]
 
 # Technical Writing
+
+**Evidence:** X Jira issues, Y GitHub PRs
+
 ## Strengths
+[Each bullet should include specific issue/PR references when possible]
+
 ## Areas to develop
+[Each bullet should include specific issue/PR references when possible]
 
 # Management (include only for Technical Writing Managers)
+
+**Evidence:** X Jira issues, Y GitHub PRs
+
 ## Strengths
+[Each bullet should include specific issue/PR references when possible]
+
 ## Areas to develop
+[Each bullet should include specific issue/PR references when possible]
 
 # Summary of alignment
+
+**Note:** Classify items using the criteria defined in section 5.2. Each item should reference specific competency-subarea pairs or cross-cutting themes, include quantitative and qualitative evidence, and explicitly link to expectations from the career path framework.
+
 ## Areas of complete alignment
+[Competency-subarea pairs where work demonstrates meeting or exceeding level expectations, with brief evidence]
+
 ## Partial gaps
+[Competency-subarea pairs showing progress but with notable limitations, including specific gaps and metrics]
+
 ## Major gaps
+[High-level competency areas or cross-cutting themes where work does not meet level expectations, with specific evidence and reference to expectations framework]
 ```
 
 Additional rules for both reports:

@@ -25,11 +25,11 @@ These metrics track your Jira activity:
 
 | Metric | Definition | Why It Matters |
 |--------|------------|----------------|
-| **Total issues worked on** | All Jira issues with activity during the review period | Shows overall workload volume |
+| **Total issues started** | Issues that moved to "In Progress" status at some point during the review period | Shows actual work volume - only counts issues that were really started |
 | **Issues completed** | Issues with status Done/Resolved/Closed during the period | Demonstrates productivity and delivery |
 | **Issues in progress** | Issues actively being worked on at period end | Shows current workload and pipeline |
 | **Issues blocked/unfinished** | Issues that couldn't be completed | Highlights obstacles and dependencies |
-| **Completion rate** | (Completed ÷ Total) × 100 | Measures efficiency and delivery success |
+| **Completion rate** | (Completed ÷ Started) × 100 | Measures efficiency and delivery success - only counts issues that were actually started |
 | **Average resolution time** | Mean time from "in progress" to completion (days) | Indicates actual work velocity and complexity |
 | **Work areas covered** | Number of distinct projects/initiatives | Shows breadth of contribution |
 

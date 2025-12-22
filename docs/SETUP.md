@@ -6,7 +6,7 @@ This project integrates with two MCP servers:
 - **Atlassian MCP** (required): Fetches Jira data
 - **GitHub MCP** (optional): Fetches PR, commit, and review data
 
-> **✅ Automatic Setup:** This project includes `mcp.json` which automatically configures both the Atlassian Rovo MCP and GitHub MCP. For GitHub, you just need to set the `GITHUB_TOKEN` environment variable (see below).
+> **✅ Automatic Setup:** This project includes `mcp.json` which automatically configures the Atlassian Rovo MCP. For GitHub MCP, you need to configure it in your global Cursor MCP configuration file (see below).
 
 ---
 
@@ -184,13 +184,7 @@ Add the same JSON configuration as shown in Step 2.
 
 The GitHub MCP server fetches pull requests, commits, code reviews, and repository contributions. This is **optional** but recommended for technical writers who work in code repositories.
 
-> **✅ Already Configured:** The project `mcp.json` already includes GitHub MCP configuration. You just need to:
-> 1. Generate a GitHub Personal Access Token (Step 1)
-> 2. Set the `GITHUB_TOKEN` environment variable (Step 2)
-> 3. Verify it's set (Step 4)
-> 4. Restart Cursor (Step 5)
->
-> **That's it!** No need to edit any configuration files.
+> **📝 Global Configuration Required:** GitHub MCP must be configured in your **global** Cursor MCP configuration file (`~/.cursor/mcp.json` on Mac/Linux, `C:\Users\YourName\.cursor\mcp.json` on Windows). This keeps your token secure and makes GitHub MCP available across all projects.
 
 ### Prerequisites
 
@@ -201,7 +195,7 @@ The GitHub MCP server fetches pull requests, commits, code reviews, and reposito
 
 **⚠️ NEVER commit GitHub tokens to Git!**
 
-The GitHub MCP server requires authentication. The project uses environment variables to keep your token secure. The `mcp.json` file references `${GITHUB_TOKEN}`, which Cursor will automatically read from your environment.
+The GitHub MCP server requires authentication using a Personal Access Token. You'll add the token directly to your global MCP configuration file, which is stored outside your project directory and never committed to Git.
 
 ### Step 1: Generate a GitHub Personal Access Token
 
@@ -215,42 +209,18 @@ The GitHub MCP server requires authentication. The project uses environment vari
 5. Click **"Generate token"**
 6. **Copy the token immediately** (you won't see it again)
 
-### Step 2: Set Environment Variable (Secure Method)
+### Step 2: Configure GitHub MCP in Global Settings
 
-**On Windows (PowerShell - Permanent):**
+**Locate your global MCP configuration file:**
 
-```powershell
-# Set user environment variable (persists across sessions)
-[System.Environment]::SetEnvironmentVariable('GITHUB_TOKEN', 'your_token_here', 'User')
-```
+- **Windows:** `C:\Users\YourName\.cursor\mcp.json`
+- **Mac/Linux:** `~/.cursor/mcp.json`
 
-**On Windows (System Settings GUI):**
+**If the file doesn't exist, create it.**
 
-1. Search for "Environment Variables" in Windows
-2. Click "Edit the system environment variables"
-3. Click "Environment Variables..." button
-4. Under "User variables", click "New..."
-5. Variable name: `GITHUB_TOKEN`
-6. Variable value: `your_token_here` (paste your token)
-7. Click OK
-8. **Restart Cursor**
+**Add GitHub MCP configuration:**
 
-**On Mac/Linux (Permanent):**
-
-Add to your shell profile (`~/.bashrc`, `~/.zshrc`, etc.):
-
-```bash
-export GITHUB_TOKEN="your_token_here"
-```
-
-Then reload:
-```bash
-source ~/.bashrc  # or ~/.zshrc
-```
-
-### Step 3: Verify Project Configuration
-
-The project `mcp.json` already includes GitHub MCP configuration:
+Open the file and add the GitHub MCP server configuration. If you already have other MCP servers configured, add the `github` entry to the existing `mcpServers` object:
 
 ```json
 {
@@ -258,20 +228,23 @@ The project `mcp.json` already includes GitHub MCP configuration:
     "github": {
       "url": "https://api.githubcopilot.com/mcp/",
       "headers": {
-        "Authorization": "Bearer ${GITHUB_TOKEN}"
+        "Authorization": "Bearer YOUR_GITHUB_PAT"
       }
     }
   }
 }
 ```
 
-**No additional configuration needed!** Cursor will automatically use this project-level configuration when you open the project.
+**Replace `YOUR_GITHUB_PAT` with your actual Personal Access Token from Step 1.**
 
-> **Note:** If you prefer to use a global configuration instead, you can add the same configuration to `~/.cursor/mcp.json` (Windows: `C:\Users\YourName\.cursor\mcp.json`). However, using the project-level `mcp.json` is recommended as it's already set up and works automatically.
+**Important:**
+- Keep the `Bearer ` prefix
+- Keep the quotes around the entire value
+- Your token should start with `ghp_` (classic tokens) or `github_pat_` (fine-grained tokens)
 
 **For GitHub Enterprise:**
 
-If using GitHub Enterprise Cloud, edit the project `mcp.json` and change the URL:
+If using GitHub Enterprise Cloud, change the URL:
 
 ```json
 {
@@ -279,37 +252,19 @@ If using GitHub Enterprise Cloud, edit the project `mcp.json` and change the URL
     "github": {
       "url": "https://copilot-api.your-enterprise.ghe.com/mcp",
       "headers": {
-        "Authorization": "Bearer ${GITHUB_TOKEN}"
+        "Authorization": "Bearer YOUR_GITHUB_PAT"
       }
     }
   }
 }
 ```
 
-### Step 4: Verify Environment Variable
+### Step 3: Save and Restart Cursor
 
-Before restarting, verify that your `GITHUB_TOKEN` is set:
-
-**On Windows (PowerShell):**
-```powershell
-echo $env:GITHUB_TOKEN
-```
-
-**On Mac/Linux:**
-```bash
-echo $GITHUB_TOKEN
-```
-
-If you see your token (starts with `ghp_`), you're all set! If not, the environment variable wasn't set correctly. Go back to Step 2 and try again.
-
-### Step 5: Restart Cursor
-
-After setting the environment variable:
-
-1. **Close Cursor completely** (not just the window - fully quit the application)
-2. **Restart Cursor**
-3. **Open this project** in Cursor
-4. The GitHub MCP will now be available and automatically configured via the project `mcp.json`
+1. **Save** the global `mcp.json` file
+2. **Close Cursor completely** (not just the window - fully quit the application)
+3. **Restart Cursor**
+4. The GitHub MCP will now be available in all your projects
 
 ### Verify GitHub Configuration
 
@@ -324,29 +279,30 @@ If configured correctly, you should see your recent PRs.
 ### Security Best Practices
 
 **DO:**
-- ✅ Use environment variables for tokens
 - ✅ Store tokens in your global `~/.cursor/mcp.json` (not in project files)
-- ✅ Add `.env`, `*.token`, `secrets/` to `.gitignore`
+- ✅ Add `.cursor/` to `.gitignore` if you version control your home directory
 - ✅ Rotate tokens periodically
 - ✅ Use fine-grained tokens with minimal scopes when possible
 - ✅ Revoke tokens immediately if compromised
+- ✅ Keep your global MCP config file private
 
 **DON'T:**
-- ❌ Hardcode tokens in `mcp.json` files
-- ❌ Commit tokens to Git
+- ❌ Commit tokens to Git (global config is outside project directory)
 - ❌ Share tokens in screenshots or documentation
 - ❌ Use tokens with more permissions than needed
-- ❌ Store tokens in plain text files in your project
+- ❌ Store tokens in project-level `mcp.json` files
+- ❌ Share your global MCP configuration file
 
 ### Troubleshooting GitHub MCP
 
 #### "GitHub MCP not found"
 
 **Solution:**
-- Verify `GITHUB_TOKEN` environment variable is set: `echo $env:GITHUB_TOKEN` (Windows) or `echo $GITHUB_TOKEN` (Mac/Linux)
-- Ensure you've **fully restarted Cursor** after setting the variable (quit completely, not just close the window)
-- Verify the project `mcp.json` includes the GitHub MCP configuration (it should already be there)
-- Make sure you opened the project folder in Cursor (the project-level `mcp.json` is only active when the project is open)
+- Verify GitHub MCP is configured in your **global** `~/.cursor/mcp.json` file (Windows: `C:\Users\YourName\.cursor\mcp.json`)
+- Ensure you've **fully restarted Cursor** after configuration (quit completely, not just close the window)
+- Check that the token in the config file is valid and not expired
+- Verify the JSON syntax is correct (use a JSON validator if needed)
+- Make sure the file path is correct for your operating system
 
 #### "Authentication failed"
 
@@ -354,7 +310,7 @@ If configured correctly, you should see your recent PRs.
 - Verify your token is valid: https://github.com/settings/tokens
 - Check token has required scopes (`repo`, `read:org`, `read:user`)
 - Regenerate token if expired
-- Ensure environment variable has correct token value
+- Ensure the token in your global `mcp.json` file is correct (check for typos, extra spaces, or missing `Bearer ` prefix)
 
 #### "No pull requests found"
 
@@ -370,13 +326,27 @@ If configured correctly, you should see your recent PRs.
 1. Go to https://github.com/settings/tokens
 2. Find and **revoke** the compromised token
 3. Generate a new token
-4. Update the `GITHUB_TOKEN` environment variable
+4. Update the token in your global `~/.cursor/mcp.json` file
 5. Restart Cursor
 
 ### Alternative: GitHub CLI Authentication
 
-If you have GitHub CLI installed, you can use it for authentication:
+If you have GitHub CLI installed, you can use it for authentication. However, the recommended approach is to use the hosted GitHub MCP server with a Personal Access Token as described above.
 
+If you prefer GitHub CLI, add this to your global `~/.cursor/mcp.json`:
+
+```json
+{
+  "mcpServers": {
+    "github": {
+      "command": "gh",
+      "args": ["api", "--paginate"]
+    }
+  }
+}
+```
+
+Then authenticate with GitHub CLI:
 ```powershell
 # Install GitHub CLI (Windows)
 winget install --id GitHub.cli
@@ -386,22 +356,6 @@ gh auth login
 
 # Verify
 gh auth status
-```
-
-Then use this MCP configuration:
-
-```json
-{
-  "mcpServers": {
-    "github": {
-      "command": "gh",
-      "args": ["api", "--paginate"],
-      "env": {
-        "GH_TOKEN": "${GITHUB_TOKEN}"
-      }
-    }
-  }
-}
 ```
 
 ---

@@ -63,7 +63,8 @@ Also include these activities not in Jira/GitHub:
 **No GitHub data:**
 - GitHub integration is optional
 - See [Setup Guide](SETUP.md) for GitHub MCP configuration
-- Verify `GITHUB_TOKEN` environment variable is set
+- Verify GitHub MCP is configured in your global `~/.cursor/mcp.json` file
+- Ensure you've fully restarted Cursor after configuration
 
 **Wrong role/level analysis:**
 ```

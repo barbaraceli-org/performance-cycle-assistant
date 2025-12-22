@@ -2,6 +2,65 @@
 
 ## Unreleased
 
+## v2.4.0 — 2025-12-22
+
+### Added
+- **Status name normalization** for accurate issue categorization:
+  - Comprehensive mapping of custom Jira status names to standard categories (Completed, In Progress, Blocked, Backlog)
+  - Case-insensitive matching with whitespace handling
+  - Context-aware classification (e.g., issues with resolution dates treated as Completed)
+  - Support for user-provided custom status mappings
+  - Tracking of unmapped statuses for data quality reporting
+  - "To Do" status is always treated as "Backlog", never as "In Progress"
+- **Enhanced changelog extraction** with robust fallback chain:
+  - Multi-tier fallback system: changelog → updated date → comment dates → created date
+  - Data quality tracking of which fallback method was used per issue
+  - More accurate "in progress" date extraction for resolution time calculations
+  - Added explanatory note in Data Quality Notes section clarifying difference between changelog data (exact timestamps) and fallback date methods (estimated dates)
+- **Improved work area clustering** with validation:
+  - Multi-signal clustering using components, labels, repositories, issue links, text similarity, and epics
+  - Validation rules: 3-15 issues per work area (merge if <3, split if >20)
+  - User override capability: "Group these issues together" or "Split this work area"
+- **Data quality warnings** in reports:
+  - New "Data Quality Notes" section at top of work summary reports
+  - Tracks status normalization, changelog availability, date completeness, unmapped statuses
+  - Warns when data quality issues are significant (>20% of issues)
+  - Helps users assess metric reliability
+- **Enhanced blocker analysis**:
+  - Extract blocker reasons from issue descriptions, comments, labels, and PR descriptions
+  - Categorize blockers into 5 categories: External dependencies, Resource constraints, Technical blockers, Process blockers, Awaiting decisions
+  - Track blocker resolution time (time from blocked to unblocked/resolved)
+  - Provide mitigation strategies per category
+  - Display blocker analysis section in "What couldn't be finished" with category breakdowns
+- **Competency evidence linking**:
+  - Link each competency bullet to specific Jira issues (e.g., "EDU-12345") or GitHub PRs (e.g., "PR #456")
+  - Show evidence count per competency: "Evidence: X Jira issues, Y GitHub PRs"
+  - Flag competencies with <3 evidence items as "Limited evidence"
+  - Makes competency analysis more traceable and verifiable
+- **Quality indicators**:
+  - First-time-right rate: Percentage of issues completed without status regressions
+  - Issues reopened: Count of issues moved from Completed back to In Progress/Blocked
+  - Issues with multiple status changes: Count of issues with >3 status transitions (indicates rework)
+  - Feedback items resolved: Count of issues with "feedback" in title/description/labels
+  - New metrics section in Overview Metrics showing quality indicators
+
+### Changed
+- All Jira metrics now use normalized statuses for consistent categorization
+- Resolution time calculations use improved fallback chain for better accuracy
+- Work area clustering algorithm enhanced with multiple signals and validation
+- Data quality metrics added to Jira metrics section
+- Performance analysis report now includes evidence counts and issue/PR references in competency bullets
+- "What couldn't be finished" section includes detailed blocker analysis with categories and mitigation strategies
+- Overview Metrics now includes quality indicators
+- Updated issue type breakdown to use actual Jira issue types (New, Epic, Review, Task, Sub-task, Update) instead of generic categories
+
+### Removed
+- Impact assessment metrics (customer-facing vs internal work, high priority work counts)
+- "High Impact Work" section from work summary reports
+
+### Documentation
+- Updated `.cursorrules` with status normalization rules and enhanced data processing instructions
+
 ## v2.3.0 — 2025-12-18
 ### Added
 - **GitHub MCP integration** for tracking pull requests, code reviews, and documentation commits

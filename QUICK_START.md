@@ -1,12 +1,8 @@
 # ⚡ Quick Start
 
-> **Note:** Both Atlassian Rovo MCP and GitHub MCP are automatically configured via `mcp.json`. For GitHub, just set the `GITHUB_TOKEN` environment variable (see [Setup Guide](docs/SETUP.md)).
+> **Note:** Atlassian Rovo MCP is automatically configured via project `mcp.json`. For GitHub MCP, configure it in your global `~/.cursor/mcp.json` file (see [Setup Guide](docs/SETUP.md)).
 >
-> **More detail?** See the **[Usage Guide](docs/USAGE_GUIDE.md)**.
->
-> **Release history?** See the **[CHANGELOG.md](CHANGELOG.md)**.
->
-> **Frameworks:** IC requests use the Technical Writer competency framework (`context/technical-writer-career-path.json`); manager requests use the Technical Writing Manager framework (`context/technical-writing-manager-career-path.json`, includes Management expectations). Your stated role selects the correct one.
+> **More detail?** See the **[Usage Guide](docs/USAGE_GUIDE.md)** or **[README.md](README.md)**.
 
 ## Generate Your Report
 
@@ -100,11 +96,7 @@ Two reports saved to `reports/`:
 ## Data Sources
 
 - **Jira** (required): Automatically fetched via Atlassian MCP
-- **GitHub** (optional): Automatically included if `GITHUB_TOKEN` environment variable is set
-  - The project `mcp.json` already includes GitHub MCP configuration
-  - Just set `GITHUB_TOKEN` environment variable and restart Cursor (see [Setup Guide](docs/SETUP.md))
-  - Captures: PRs authored/reviewed, documentation commits, repository contributions
-  - **Verify token:** `echo $env:GITHUB_TOKEN` (Windows) or `echo $GITHUB_TOKEN` (Mac/Linux)
+- **GitHub** (optional): Automatically included if GitHub MCP is configured (see [Setup Guide](docs/SETUP.md))
 
 ## Need Help?
 
