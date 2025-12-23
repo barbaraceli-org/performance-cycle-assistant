@@ -4,25 +4,32 @@ This guide explains the quantitative metrics automatically included in your work
 
 ## Overview
 
-The Performance Cycle Report Assistant automatically calculates and includes quantitative metrics at three levels:
+The Performance Cycle Report Assistant automatically calculates and includes quantitative metrics from Jira and GitHub (if configured) at three levels:
 
 1. **Overall metrics** - Summary of all work during the review period
 2. **Per-quarter metrics** - Breakdown by calendar quarter
 3. **Per-work-area metrics** - Detailed metrics for each project/initiative
 
+## Data Sources
+
+- **Jira** (required): Task tracking, issue management, project work
+- **GitHub** (optional): Pull requests, code reviews, documentation commits
+  - Automatically included if GitHub MCP server is configured
+  - See [Setup Guide](docs/SETUP.md) for GitHub configuration
+
 ## Metric Definitions
 
-### Overall Metrics
+### Jira Metrics
 
-These appear at the top of your work summary report:
+These metrics track your Jira activity:
 
 | Metric | Definition | Why It Matters |
 |--------|------------|----------------|
-| **Total issues worked on** | All Jira issues with activity during the review period | Shows overall workload volume |
+| **Total issues started** | Issues that were "In Progress" at any point during the review period, including issues that moved to "In Progress" during the period and issues already "In Progress" at period start (carryover work) | Shows actual work volume - reflects all work that was "on your plate" during the period, regardless of when originally started |
 | **Issues completed** | Issues with status Done/Resolved/Closed during the period | Demonstrates productivity and delivery |
 | **Issues in progress** | Issues actively being worked on at period end | Shows current workload and pipeline |
 | **Issues blocked/unfinished** | Issues that couldn't be completed | Highlights obstacles and dependencies |
-| **Completion rate** | (Completed ÷ Total) × 100 | Measures efficiency and delivery success |
+| **Completion rate** | (Completed ÷ Started) × 100 | Measures efficiency and delivery success - counts all issues that were actively being worked on during the period (including carryover from before the period) |
 | **Average resolution time** | Mean time from "in progress" to completion (days) | Indicates actual work velocity and complexity |
 | **Work areas covered** | Number of distinct projects/initiatives | Shows breadth of contribution |
 
@@ -47,6 +54,31 @@ Shows how work was prioritized:
 - **Low** - Nice-to-have improvements
 
 Helps demonstrate focus on high-impact work.
+
+### GitHub Metrics (Optional)
+
+These metrics track your GitHub contributions when GitHub MCP is configured:
+
+| Metric | Definition | Why It Matters |
+|--------|------------|----------------|
+| **Pull requests authored** | PRs you created (total, merged, open) | Shows documentation contributions in code repos |
+| **Pull requests reviewed** | PRs you reviewed for others | Demonstrates collaboration and technical review skills |
+| **Documentation commits** | Commits to .md, docs/, README files | Tracks direct documentation updates |
+| **Repositories contributed to** | Distinct repos where you contributed | Shows breadth of impact across projects |
+| **Average PR merge time** | Mean time from PR creation to merge (days) | Indicates efficiency and collaboration speed |
+| **Lines changed** | Lines added/deleted in documentation files | Shows volume of documentation work |
+
+**Documentation file types tracked:**
+- Markdown files (*.md)
+- README files
+- API documentation
+- Contributing guides
+- Documentation site content
+
+**Per-repository breakdown:**
+- Contributions by repository
+- PR counts per repo
+- Documentation files modified per repo
 
 ### Per-Quarter Metrics
 
@@ -94,6 +126,26 @@ Format: `**Metrics:** 4 unfinished issues | Avg age: 62 days`
 
 Issues are included if they had **any activity** during the review period, regardless of when they were created or completed. This reflects "when the task was on your plate."
 
+### Handling Issues Started Before the Period
+
+**"Total issues started" includes carryover work:**
+
+Issues that were already "In Progress" at the start of the review period (started before the period) are counted in "Total issues started" if they:
+- Were completed during the period, OR
+- Remained "In Progress" during the period (even if not completed)
+
+This ensures the metric reflects all work that was actively being worked on during the period, not just newly started work.
+
+**Example:**
+- Period: January 2025
+- 12 issues moved to "In Progress" during January (new starts)
+- 8 issues were already "In Progress" at January 1st and were completed during January (carryover)
+- **Total issues started:** 20 (12 + 8)
+- **Issues completed:** 20
+- **Completion rate:** 100% (20/20)
+
+This approach provides a fairer view of your productivity by including all work that was "on your plate" during the period, regardless of when it was originally started.
+
 ### Calculation Rules
 
 - **Percentages**: Rounded to nearest whole number (e.g., 83%)
@@ -101,6 +153,15 @@ Issues are included if they had **any activity** during the review period, regar
 - **Missing data**: Shows "N/A" or omits metric if calculation not possible
 - **Zero values**: Shown explicitly as "0" rather than omitted
 - **Rounding**: Conservative (round down for rates, round up for time)
+
+### GitHub-Specific Calculation Rules
+
+- **PR merge time**: Calculated only for merged PRs (created_at to merged_at)
+- **Documentation commits**: Filtered by file patterns (*.md, docs/**, README*, CONTRIBUTING*, etc.)
+- **Lines changed**: Sum of additions and deletions in documentation files only
+- **Repository counting**: Each distinct repository where you had activity counts once
+- **Review counting**: Includes all review types (approve, request changes, comment)
+- **Date filtering**: GitHub activities included if they occurred during the review period
 
 ### Average Resolution Time Calculation
 
@@ -139,18 +200,21 @@ Issues are included if they had **any activity** during the review period, regar
 ### What Metrics Show
 
 ✅ **Good indicators:**
-- Volume and consistency of work
+- Volume and consistency of work (Jira + GitHub)
 - Efficiency and velocity
-- Breadth of contribution
+- Breadth of contribution across systems
 - Ability to complete work
 - Focus on priorities
+- Collaboration through code reviews (GitHub)
+- Technical engagement with repositories (GitHub)
 
 ❌ **What metrics DON'T show:**
 - Quality of work (requires qualitative review)
 - Complexity or difficulty
 - Strategic impact
-- Collaboration and communication
+- Communication effectiveness
 - Learning and growth
+- Impact of mentoring or leadership
 
 ### Interpreting Your Metrics
 
@@ -167,6 +231,14 @@ Issues are included if they had **any activity** during the review period, regar
 **High work area count**: Demonstrates versatility and broad contribution
 
 **Low work area count**: May indicate deep focus and specialization (not necessarily negative)
+
+**High PR count (GitHub)**: Shows active engagement with code repositories and developer workflows
+
+**High review count (GitHub)**: Demonstrates collaboration, technical expertise, and team support
+
+**Fast PR merge time (GitHub)**: Indicates efficient collaboration and clear documentation
+
+**Many repositories (GitHub)**: Shows broad impact across multiple projects or teams
 
 
 ## Example Interpretation

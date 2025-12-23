@@ -17,9 +17,7 @@
    I'm a Level 3 Technical Writer.
    ```
 
-   > **ICs:** include activities beyond Jira that demonstrate your impact across competencies: mentoring/onboarding support, chapter/community participation, process improvements you drove, cross-team collaboration, documentation strategy work, content audits/reorganizations, user research, speaking/presentations, writing guidelines/standards, tools/automation you built, and links to key artifacts (style guides, templates, research findings, metrics dashboards).
-   
-   > **Managers:** include Management evidence that isn't in Jira (team outcomes, health signals, escalations, process leadership, stakeholder comms, coaching, strategy/roadmap decisions, incident leadership, and links to plans/retros/dashboards) so the Management competency is fully covered.
+   > **Tip:** Jira and GitHub data are fetched automatically. Mention additional activities not tracked in systems (mentoring, presentations, process improvements, team outcomes, etc.).
 
 3. **Review and refine:**
    - Ask for more detail: "Expand the Q2 accomplishments"
@@ -29,24 +27,42 @@
 ## What Happens Automatically
 
 The assistant will:
-1. Fetch your Jira issues (created, updated, or resolved in date range)
-2. Group by calendar quarters (Q1-Q4)
-3. Cluster into work areas (based on components, labels, themes)
-4. Generate accomplishment bullets per area
-5. Identify unfinished tasks
-6. Analyze 6 competency areas with strengths and development areas
-7. Save two separate reports to `reports/`:
-   - `work-summary-[date-range].md`
-   - `performance-analysis-[date-range].md`
+1. **Validate Jira connection** (automatic check before proceeding)
+   - Tests Atlassian MCP connection
+   - **If connection fails, stops immediately and does NOT proceed with any data retrieval or report generation**
+   - Provides setup instructions and references `docs/SETUP.md` for configuration help
+   - **Waits for you to fix the connection before proceeding**
+2. **Only if connection succeeds:**
+   - Fetch your Jira issues (created, updated, or resolved in date range)
+   - Fetch your GitHub activity (if configured): PRs, commits, reviews
+   - Group by calendar quarters (Q1-Q4)
+   - Cluster into work areas (based on components, labels, themes, repositories)
+   - Generate accomplishment bullets per area
+   - Identify unfinished tasks
+   - Analyze competency areas with strengths and development areas
+   - Save two separate reports to `reports/`:
+     - `work-summary-[date-range].md`
+     - `performance-analysis-[date-range].md`
 
 ## Tips for Best Results
 
 1. **Keep Jira updated** - Add meaningful descriptions, labels, and components
-2. **Provide context** - Mention non-Jira activities, special projects, challenges
+2. **Provide context** - Mention non-Jira/GitHub activities, special projects, challenges
 3. **Be specific** - State your role and exact level (Technical Writer L1/L2/L3 or Technical Writing Manager L3/L4/L5/L6)
 4. **Review and iterate** - Ask for refinements or additional detail
 
 ## Troubleshooting
+
+**Connection check fails / "Unable to connect to Jira":**
+- The assistant automatically checks Jira connection before proceeding
+- **If connection fails, the assistant will NOT retrieve any data (Jira or GitHub) and will NOT generate any reports**
+- **The assistant will stop and wait for you to fix the connection**
+- To fix the connection, verify your Atlassian MCP configuration:
+  - Check that `mcp.json` exists in project root with Atlassian MCP configuration
+  - Verify Cursor MCP settings (Settings → Features → Model Context Protocol)
+  - Restart Cursor completely after configuration changes
+  - See [Setup Guide](SETUP.md) for complete setup instructions and troubleshooting
+- After fixing the connection, make your request again
 
 **Jira issues not found:**
 - Ensure you're logged into Atlassian in your browser
@@ -57,9 +73,15 @@ The assistant will:
 
 **Report incomplete:**
 ```
-Also include these activities not in Jira:
+Also include these activities not in Jira/GitHub:
 - [Your activities]
 ```
+
+**No GitHub data:**
+- GitHub integration is optional
+- See [Setup Guide](SETUP.md) for GitHub MCP configuration
+- Verify GitHub MCP is configured in your global `~/.cursor/mcp.json` file
+- Ensure you've fully restarted Cursor after configuration
 
 **Wrong role/level analysis:**
 ```
@@ -103,7 +125,7 @@ Expand the "Communication" competency section with more specific examples.
 ### Performance Analysis Report
 
 **Structure:**
-- **6 Competency Areas** - Strengths and development areas for each
+- **Competency Areas** - Strengths and development areas for each
 - **Summary of Alignment** - Overall assessment against level expectations
 
 **Use for:**
@@ -166,7 +188,7 @@ Generate my report with extra detail on:
 
 ### Provide Context
 
-Include non-Jira activities:
+Include non-Jira/GitHub activities:
 - Presentations and workshops
 - Mentoring and training
 - Process improvements

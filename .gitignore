@@ -24,11 +24,14 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
-# Environment variables
+# Environment variables and secrets
 .env
 .env.local
 .env.*.local
 .env.production.local
+*.token
+secrets/
+mcp.json.local
 
 # Temporary files
 *.tmp

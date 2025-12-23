@@ -54,7 +54,7 @@ I'm a Level 1 Technical Writer.
 
 ## 🎨 With Additional Context
 
-Include non-Jira activities and achievements:
+Include non-Jira/GitHub activities and achievements:
 
 ```
 Generate my Q1 2025 report (Jan-Mar).
@@ -68,10 +68,12 @@ Also include:
 ```
 
 **Why add context:**
-- Captures work not tracked in Jira
+- Captures work not tracked in Jira or GitHub
 - Highlights presentations and training
 - Shows mentoring and leadership
 - Demonstrates professional development
+
+**Note:** If GitHub MCP is configured, your PRs, commits, and reviews are automatically included!
 
 ---
 
@@ -156,18 +158,17 @@ Highlight differences in volume and focus areas.
 
 - **Date range** (YYYY-MM-DD or quarter/year)
 - **Your role and level** (e.g., "Level 2 Technical Writer" or "Level 3 Technical Writing Manager")
-- **Non-Jira activities** (presentations, training, mentoring)
-- **Special projects** not tracked in Jira
+- **Activities not in Jira/GitHub** (presentations, training, mentoring, team outcomes, process improvements)
+- **Special projects** not tracked in systems
 - **Context** about challenges or achievements
 
-> **ICs:** include activities beyond Jira that demonstrate your impact across competencies: mentoring/onboarding support, chapter/community participation, process improvements you drove, cross-team collaboration, documentation strategy work, content audits/reorganizations, user research, speaking/presentations, writing guidelines/standards, tools/automation you built, and links to key artifacts (style guides, templates, research findings, metrics dashboards).
-
-> **Managers:** include Management evidence that isn't in Jira (team outcomes, health signals, escalations, process leadership, stakeholder comms, coaching, strategy/roadmap decisions, incident leadership, and links to plans/retros/dashboards) so the Management competency is fully covered.
+> **Note:** Jira issues and GitHub PRs/commits/reviews are automatically fetched. Focus on adding activities not tracked in systems: mentoring, presentations, workshops, process improvements, team outcomes (for managers), and links to key artifacts.
 
 ### ❌ DON'T Need To:
 
 - List Jira issues manually (automatic)
-- Export Jira data (automatic)
+- List GitHub PRs manually (automatic if configured)
+- Export data (automatic)
 - Mention the expectations file (automatic)
 - Calculate metrics (automatic)
 - Format the reports (automatic)
@@ -201,10 +202,35 @@ Also include:
 
 ---
 
+## 🐙 GitHub Integration Examples
+
+If you have GitHub MCP configured, you can explicitly mention GitHub work:
+
+```
+Generate my H1 2025 report.
+I'm a Level 3 Technical Writer.
+
+Focus on:
+- API documentation PRs in the developer-docs repo
+- README improvements across multiple repositories
+- Documentation reviews I provided to the engineering team
+```
+
+**Or let it auto-detect:**
+
+```
+Generate my Q2 2025 report. I'm L2 IC.
+```
+
+The assistant will automatically include your GitHub activity if configured!
+
+---
+
 ## 🔗 Next Steps
 
 - **See a complete example:** [example-report-with-metrics.md](example-report-with-metrics.md)
-- **Understand metrics:** [../METRICS_GUIDE.md](../METRICS_GUIDE.md)
+- **Understand metrics:** [../METRICS_GUIDE.md](../METRICS_GUIDE.md) (includes GitHub metrics)
+- **Setup GitHub:** [../docs/SETUP.md](../docs/SETUP.md) - Configure GitHub MCP in global settings (optional but recommended)
 - **Learn more:** [../docs/USAGE_GUIDE.md](../docs/USAGE_GUIDE.md)
 - **Quick reference:** [../QUICK_START.md](../QUICK_START.md)
 

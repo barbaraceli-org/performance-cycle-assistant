@@ -1,49 +1,38 @@
 # Performance Cycle Report Assistant
 
-Generates performance-cycle reports for Technical Writers and Managers using Jira data and the LX competency frameworks. Reports are fully formatted and saved automatically.
+Generates performance-cycle reports for Technical Writers and Managers using Jira and GitHub data with competency frameworks. Reports are fully formatted and saved automatically.
 
 ## 🚀 Quick start
 
-- Open Cursor Chat (`Ctrl+L` or `Cmd+L`) and write your request. For example:
-
-  ```
-  Generate my performance cycle report for 2025-01-01 to 2025-06-30.
-  I'm a Level 2 Technical Writer.
-  ```
-
-- The assistant fetches Jira activity, calculates metrics, writes accomplishments and unfinished work by quarter/work area, compares to level expectations, and saves two Markdown files in `reports/`.
-
-> **Important:** Always state whether you are an individual contributor or a manager. IC (Technical Writer) tops out at **L3**; the manager track also starts at **L3**. You can say "technical writer", "tech writer", "ic", or "individual collaborator" for IC roles, and "technical writing manager" or "manager" for manager roles.
->
-> **ICs:** include activities beyond Jira that demonstrate your impact across competencies: mentoring/onboarding support, chapter/community participation, process improvements you drove, cross-team collaboration, documentation strategy work, content audits/reorganizations, user research, speaking/presentations, writing guidelines/standards, tools/automation you built, and links to key artifacts (style guides, templates, research findings, metrics dashboards).
->
-> **Managers:** include Management evidence that isn't in Jira (team outcomes, health signals, escalations, process leadership, stakeholder comms, coaching, strategy/roadmap decisions, incident leadership, and links to plans/retros/dashboards) so the Management competency is fully covered.
+See **[QUICK_START.md](QUICK_START.md)** for immediate usage instructions.
 
 ## What you get
-- **Work Summary** (`work-summary-[date-range].md`): overall, per-quarter, and per-work-area metrics; accomplishments; unfinished tasks with blocker analysis.
-- **Performance Analysis** (`performance-analysis-[date-range].md`): strengths and areas to develop across six competencies; alignment summary.
+- **Work Summary** (`work-summary-[date-range].md`): Jira and GitHub metrics; accomplishments by quarter/work area; unfinished tasks with blocker analysis.
+- **Performance Analysis** (`performance-analysis-[date-range].md`): strengths and areas to develop across competency areas; alignment summary.
 
 ## Supported levels
 - **Technical Writers:** L1 (Technical Writer I), L2 (Technical Writer II), L3 (Senior Technical Writer)
 - **Technical Writing Managers:** L3–L6 (manager track starts at L3)
 
-> **Competency frameworks differ by role:** IC requests use the Technical Writer framework; manager requests use the Technical Writing Manager framework. Always specify whether you’re an IC or a manager so the right competencies are applied.
+> **Important:** Always state whether you are an individual contributor or a manager. IC (Technical Writer) tops out at **L3**; the manager track starts at **L3**. Use "technical writer", "tech writer", "ic", or "individual collaborator" for IC roles, and "technical writing manager" or "manager" for manager roles.
 
 ## Prerequisites
 - Cursor IDE (latest)
 - Jira Cloud access with appropriate permissions
 - Atlassian account (authentication handled automatically via `mcp.json`)
+- GitHub account (optional, for repository contribution tracking) - see [Setup Guide](docs/SETUP.md)
+
+> **Note:** The assistant automatically validates the Jira connection before generating reports. If connection fails, you'll be directed to the [Setup Guide](docs/SETUP.md) for configuration help.
 
 ## Documentation
 - **[Quick Start](QUICK_START.md)** — one-page generate-and-go
 - **[Usage Guide](docs/USAGE_GUIDE.md)** — detailed instructions and tips
 - **[Metrics Guide](METRICS_GUIDE.md)** — how metrics are calculated and interpreted
-- **[Setup](docs/SETUP.md)** — MCP configuration and troubleshooting (rarely needed)
+- **[Setup](docs/SETUP.md)** — MCP configuration (Jira + GitHub)
+- **[GitHub Integration](docs/GITHUB_INTEGRATION.md)** — complete GitHub MCP guide
 - **[Examples](examples/example-request.md)** — sample requests
 - **[Example report](examples/example-report-with-metrics.md)** — full sample output
-- **[Changelog](CHANGELOG.md)** — release history
 
-> **Framework selection:** Always state IC vs manager. IC requests use `context/technical-writer-career-path.json`; manager requests use `context/technical-writing-manager-career-path.json` (includes Management expectations). The agent picks the framework based on your stated role.
 
 ## Customization
 - Replace competency frameworks: `context/technical-writer-career-path.json` (writers) or `context/technical-writing-manager-career-path.json` (managers).
@@ -51,29 +40,28 @@ Generates performance-cycle reports for Technical Writers and Managers using Jir
 - Tweak JQL filters in `.cursorrules` section 1 if your Jira workflow differs.
 
 ## Troubleshooting
-- **No Jira issues returned:** ensure you are logged into Atlassian; try “Show me my recent Jira issues”; verify date format `YYYY-MM-DD`; restart Cursor if MCP connection stalls.
-- **Report feels incomplete:** add non-Jira activities or specific projects in your request.
-- **Wrong level/role:** restate your level explicitly (e.g., “I’m a Level 3 Technical Writing Manager”).
+See [Usage Guide](docs/USAGE_GUIDE.md#troubleshooting) for detailed troubleshooting steps.
 
 ## Project structure
 ```
 performance-cycle/
 ├── .cursorrules                               # Assistant configuration
 ├── .gitignore                                 # Git ignore rules
-├── mcp.json                                   # Atlassian MCP auto-configuration
+├── mcp.json                                   # Atlassian MCP configuration (project-level)
 │
 ├── README.md                                  # Overview (this file)
 ├── QUICK_START.md                             # One-page quick reference
 ├── METRICS_GUIDE.md                           # Quantitative metrics explained
-│
-├── context/
-│   ├── technical-writer-career-path.json                        # LX expectations (writers L1–L3)
-│   └── technical-writing-manager-career-path.json               # Manager expectations (L3–L6)
 ├── CHANGELOG.md                               # Release history
 │
+├── context/
+│   ├── technical-writer-career-path.json      # Expectations (writers L1–L3)
+│   └── technical-writing-manager-career-path.json  # Expectations (managers L3–L6)
+│
 ├── docs/
-│   ├── SETUP.md                               # MCP configuration
-│   └── USAGE_GUIDE.md                         # Detailed usage guide
+│   ├── SETUP.md                               # MCP configuration (Jira + GitHub)
+│   ├── USAGE_GUIDE.md                         # Detailed usage guide
+│   └── GITHUB_INTEGRATION.md                  # GitHub integration guide
 │
 ├── examples/
 │   ├── example-request.md                     # Sample requests

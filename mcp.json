@@ -1,7 +1,7 @@
 {
-    "mcpServers": {
-      "Atlassian-MCP-Server": {
-        "url": "https://mcp.atlassian.com/v1/sse"
-      }
+  "mcpServers": {
+    "Atlassian-MCP-Server": {
+      "url": "https://mcp.atlassian.com/v1/sse"
     }
   }
+}
