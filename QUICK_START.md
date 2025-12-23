@@ -96,6 +96,8 @@ Two reports saved to `reports/`:
 ## Data Sources
 
 - **Jira** (required): Automatically fetched via Atlassian MCP
+  - Connection is validated automatically before report generation
+  - If connection fails, see [Setup Guide](docs/SETUP.md) for configuration help
 - **GitHub** (optional): Automatically included if GitHub MCP is configured (see [Setup Guide](docs/SETUP.md))
 
 ## Need Help?

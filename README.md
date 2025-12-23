@@ -22,6 +22,8 @@ See **[QUICK_START.md](QUICK_START.md)** for immediate usage instructions.
 - Atlassian account (authentication handled automatically via `mcp.json`)
 - GitHub account (optional, for repository contribution tracking) - see [Setup Guide](docs/SETUP.md)
 
+> **Note:** The assistant automatically validates the Jira connection before generating reports. If connection fails, you'll be directed to the [Setup Guide](docs/SETUP.md) for configuration help.
+
 ## Documentation
 - **[Quick Start](QUICK_START.md)** — one-page generate-and-go
 - **[Usage Guide](docs/USAGE_GUIDE.md)** — detailed instructions and tips

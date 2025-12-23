@@ -27,16 +27,22 @@
 ## What Happens Automatically
 
 The assistant will:
-1. Fetch your Jira issues (created, updated, or resolved in date range)
-2. Fetch your GitHub activity (if configured): PRs, commits, reviews
-3. Group by calendar quarters (Q1-Q4)
-4. Cluster into work areas (based on components, labels, themes, repositories)
-5. Generate accomplishment bullets per area
-6. Identify unfinished tasks
-7. Analyze competency areas with strengths and development areas
-8. Save two separate reports to `reports/`:
-   - `work-summary-[date-range].md`
-   - `performance-analysis-[date-range].md`
+1. **Validate Jira connection** (automatic check before proceeding)
+   - Tests Atlassian MCP connection
+   - **If connection fails, stops immediately and does NOT proceed with any data retrieval or report generation**
+   - Provides setup instructions and references `docs/SETUP.md` for configuration help
+   - **Waits for you to fix the connection before proceeding**
+2. **Only if connection succeeds:**
+   - Fetch your Jira issues (created, updated, or resolved in date range)
+   - Fetch your GitHub activity (if configured): PRs, commits, reviews
+   - Group by calendar quarters (Q1-Q4)
+   - Cluster into work areas (based on components, labels, themes, repositories)
+   - Generate accomplishment bullets per area
+   - Identify unfinished tasks
+   - Analyze competency areas with strengths and development areas
+   - Save two separate reports to `reports/`:
+     - `work-summary-[date-range].md`
+     - `performance-analysis-[date-range].md`
 
 ## Tips for Best Results
 
@@ -46,6 +52,17 @@ The assistant will:
 4. **Review and iterate** - Ask for refinements or additional detail
 
 ## Troubleshooting
+
+**Connection check fails / "Unable to connect to Jira":**
+- The assistant automatically checks Jira connection before proceeding
+- **If connection fails, the assistant will NOT retrieve any data (Jira or GitHub) and will NOT generate any reports**
+- **The assistant will stop and wait for you to fix the connection**
+- To fix the connection, verify your Atlassian MCP configuration:
+  - Check that `mcp.json` exists in project root with Atlassian MCP configuration
+  - Verify Cursor MCP settings (Settings → Features → Model Context Protocol)
+  - Restart Cursor completely after configuration changes
+  - See [Setup Guide](SETUP.md) for complete setup instructions and troubleshooting
+- After fixing the connection, make your request again
 
 **Jira issues not found:**
 - Ensure you're logged into Atlassian in your browser

@@ -2,6 +2,16 @@
 
 ## Unreleased
 
+## v2.4.1 — 2025-12-23
+
+### Removed
+- **Quality indicators** from work summary reports:
+  - Removed first-time-right rate metric
+  - Removed issues reopened count
+  - Removed multiple status changes tracking
+  - Removed feedback items resolved count
+  - Simplified metrics to focus on the most useful quantitative indicators (completion rate, resolution time, work volume)
+
 ## v2.4.0 — 2025-12-22
 
 ### Added

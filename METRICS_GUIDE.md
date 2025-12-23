@@ -25,11 +25,11 @@ These metrics track your Jira activity:
 
 | Metric | Definition | Why It Matters |
 |--------|------------|----------------|
-| **Total issues started** | Issues that moved to "In Progress" status at some point during the review period | Shows actual work volume - only counts issues that were really started |
+| **Total issues started** | Issues that were "In Progress" at any point during the review period, including issues that moved to "In Progress" during the period and issues already "In Progress" at period start (carryover work) | Shows actual work volume - reflects all work that was "on your plate" during the period, regardless of when originally started |
 | **Issues completed** | Issues with status Done/Resolved/Closed during the period | Demonstrates productivity and delivery |
 | **Issues in progress** | Issues actively being worked on at period end | Shows current workload and pipeline |
 | **Issues blocked/unfinished** | Issues that couldn't be completed | Highlights obstacles and dependencies |
-| **Completion rate** | (Completed ÷ Started) × 100 | Measures efficiency and delivery success - only counts issues that were actually started |
+| **Completion rate** | (Completed ÷ Started) × 100 | Measures efficiency and delivery success - counts all issues that were actively being worked on during the period (including carryover from before the period) |
 | **Average resolution time** | Mean time from "in progress" to completion (days) | Indicates actual work velocity and complexity |
 | **Work areas covered** | Number of distinct projects/initiatives | Shows breadth of contribution |
 
@@ -125,6 +125,26 @@ Format: `**Metrics:** 4 unfinished issues | Avg age: 62 days`
 ### Date Ranges and Inclusion
 
 Issues are included if they had **any activity** during the review period, regardless of when they were created or completed. This reflects "when the task was on your plate."
+
+### Handling Issues Started Before the Period
+
+**"Total issues started" includes carryover work:**
+
+Issues that were already "In Progress" at the start of the review period (started before the period) are counted in "Total issues started" if they:
+- Were completed during the period, OR
+- Remained "In Progress" during the period (even if not completed)
+
+This ensures the metric reflects all work that was actively being worked on during the period, not just newly started work.
+
+**Example:**
+- Period: January 2025
+- 12 issues moved to "In Progress" during January (new starts)
+- 8 issues were already "In Progress" at January 1st and were completed during January (carryover)
+- **Total issues started:** 20 (12 + 8)
+- **Issues completed:** 20
+- **Completion rate:** 100% (20/20)
+
+This approach provides a fairer view of your productivity by including all work that was "on your plate" during the period, regardless of when it was originally started.
 
 ### Calculation Rules
 
