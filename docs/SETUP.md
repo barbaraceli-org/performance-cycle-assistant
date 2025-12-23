@@ -1,6 +1,22 @@
-# Setup Guide
+# Setup & Usage Guide
 
-## Overview
+Complete guide for setting up, using, and troubleshooting the Performance Cycle Report Assistant.
+
+## Table of Contents
+
+1. [Setup](#setup)
+   - [Atlassian MCP (Jira)](#atlassian-rovo-mcp-configuration)
+   - [GitHub MCP (Optional)](#github-mcp-configuration-optional)
+2. [How to Use](#how-to-use)
+3. [Understanding Your Reports](#understanding-your-reports)
+4. [GitHub Integration](#github-integration)
+5. [Troubleshooting](#troubleshooting)
+6. [Customization](#customization)
+7. [Best Practices](#best-practices)
+
+---
+
+## Setup
 
 This project integrates with two MCP servers:
 - **Atlassian MCP** (required): Fetches Jira data
@@ -360,11 +376,324 @@ gh auth status
 
 ---
 
+## How to Use
+
+> **Note:** The Atlassian Rovo MCP is automatically configured via `mcp.json` in this project. No setup required!
+>
+> **Callout:** Always state whether you are an individual contributor or a manager. IC (Technical Writer) levels end at **L3**; the manager track starts at **L3**. Use "technical writer", "tech writer", "ic", or "individual collaborator" for IC roles, and "technical writing manager" or "manager" for manager roles.
+>
+> **Frameworks:** IC requests use `context/technical-writer-career-path.json`; manager requests use `context/technical-writing-manager-career-path.json` (includes Management expectations). Your stated role selects the correct competencies for analysis.
+
+### Basic Usage
+
+1. **Open Cursor Chat:** `Ctrl+L` or `Cmd+L`
+
+2. **Make your request:**
+
+   ```
+   Generate my performance cycle report for 2025-01-01 to 2025-06-30.
+   I'm a Level 3 Technical Writer.
+   ```
+
+   > **Tip:** Jira and GitHub data are fetched automatically. Mention additional activities not tracked in systems (mentoring, presentations, process improvements, team outcomes, etc.).
+
+3. **Review and refine:**
+   - Ask for more detail: "Expand the Q2 accomplishments"
+   - Add context: "Include these activities: [list]"
+   - Focus areas: "Add more detail to Communication competency"
+
+### What Happens Automatically
+
+The assistant will:
+1. **Validate Jira connection** (automatic check before proceeding)
+   - Tests Atlassian MCP connection
+   - **If connection fails, stops immediately and does NOT proceed with any data retrieval or report generation**
+   - Provides setup instructions and references this guide for configuration help
+   - **Waits for you to fix the connection before proceeding**
+2. **Only if connection succeeds:**
+   - Fetch your Jira issues (created, updated, or resolved in date range)
+   - Fetch your GitHub activity (if configured): PRs, commits, reviews
+   - Group by calendar quarters (Q1-Q4)
+   - Cluster into work areas (based on components, labels, themes, repositories)
+   - Generate accomplishment bullets per area
+   - Identify unfinished tasks
+   - Analyze competency areas with strengths and development areas
+   - Save two separate reports to `reports/`:
+     - `work-summary-[date-range].md`
+     - `performance-analysis-[date-range].md`
+
+### Tips for Best Results
+
+1. **Keep Jira updated** - Add meaningful descriptions, labels, and components
+2. **Provide context** - Mention non-Jira/GitHub activities, special projects, challenges
+3. **Be specific** - State your role and exact level (Technical Writer L1/L2/L3 or Technical Writing Manager L3/L4/L5/L6)
+4. **Review and iterate** - Ask for refinements or additional detail
+
+### Advanced Usage
+
+**Compare periods:**
+```
+Generate reports for Q1 and Q2 2025. Highlight differences.
+```
+
+**Custom focus:**
+```
+Generate my 2025 report (L3) with emphasis on:
+- Technical leadership activities
+- Cross-functional collaboration
+- Documentation strategy initiatives
+```
+
+**Iterative refinement:**
+```
+Expand the "Communication" competency section with more specific examples.
+```
+
+---
+
+## Understanding Your Reports
+
+### Work Summary Report
+
+**Structure:**
+- **Overview Metrics** - High-level statistics
+- **Accomplishments** - Organized by quarter and work area
+- **What couldn't be finished** - Unfinished tasks with blocker analysis
+
+**Use for:**
+- Performance review conversations
+- Tracking quarterly progress
+- Identifying blockers and dependencies
+
+### Performance Analysis Report
+
+**Structure:**
+- **Competency Areas** - Strengths and development areas for each
+- **Summary of Alignment** - Overall assessment against level expectations
+
+**Use for:**
+- Career development planning
+- Identifying skill gaps
+- Setting growth goals
+
+### Metrics Explained
+
+See **[METRICS_GUIDE.md](../METRICS_GUIDE.md)** for complete details on:
+- What each metric means
+- How metrics are calculated
+- Interpreting your results
+- Good ranges and benchmarks
+
+**Advanced Metrics (December 2025):**
+- **Carryover & Scope Creep Analysis** - Contextualizes completion rates by distinguishing planned vs. inherited vs. reactive work
+- **Review-to-Author Ratio** - Measures "Force Multiplier" behavior through peer review contributions
+- **Impact vs. Effort Correlation** - Flags high-priority work with low output or low-priority work with massive changes
+- **Semantic Blocker Categorization** - Root cause analysis of impediments using AI to identify patterns beyond status labels
+
+---
+
+## GitHub Integration
+
+The GitHub MCP integration automatically captures your documentation work in code repositories when configured.
+
+### What Gets Tracked
+
+When GitHub MCP is configured, the assistant automatically fetches:
+
+1. **Pull Requests Authored**
+   - All PRs you created during the review period
+   - Status: merged, open, closed
+   - Files changed, lines added/deleted
+   - Merge time metrics
+
+2. **Pull Requests Reviewed**
+   - PRs where you provided reviews
+   - Review types: approve, request changes, comment
+   - Repositories and teams you supported
+
+3. **Documentation Commits**
+   - Commits to documentation files:
+     - `*.md` files
+     - `docs/` directories
+     - `README*` files
+     - `CONTRIBUTING*` files
+     - API documentation
+   - Lines changed (additions/deletions)
+   - Repositories modified
+
+4. **Repository Contributions**
+   - All repositories you contributed to
+   - Breadth of impact across projects
+   - Cross-team collaboration
+
+### Filtered Content
+
+The integration **only tracks documentation-related work**:
+- ✅ Markdown files
+- ✅ Documentation folders
+- ✅ README updates
+- ✅ API docs
+- ❌ Code files (*.js, *.py, etc.)
+- ❌ Configuration files
+- ❌ Build files
+
+### How GitHub Work Appears in Reports
+
+GitHub work is included in your accomplishments, and GitHub metrics are displayed in quarterly summaries. Only Jira metrics are shown in the Overview Metrics section at the top of the report.
+
+**Example accomplishments:**
+```markdown
+#### API Documentation
+**Metrics:** 15 completed | 2 in progress | Avg resolution: 6 days
+
+**Accomplishments:**
+- Authored comprehensive API reference for Payment Gateway (PR #234)
+- Reviewed 5 API documentation PRs from engineering team
+- Updated 23 endpoint descriptions with improved examples
+- Merged 8 PRs in developer-docs repo updating authentication docs
+- Fixed broken links in README files across 3 repositories
+```
+
+**Per-quarter breakdown:**
+```markdown
+### Quarter 2
+**Q2 Metrics:** 38 issues completed | 5 in progress | 88% completion rate
+**GitHub:** 12 PRs merged | 8 reviews | 3 repositories
+
+#### API Documentation
+**Metrics:** 15 completed | 2 in progress | Avg resolution: 6 days
+
+**Accomplishments:**
+- Authored comprehensive API reference for Payment Gateway (PR #234)
+- Reviewed 5 API documentation PRs from engineering team
+```
+
+### Benefits
+
+- **More complete picture**: Captures in-repo work and documentation that lives in code repositories
+- **Shows collaboration**: Code reviews demonstrate technical expertise
+- **Demonstrates breadth**: Contributions across multiple repositories
+- **Proves impact**: Work is included in accomplishments with PR references
+
+### Usage Examples
+
+**Basic request (auto-includes GitHub):**
+```
+Generate my Q2 2025 report.
+I'm a Level 3 Technical Writer.
+```
+
+**Emphasize GitHub work:**
+```
+Generate my H1 2025 report.
+I'm L2 IC.
+
+Focus on:
+- API documentation PRs in the developer-docs repo
+- README improvements across repositories
+- Documentation reviews for the engineering team
+```
+
+**Optional: Disable GitHub integration temporarily:**
+```
+Generate my Q2 report. I'm L2 IC.
+Use only Jira data, skip GitHub.
+```
+
+---
+
+## Customization
+
+### For Your Organization
+
+1. **Replace or extend the competency frameworks:**
+   - Edit `context/technical-writer-career-path.json` (writers)
+   - Edit `context/technical-writing-manager-career-path.json` (managers L3–L6)
+   - Add your organization's levels and expectations
+
+2. **Adjust metrics:**
+   - Edit `.cursorrules` section 4.2
+   - Customize which metrics to include/exclude
+
+3. **Modify report structure:**
+   - Edit `.cursorrules` sections 4.1 and 5.1
+   - Adjust bullet counts, sections, or formatting
+
+### For Your Workflow
+
+**Add custom work areas:**
+```
+Group my work into these areas:
+- API Documentation
+- Developer Guides
+- Release Notes
+- Internal Documentation
+```
+
+**Focus on specific competencies:**
+```
+Generate my report with extra detail on:
+- Technical Writing competency
+- Communication competency
+```
+
+---
+
+## Best Practices
+
+### Keep Jira Updated
+
+- ✅ Use meaningful issue titles
+- ✅ Add descriptions with context
+- ✅ Apply relevant labels and components
+- ✅ Update status promptly
+- ✅ Link related issues
+
+### Provide Context
+
+Include non-Jira/GitHub activities:
+- Presentations and workshops
+- Mentoring and training
+- Process improvements
+- Cross-team collaboration
+- Learning and certifications
+
+### Review and Refine
+
+- Read through generated reports
+- Ask for clarifications or expansions
+- Add missing context
+- Request specific examples
+- Iterate until satisfied
+
+---
+
+## Common Questions
+
+**Q: Can I generate reports for past years?**  
+A: Yes! Use any date range. The assistant will fetch Jira data for that period.
+
+**Q: What if I don't have Jira data?**  
+A: Provide your activities manually in the request. The assistant will still generate structured reports.
+
+**Q: Can I compare my performance across multiple periods?**  
+A: Yes! Request multiple reports and ask for comparison analysis.
+
+**Q: How do I share reports with my manager?**  
+A: Reports are saved as Markdown files in `reports/`. Share them directly or convert to PDF.
+
+**Q: Can I customize the competency framework?**  
+A: Yes! Replace `context/technical-writer-career-path.json` with your organization's framework.
+
+**Q: What if my level isn't L1, L2, or L3?**  
+A: Update the JSON file with your organization's levels and expectations.
+
+---
+
 ## Next Steps
 
-Once MCP servers are configured, proceed to:
-- **[Quick Start](../QUICK_START.md)** - Generate your first report
-- **[Usage Guide](USAGE_GUIDE.md)** - Learn advanced features
-- **[Examples](../examples/example-request.md)** - See sample requests
-- **[Metrics Guide](../METRICS_GUIDE.md)** - Understand GitHub and Jira metrics
+- **[Metrics Guide](../METRICS_GUIDE.md)** - Understand all metrics (basic + advanced)
+- **[Examples](../examples/example-report-with-metrics.md)** - See a complete example report
+- **[README](../README.md)** - Project overview and quick start
+- **[Changelog](../CHANGELOG.md)** - Release history and updates
 

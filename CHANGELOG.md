@@ -2,6 +2,67 @@
 
 ## Unreleased
 
+## v2.5.0 — 2025-12-23
+
+### Added
+- **Carryover & Scope Creep Analysis**:
+  - Added **Carryover issues** metric: Issues already "In Progress" at period start
+  - Added **New issues started** metric: Issues that moved to "In Progress" during the period
+  - Added **Scope creep** metric: Issues created and assigned after period start
+  - Enhanced completion rate context to include carryover information
+  - Low completion rates with high carryover (>30%) now highlight complexity and persistence, not poor performance
+  - High scope creep (>40%) flags reactive work patterns and planning opportunities
+- **Review-to-Author Ratio (GitHub)**:
+  - Added **Review-to-author ratio** metric: PRs reviewed ÷ PRs authored
+  - Defined interpretation thresholds:
+    - >1.5 = Force Multiplier (L2/L3 trait)
+    - 0.8-1.5 = Balanced contribution (L1-L2)
+    - <0.5 = Potential siloed work
+  - Quantifies peer review contribution, a key but often invisible activity
+  - Provides evidence for "Responsibility & Scope" competency
+- **Impact vs. Effort Correlation**:
+  - Added **Impact vs. Effort flags** to identify outliers:
+    - High-priority issues with <50 lines changed
+    - Low-priority issues with >1000 lines changed
+  - Integrated into Data Processing rules for automatic flagging
+  - Surfaces invisible complexity (architecture, research, coordination)
+  - Identifies potential over-engineering or misaligned priorities
+  - Strengthens "Autonomy & Execution" competency assessment
+- **Semantic Blocker Categorization**:
+  - Enhanced blocker analysis to use **semantic grouping** from descriptions, comments, and labels
+  - Added **Root causes** subsection for each blocker category
+  - Added **Recurring impediment patterns** section to identify systemic issues
+  - Provides actionable insights into obstacle patterns
+  - Enables better mitigation strategies and process improvements
+- **Advanced Metrics Interpretation Guide**:
+  - Carryover & Scope Creep Context interpretation
+  - Review-to-Author Ratio thresholds and meanings
+  - Impact vs. Effort flag usage
+  - Semantic Blocker Pattern analysis
+  - Links metrics to specific competencies
+  - Provides coaching-oriented insights, not just numbers
+
+### Changed
+- Updated Jira metrics calculations:
+  - Carryover: `status = "In Progress" AND updated < period_start`
+  - New starts: `first "In Progress" transition within period`
+  - Scope creep: `created >= period_start AND assignee = currentUser()`
+- Updated GitHub metrics calculations:
+  - Review-to-author ratio: `count(reviewed_prs) / count(authored_prs)`, 1 decimal place
+  - Impact vs. effort: Compare Jira priority field with PR `additions + deletions`
+- Enhanced semantic analysis requirements:
+  - Parse issue descriptions, comments, and labels
+  - Group by theme using semantic similarity
+  - Rank by frequency and impact
+  - Provide top 3-5 categories with root causes
+
+### Documentation
+- Updated **`.cursorrules`** with all four improvements including detailed calculation rules and interpretation guidance
+- Updated **`METRICS_GUIDE.md`** with new metrics definitions, thresholds, calculation rules, and interpretation guidelines; includes comprehensive advanced metrics section
+- Updated **`README.md`** with overview and quick start guide
+- Updated **`docs/SETUP.md`** with comprehensive setup, usage, and troubleshooting guide
+- Updated **`examples/example-report-with-metrics.md`** with all new metrics including semantic blocker analysis
+
 ## v2.4.1 — 2025-12-23
 
 ### Removed
@@ -11,117 +72,3 @@
   - Removed multiple status changes tracking
   - Removed feedback items resolved count
   - Simplified metrics to focus on the most useful quantitative indicators (completion rate, resolution time, work volume)
-
-## v2.4.0 — 2025-12-22
-
-### Added
-- **Status name normalization** for accurate issue categorization:
-  - Comprehensive mapping of custom Jira status names to standard categories (Completed, In Progress, Blocked, Backlog)
-  - Case-insensitive matching with whitespace handling
-  - Context-aware classification (e.g., issues with resolution dates treated as Completed)
-  - Support for user-provided custom status mappings
-  - Tracking of unmapped statuses for data quality reporting
-  - "To Do" status is always treated as "Backlog", never as "In Progress"
-- **Enhanced changelog extraction** with robust fallback chain:
-  - Multi-tier fallback system: changelog → updated date → comment dates → created date
-  - Data quality tracking of which fallback method was used per issue
-  - More accurate "in progress" date extraction for resolution time calculations
-  - Added explanatory note in Data Quality Notes section clarifying difference between changelog data (exact timestamps) and fallback date methods (estimated dates)
-- **Improved work area clustering** with validation:
-  - Multi-signal clustering using components, labels, repositories, issue links, text similarity, and epics
-  - Validation rules: 3-15 issues per work area (merge if <3, split if >20)
-  - User override capability: "Group these issues together" or "Split this work area"
-- **Data quality warnings** in reports:
-  - New "Data Quality Notes" section at top of work summary reports
-  - Tracks status normalization, changelog availability, date completeness, unmapped statuses
-  - Warns when data quality issues are significant (>20% of issues)
-  - Helps users assess metric reliability
-- **Enhanced blocker analysis**:
-  - Extract blocker reasons from issue descriptions, comments, labels, and PR descriptions
-  - Categorize blockers into 5 categories: External dependencies, Resource constraints, Technical blockers, Process blockers, Awaiting decisions
-  - Track blocker resolution time (time from blocked to unblocked/resolved)
-  - Provide mitigation strategies per category
-  - Display blocker analysis section in "What couldn't be finished" with category breakdowns
-- **Competency evidence linking**:
-  - Link each competency bullet to specific Jira issues (e.g., "EDU-12345") or GitHub PRs (e.g., "PR #456")
-  - Show evidence count per competency: "Evidence: X Jira issues, Y GitHub PRs"
-  - Flag competencies with <3 evidence items as "Limited evidence"
-  - Makes competency analysis more traceable and verifiable
-- **Quality indicators**:
-  - First-time-right rate: Percentage of issues completed without status regressions
-  - Issues reopened: Count of issues moved from Completed back to In Progress/Blocked
-  - Issues with multiple status changes: Count of issues with >3 status transitions (indicates rework)
-  - Feedback items resolved: Count of issues with "feedback" in title/description/labels
-  - New metrics section in Overview Metrics showing quality indicators
-
-### Changed
-- All Jira metrics now use normalized statuses for consistent categorization
-- Resolution time calculations use improved fallback chain for better accuracy
-- Work area clustering algorithm enhanced with multiple signals and validation
-- Data quality metrics added to Jira metrics section
-- Performance analysis report now includes evidence counts and issue/PR references in competency bullets
-- "What couldn't be finished" section includes detailed blocker analysis with categories and mitigation strategies
-- Overview Metrics now includes quality indicators
-- Updated issue type breakdown to use actual Jira issue types (New, Epic, Review, Task, Sub-task, Update) instead of generic categories
-
-### Removed
-- Impact assessment metrics (customer-facing vs internal work, high priority work counts)
-- "High Impact Work" section from work summary reports
-
-### Documentation
-- Updated `.cursorrules` with status normalization rules and enhanced data processing instructions
-
-## v2.3.0 — 2025-12-18
-### Added
-- **GitHub MCP integration** for tracking pull requests, code reviews, and documentation commits
-  - Automatically fetches PRs authored and reviewed
-  - Tracks documentation commits (*.md, docs/, README files)
-  - Calculates GitHub metrics: PR merge time, lines changed, repositories contributed to
-  - Merges GitHub activity with Jira data in work areas
-- **Enhanced metrics** in work summary reports:
-  - GitHub activity metrics (PRs, commits, reviews, repositories)
-  - Per-repository contribution breakdown
-  - Documentation file type analysis
-- **Security enhancements**:
-  - Updated `.gitignore` to protect GitHub tokens (*.token, secrets/, mcp.json.local)
-  - Documented secure token management using environment variables
-  - Added comprehensive GitHub MCP setup guide in docs/SETUP.md
-- **Documentation updates**:
-  - Added GitHub integration section to README, QUICK_START, and USAGE_GUIDE
-  - Expanded METRICS_GUIDE with GitHub-specific metrics and calculations
-  - Added GitHub examples to example-request.md
-  - Updated all guides to reflect optional GitHub integration
-
-### Changed
-- `.cursorrules` now includes GitHub MCP data retrieval alongside Jira
-- Work summary template includes separate sections for Jira and GitHub metrics
-- Data processing now merges GitHub PRs with Jira issues when related
-
-### Security
-- **IMPORTANT**: Never commit GitHub tokens to Git. Use environment variables (`GITHUB_TOKEN`)
-- GitHub MCP configuration should be in global `~/.cursor/mcp.json`, not project files
-
-## v2.2.0 — 2025-12-18
-- Added IC guidance prompting users to include non-Jira activities (mentoring, process improvements, cross-team collaboration, documentation strategy, user research, presentations, tools/automation).
-- Added recommendation to generate reports by shorter periods (quarters, semesters, months) instead of full years.
-- Changed average resolution time calculation from creation date to "in progress" date (extracted from Jira changelog).
-
-## v2.1.0 — 2025-12-17
-- Added guidance to specify role (Technical Writer vs Technical Writing Manager) and level in report requests.
-- Documented manager track availability (manager track starts at L3) across Quick Start, README, Usage Guide, and Navigation.
-- Updated `.cursorrules` to load expectations from both writer and manager career-path JSON files based on role.
-- Simplified documentation (removed redundant Navigation doc, refreshed README/Quick Start) and aligned writer JSON filename with documented path.
-- Clarified that competency frameworks differ for ICs and managers, and the correct one is chosen based on the stated role.
-
-## v2.0.0 — Quantitative Metrics and Competency Analysis
-- Added automatic quantitative metrics in work summary (completion rate, avg resolution time, issue type and priority distributions, per-quarter and per-work-area metrics, unfinished work metrics).
-- Expanded performance analysis with structured strengths/areas-to-develop across six competencies and alignment summary.
-- Improved examples and guides (example report with metrics, example requests).
-- Added Navigation and Metrics guides; refreshed Quick Start and Usage guides.
-- Ensured automatic Jira fetching via Atlassian MCP configuration.
-
-## v1.0.0 — Initial Release
-- Generated two Markdown reports: work summary and performance analysis for Technical Writers (L1–L3).
-- Pulled Jira activity within a date range and grouped by quarter and work area.
-- Included accomplishments and unfinished tasks with blocker analysis.
-- Loaded LX Technical Writer expectations from `context/technical-writer-career-path.json` for competency comparison.

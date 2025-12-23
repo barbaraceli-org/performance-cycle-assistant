@@ -74,6 +74,8 @@ Generate comprehensive performance-cycle reports for Technical Writers and Techn
 - Work area validation: 3-15 issues per area (merge if <3, split if >20)
 - Link Jira-GitHub: Parse PR descriptions for Jira keys (e.g., "EDU-123"), match by work area/theme
 - Deduplication: PR+Jira = combined bullet; standalone = separate bullet
+- **Impact vs. Effort Analysis:** Correlate Jira priority/story points with GitHub lines changed. Flag high-priority issues with low output (<50 lines) or low-priority issues with massive PRs (>1000 lines) to identify potential over-engineering, invisible complexity, or misaligned priorities
+- **Semantic Blocker Categorization:** Analyze blocker reasons from issue descriptions, comments, and labels using semantic grouping (e.g., "Awaiting API Specs", "Review Bottlenecks", "System Downtime", "Resource Constraints"). Identify recurring impediment patterns beyond status labels
 
 **Include non-Jira activities:**
 - **Technical Writer:** Mentoring, community participation, process improvements, cross-team collaboration, strategy work, content audits, user research, speaking/presentations, guidelines/standards, tools/automation
@@ -113,20 +115,24 @@ Generate **two separate Markdown reports**:
 ## Overview Metrics
 
 ### Jira Activity
-- **Total issues started:** X (issues that were "In Progress" at any point during the period, including carryover work from before the period)
+- **Total issues worked on:** X (issues that were "In Progress" at any point during the period, including carryover work from before the period)
+- **Carryover issues:** Y (issues already "In Progress" at period start)
+- **New issues started:** Z (issues that moved to "In Progress" during the period)
+- **Scope creep:** W (issues created and assigned after period start)
 - **Issues completed:** Y
 - **Issues in progress:** Z (actively being worked on at period end; may include blocked issues)
 - **Issues blocked:** W (blocked status at period end; may overlap with in progress)
 - **Issues unfinished:** V (backlog/other non-completed issues at period end, excluding in progress and blocked)
-- **Completion rate:** N% (completed / started; X issues still in progress)
+- **Completion rate:** N% (completed / worked on; X issues still in progress)
 - **Average resolution time:** M days (resolutiondate - in_progress_date)
 - **Work areas covered:** K
-- **Issue type breakdown:** [counts and percentages]
+- **Issue type breakdown:** [counts and percentages for Epic, New, Update, Review, Task]
 - **Priority distribution:** [counts and percentages]
 
 ### GitHub Activity
 - **Pull requests authored:** X total (Y merged, Z open, W closed)
 - **Pull requests reviewed:** X across N repositories
+- **Review-to-author ratio:** X.X:1 (reviews / authored PRs)
 - **Documentation commits:** X commits in Y PRs, Z files modified (or X standalone commits, Y files modified if counting direct commits)
 - **Repositories contributed to:** N
 - **Average PR merge time:** X.X days
@@ -166,31 +172,36 @@ Generate **two separate Markdown reports**:
 
 ### Blocker Analysis
 
-**Blocker categories:**
-- **External dependencies:** X issues | Avg resolution: Y days
+**Blocker categories (semantically grouped from descriptions, comments, and labels):**
+- **[Semantic Category 1]:** X issues | Avg resolution: Y days
+  - *Root causes:* [Specific themes from issue content]
   - *Mitigation:* [Strategies]
-- **Resource constraints:** X issues | Avg resolution: Y days
+- **[Semantic Category 2]:** X issues | Avg resolution: Y days
+  - *Root causes:* [Specific themes from issue content]
   - *Mitigation:* [Strategies]
-- **Technical blockers:** X issues | Avg resolution: Y days
-  - *Mitigation:* [Strategies]
-- **Process blockers:** X issues | Avg resolution: Y days
-  - *Mitigation:* [Strategies]
-- **Awaiting decisions:** X issues | Avg resolution: Y days
-  - *Mitigation:* [Strategies]
+- **[Semantic Category 3-5]:** [Same structure]
+
+**Recurring impediment patterns:**
+- [Most common blocker theme with frequency and impact]
+- [Second most common blocker theme]
+- [Third most common blocker theme]
 ```
 
 ### Metrics Calculation:
 
 **Jira:**
-- **Started:** Issues that were "In Progress" at any point during [[date range]], including:
+- **Worked on:** Issues that were "In Progress" at any point during [[date range]], including:
   - Issues that moved to "In Progress" during the period (new starts)
   - Issues that were already "In Progress" at period start (carryover work)
   - This reflects all work that was "on your plate" during the period, regardless of when it was originally started
+- **Carryover issues:** Issues with status = "In Progress" before period start date. Flag high carryover (>30% of worked on) to contextualize completion rate—indicates complexity, persistence, or inherited workload
+- **New issues started:** Issues that transitioned to "In Progress" during [[date range]] (created_date OR first "In Progress" transition within period)
+- **Scope creep:** Issues created AND assigned to user after period start date. High scope creep (>40% of new starts) indicates reactive work or poor planning
 - **Completed:** Normalized status = "Completed" AND resolutiondate within [[date range]]
 - **In progress:** Normalized status = "In Progress" at period end (includes issues that may also be blocked)
 - **Blocked:** Normalized status = "Blocked" at period end (may overlap with in progress if issue is both active and blocked)
 - **Unfinished:** Normalized status = "Backlog" or other non-completed statuses at period end, excluding in progress and blocked
-- **Completion rate:** (completed / started) × 100, rounded to whole number. Include context: "X issues still in progress" to provide clarity when rate appears low due to active work
+- **Completion rate:** (completed / worked on) × 100, rounded to whole number. Include context: "X issues still in progress" and "Y carryover issues" to provide clarity when rate appears low due to active work or inherited complexity
 - **Resolution time:** avg(resolutiondate - in_progress_date) in days, 1 decimal place
 
 **GitHub:**
@@ -199,9 +210,14 @@ Generate **two separate Markdown reports**:
   - **Open:** state = "open" at period end
   - **Closed:** state = "closed" AND NOT merged (closed without merging)
 - **PRs merged:** state = "merged" AND merged_at within [[date range]]
+- **PRs reviewed:** Count of PRs where user submitted review comments (exclude self-authored PRs)
+- **Review-to-author ratio:** (PRs reviewed / PRs authored), 1 decimal place. Ratio >1.5 indicates "Force Multiplier" behavior (unblocking others), a key trait for L2/L3 Technical Writers. Ratio <0.5 may indicate siloed work or limited team collaboration
 - **Merge time:** avg(merged_at - created_at) in days, 1 decimal place (calculated only for merged PRs)
 - **Documentation commits:** Count commits in PRs (or standalone commits if applicable) that modify documentation files (*.md, **/docs/**, README*, CONTRIBUTING*)
 - **Lines changed:** Sum of additions/deletions in documentation files. If data unavailable, show "N/A" instead of placeholder text
+- **Impact vs. Effort flags:** Identify outliers:
+  - High-priority Jira issues (<50 lines changed): Potential invisible complexity or blocked work
+  - Low-priority Jira issues (>1000 lines changed): Potential over-engineering or misaligned priorities
 
 **Per-quarter:** Same calculations scoped to each quarter
 **Per-work-area:** Jira metrics only (completed, in progress, avg resolution time)
@@ -269,6 +285,28 @@ This analysis is based on the **VTEX Technical Writer Career Path**, using the *
   - **Complete alignment:** Meeting/exceeding expectations, consistent behaviors, metrics meet thresholds
   - **Partial gaps:** Progress with limitations, inconsistent behaviors, metrics 20-30% below target
   - **Major gaps:** Not meeting expectations, missing critical behaviors, metrics >50% below target, systemic issues
+
+### Advanced Metrics Interpretation:
+
+**Carryover & Scope Creep Context:**
+- High carryover (>30%) + low completion rate → Emphasize complexity and persistence, not poor performance
+- High scope creep (>40%) + low completion rate → Highlight reactive work patterns, suggest proactive planning
+- Low carryover + high completion rate → Strong execution and planning skills
+
+**Review-to-Author Ratio (Technical Writers):**
+- Ratio >1.5 → "Force Multiplier" behavior, evidence for L2/L3 "Responsibility & Scope" competency
+- Ratio 0.8-1.5 → Balanced contribution, appropriate for L1-L2
+- Ratio <0.5 → Potential siloed work, development area for "Communication" and "Collaboration"
+
+**Impact vs. Effort Flags:**
+- High-priority + low lines changed → Investigate for invisible complexity (architecture, research, coordination)
+- Low-priority + high lines changed → Flag for over-engineering or scope misalignment
+- Use in "Autonomy & Execution" analysis to assess prioritization and efficiency
+
+**Semantic Blocker Patterns:**
+- Recurring blockers → Systemic issues, evidence for "Responsibility & Scope" (ability to escalate/resolve)
+- Diverse blockers → Context-dependent challenges, assess mitigation strategies
+- Use in "Areas to develop" to provide actionable feedback on obstacle management
 
 ---
 

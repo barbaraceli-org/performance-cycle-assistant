@@ -229,8 +229,7 @@ The assistant will automatically include your GitHub activity if configured!
 ## 🔗 Next Steps
 
 - **See a complete example:** [example-report-with-metrics.md](example-report-with-metrics.md)
-- **Understand metrics:** [../METRICS_GUIDE.md](../METRICS_GUIDE.md) (includes GitHub metrics)
-- **Setup GitHub:** [../docs/SETUP.md](../docs/SETUP.md) - Configure GitHub MCP in global settings (optional but recommended)
-- **Learn more:** [../docs/USAGE_GUIDE.md](../docs/USAGE_GUIDE.md)
-- **Quick reference:** [../QUICK_START.md](../QUICK_START.md)
+- **Understand metrics:** [../METRICS_GUIDE.md](../METRICS_GUIDE.md) - All metrics explained (basic + advanced)
+- **Setup & usage:** [../docs/SETUP.md](../docs/SETUP.md) - Complete guide for setup, usage, and troubleshooting
+- **Quick start:** [../README.md](../README.md) - Project overview and quick start
 
