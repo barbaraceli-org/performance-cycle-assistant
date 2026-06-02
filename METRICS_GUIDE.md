@@ -764,11 +764,53 @@ A: Yes! Edit `.cursorrules` to adjust thresholds for carryover, scope creep, and
 - **GitHub**: PR authorship, review activity, lines changed, file types
 - **AI Analysis**: Issue descriptions, comments, labels for semantic blocker categorization
 
+### JQL Data Retrieval
+
+Reports fetch Jira issues with a **primary JQL** aligned to metric definitions (not generic `updated` activity alone):
+
+```jql
+(
+  assignee = currentUser()
+  OR assignee was currentUser() during ("START", "END")
+)
+AND (
+  statusCategory changed to "In Progress" during ("START", "END")
+  OR statusCategory was "In Progress" on "START"
+  OR statusCategory was "In Progress" on "END"
+  OR (resolved >= "START" AND resolved <= "END")
+)
+ORDER BY updated DESC
+```
+
+| JQL branch | Metric support |
+|------------|----------------|
+| `statusCategory changed to "In Progress" during (...)` | New issues started; total worked on |
+| `statusCategory was "In Progress" on "START"` | Carryover; total worked on (including stale carryover with no updates in period) |
+| `statusCategory was "In Progress" on "END"` | Issues in progress at period end |
+| `resolved >= START AND resolved <= END` | Issues completed in period |
+| `assignee was currentUser() during (...)` | Work owned during the period but since reassigned |
+
+**Optional scope-creep supplement** (merge and dedupe by issue key with primary results):
+
+```jql
+assignee = currentUser()
+AND created >= "START"
+AND created <= "END"
+AND statusCategory != "In Progress"
+AND NOT statusCategory changed to "In Progress" during ("START", "END")
+ORDER BY created DESC
+```
+
+If `statusCategory` is unavailable, use explicit status names from your workflow (e.g. `status changed to ("In Progress", "In Review") during (...)`). Customize JQL in `.cursorrules` section 1 if your workflow differs.
+
+Metrics (carryover, completion rate, avg resolution, scope creep %) are still computed from **changelog** and normalized statuses on the fetched issue set.
+
 ### Calculation Methods
 
 **Carryover:**
 ```
-Issues with status = "In Progress" AND updated < period_start_date
+Issues that were "In Progress" (normalized) at period start — verify via changelog
+(first "In Progress" transition before period_start) or status was "In Progress" on period_start
 Carryover % = (carryover_issues / total_worked_on) × 100
 ```
 
@@ -801,4 +843,4 @@ Low-priority issues with (additions + deletions) > 1000
 
 ---
 
-*Last updated: December 2025*
+*Last updated: June 2026*

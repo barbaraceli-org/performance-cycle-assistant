@@ -46,7 +46,10 @@ Generate comprehensive performance-cycle reports for Technical Writers and Techn
 1. **Jira activities** (Atlassian MCP):
    - Get Cloud ID: `mcp_Atlassian-MCP-Server_getAccessibleAtlassianResources`
    - Search: `mcp_Atlassian-MCP-Server_searchJiraIssuesUsingJql`
-   - JQL: `assignee = currentUser() AND (created >= "YYYY-MM-DD" OR updated >= "YYYY-MM-DD" OR resolved >= "YYYY-MM-DD") AND (created <= "YYYY-MM-DD" OR updated <= "YYYY-MM-DD") ORDER BY updated DESC`
+   - **Primary JQL** (use period **start** for the first date in each pair and period **end** for the second; the two `on` dates are period start and period end respectively):
+     `(assignee = currentUser() OR assignee was currentUser() during ("YYYY-MM-DD", "YYYY-MM-DD")) AND (statusCategory changed to "In Progress" during ("YYYY-MM-DD", "YYYY-MM-DD") OR statusCategory was "In Progress" on "YYYY-MM-DD" OR statusCategory was "In Progress" on "YYYY-MM-DD" OR (resolved >= "YYYY-MM-DD" AND resolved <= "YYYY-MM-DD")) ORDER BY updated DESC`
+   - **Optional scope-creep JQL** (run if needed; merge with primary results and dedupe by issue key): `assignee = currentUser() AND created >= "YYYY-MM-DD" AND created <= "YYYY-MM-DD" AND statusCategory != "In Progress" AND NOT statusCategory changed to "In Progress" during ("YYYY-MM-DD", "YYYY-MM-DD") ORDER BY created DESC`
+   - If `statusCategory` is unavailable in your Jira instance, replace `statusCategory` clauses with explicit `status changed to` / `status was` using your workflow's in-progress status names (see `METRICS_GUIDE.md` → Technical Implementation Details).
    - Fields: `["summary", "description", "status", "issuetype", "priority", "created", "updated", "resolutiondate", "labels", "components", "changelog"]`
    - Extract "in progress" date: changelog → updated date → comment dates → created date (track fallback method)
 
