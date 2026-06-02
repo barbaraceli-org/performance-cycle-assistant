@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+### Changed
+- **Performance analysis report:** Each competency now receives an explicit rating (**Need focus**, **On Track**, or **Outperform**) with rationale, supporting evidence, and actionable improvement steps. Replaces per-dimension Strengths/Areas to develop and Summary of alignment sections with an evaluation overview and priority development focus.
+
 ## v2.5.0 — 2025-12-23
 
 ### Added

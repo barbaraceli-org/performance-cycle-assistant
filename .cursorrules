@@ -228,6 +228,18 @@ Generate **two separate Markdown reports**:
 
 ## 5. Performance Analysis Report
 
+### Competency evaluation scale (MANDATORY per competency)
+
+Assign **exactly one** rating per competency using this scale:
+
+| # | Evaluation | When to assign |
+| --- | --- | --- |
+| 1 | **Need focus** | Does not have consistent examples of how this ability was achieved in the period |
+| 2 | **On Track** | Has consistent examples (≥3 distinct, period-relevant instances) of how this ability was achieved |
+| 3 | **Outperform** | Has consistent examples (≥3) **and** the ability was recognized by others as standing out (e.g., explicit praise in Jira/GitHub comments, review/mentorship attribution, leadership callouts, disproportionate peer impact such as review-to-author ratio >1.5 tied to this competency) |
+
+Display each rating as: **`Evaluation: [Need focus \| On Track \| Outperform]`** (include the number in parentheses on first mention in the report intro table only, if used).
+
 ### Structure:
 
 ```markdown
@@ -235,42 +247,63 @@ Generate **two separate Markdown reports**:
 
 This analysis is based on the **VTEX Technical Writer Career Path**, using the **Technical Writer** framework for IC roles and **Technical Writing Manager** framework for manager roles. The manager track includes an additional **Management** competency.
 
-**Technical Writer (IC):** One `#` section per entry in `dimensions[]` (use `label` as heading): Abstraction & Modeling, Responsibility & Scope, Autonomy & Execution, Communication, Writing. In bullets, reference granular competency keys (e.g., pattern_recognition) and level expectations from `levels[userLevel].competencies`.
+## Evaluation scale
 
-**Technical Writing Manager:** One `#` section per competency key: Abstraction & Modeling, Responsibility & Scope, Autonomy & Execution, Communication, Editorial Writing & Content Management, Technical Writing, Management.
+| # | Evaluation | Description |
+| --- | --- | --- |
+| 1 | Need focus | Doesn't have consistent examples on how this ability was achieved |
+| 2 | On Track | Has consistent examples on how this ability was achieved |
+| 3 | Outperform | Has consistent examples on how this ability was achieved and this ability was recognized by others as something that stands out |
 
-# [Dimension label — repeat per role framework above]
+**Technical Writer (IC):** One `#` section per entry in `dimensions[]` (use `label` as heading). Under each dimension, one `##` subsection per granular competency key listed in `dimensions[].competencies`. Compare against `levels[userLevel].competencies[key]`.
 
-**Evidence:** X Jira issues, Y GitHub PRs
+**Technical Writing Manager:** One `#` section per competency key in the manager framework (each key is already dimension-level; no nested `##` unless the JSON defines sub-keys).
 
-## Strengths
-- [3-5 bullets with issue/PR references, e.g., "Demonstrated X (EDU-123, PR #456)"]
+# [Dimension label — IC only; omit extra heading for manager if section title equals competency]
 
-## Areas to develop
-- [3-5 bullets with issue/PR references]
+## [competency_key — human-readable label, e.g., Pattern recognition]
 
-# Summary of alignment
+**Evaluation:** [Need focus | On Track | Outperform]
 
-## Areas of complete alignment
-- [Competency-subarea pairs meeting/exceeding expectations with brief evidence]
+**Rationale:** [2-4 sentences: why this rating was assigned against the scale above; cite evidence count and recognition signals, or lack thereof]
 
-## Partial gaps
-- [Competency-subarea pairs with notable limitations, specific gaps and metrics]
+**Evidence:** X Jira issues, Y GitHub PRs (or "Limited evidence" if <3)
 
-## Major gaps
-- [High-level areas not meeting expectations, with evidence and framework references]
+### Supporting evidence
+- [3-5 bullets with Jira keys/PR numbers when applicable; for Need focus, include what exists even if sparse]
+
+### Actionable steps to improve
+- [3-5 concrete, prioritized actions tied to this competency and rating — see rules below]
+
+[Repeat `## [competency]` for each competency in the dimension]
+
+# Summary
+
+## Evaluation overview
+
+| Competency | Evaluation |
+| --- | --- |
+| [key or label] | [Need focus \| On Track \| Outperform] |
+
+## Cross-cutting themes
+- [Patterns across competencies: strongest areas, systemic gaps, metrics that explain multiple ratings]
+
+## Priority development focus
+- [Top 3 competencies rated Need focus or On Track with highest impact on level expectations, with 1-sentence why each matters now]
 ```
 
 ### Competency Analysis Rules:
 
-- **3-5 bullets** per Strengths and Areas to develop
-- **Link evidence:** Include Jira keys/PR numbers in parentheses
+- **One evaluation per competency** — never leave a competency without an explicit rating from the scale
+- **Supporting evidence:** 3-5 bullets per competency; link Jira keys/PR numbers in parentheses
+- **Actionable steps to improve (required per competency):**
+  - **Need focus → On Track:** Steps to build consistent evidence (specific behaviors, artifact types, cadence, example issue types to own)
+  - **On Track → Outperform:** Steps to increase visibility and external recognition (stakeholder communication, leading reviews, presenting work, documenting outcomes for others to cite)
+  - **Outperform:** Steps to sustain and multiply impact (mentoring others, codifying practices, expanding scope)
+  - Each step must be **specific and doable** in the next review period — avoid generic advice ("communicate better")
 - **Neutral tone:** Coaching-oriented, not judgmental or flattering
-- **Evidence tracking:** Count per competency, flag <3 as "Limited evidence"
-- **Alignment classification:**
-  - **Complete alignment:** Meeting/exceeding expectations, consistent behaviors, metrics meet thresholds
-  - **Partial gaps:** Progress with limitations, inconsistent behaviors, metrics 20-30% below target
-  - **Major gaps:** Not meeting expectations, missing critical behaviors, metrics >50% below target, systemic issues
+- **Evidence tracking:** Count distinct examples per competency; <3 consistent examples → maximum rating is **Need focus**; ≥3 without recognition → **On Track**; ≥3 with documented third-party recognition → **Outperform**
+- **Limited evidence:** If <3 total data points, still assign **Need focus** and state "Limited evidence" in the Evidence line; actionable steps must address how to generate traceable examples in Jira/GitHub
 
 ### Advanced Metrics Interpretation:
 
@@ -292,7 +325,7 @@ This analysis is based on the **VTEX Technical Writer Career Path**, using the *
 **Semantic Blocker Patterns:**
 - Recurring blockers → Systemic issues, evidence for "Responsibility & Scope" (ability to escalate/resolve)
 - Diverse blockers → Context-dependent challenges, assess mitigation strategies
-- Use in "Areas to develop" to provide actionable feedback on obstacle management
+- Use in competency rationales and actionable steps when blockers limited demonstrated ability
 
 ---
 

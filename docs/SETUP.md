@@ -417,7 +417,7 @@ The assistant will:
    - Cluster into work areas (based on components, labels, themes, repositories)
    - Generate accomplishment bullets per area
    - Identify unfinished tasks
-   - Analyze competency areas with strengths and development areas
+   - Rate each competency (Need focus / On Track / Outperform) with evidence and actionable improvement steps
    - Save two separate reports to `reports/`:
      - `work-summary-[date-range].md`
      - `performance-analysis-[date-range].md`
@@ -468,13 +468,22 @@ Expand the "Communication" competency section with more specific examples.
 ### Performance Analysis Report
 
 **Structure:**
-- **Competency Areas** - Strengths and development areas for each
-- **Summary of Alignment** - Overall assessment against level expectations
+- **Evaluation scale** - Need focus (1), On Track (2), Outperform (3) — defined at the top of the report
+- **Per competency** - Explicit rating, rationale, supporting evidence (Jira/GitHub links), and actionable steps to improve
+- **Summary** - Evaluation overview table, cross-cutting themes, and priority development focus
+
+**Evaluation meanings:**
+
+| # | Rating | Meaning |
+| --- | --- | --- |
+| 1 | Need focus | No consistent examples of achieving this ability in the period |
+| 2 | On Track | Consistent examples (typically ≥3) of achieving this ability |
+| 3 | Outperform | Consistent examples plus recognition by others that this ability stands out |
 
 **Use for:**
 - Career development planning
-- Identifying skill gaps
-- Setting growth goals
+- Identifying skill gaps and concrete next steps
+- Setting growth goals tied to moving up the evaluation scale
 
 ### Metrics Explained
 

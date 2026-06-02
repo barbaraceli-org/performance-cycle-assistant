@@ -595,9 +595,8 @@ Instead of just listing "Blocked" issues, the system:
 - **Diverse blockers** → Context-dependent challenges requiring adaptability
 - **Mitigation strategies** → Proactive problem-solving and process improvement
 
-**Areas to develop:**
-- Identify patterns in blocker categories
-- Provide actionable feedback on obstacle management
+**Actionable steps (in performance report):**
+- Tie blocker patterns to competency ratings and concrete next-period actions
 - Suggest process improvements to prevent recurring blockers
 
 **Benefits:**
@@ -629,22 +628,25 @@ The advanced metrics enhance competency assessment:
 - **Review-to-author ratio** → Peer collaboration and engagement
 - **Semantic blocker analysis** → Stakeholder management and escalation
 
-**Example Performance Analysis:**
+**Example Performance Analysis (excerpt):**
 ```markdown
-# Autonomy & Execution
+## Execution and delivery reliability
 
-**Evidence:** 87 Jira issues, 45 GitHub PRs
+**Evaluation:** On Track
 
-## Strengths
-- Demonstrated strong planning with low scope creep (28% vs. 40% threshold), indicating effective scope protection and proactive work management
-- Maintained 83% completion rate despite high carryover (26%), showing persistence on complex inherited work
-- Efficient execution with 8.5-day average resolution time, balancing speed with quality
-- Review-to-author ratio of 0.5:1 shows balanced focus on individual contributions
+**Rationale:** Five distinct Jira completions and three merged PRs show consistent delivery across the period. Scope creep stayed at 28% (below the 40% threshold). No third-party recognition signals tied specifically to delivery reliability.
 
-## Areas to develop
-- High carryover (26%) suggests opportunities to reduce work-in-progress and increase throughput by completing more issues before starting new ones
-- Impact vs. Effort analysis flagged 3 low-priority issues with >1000 lines changed, indicating potential over-engineering or misaligned priorities
-- Semantic blocker analysis shows recurring "Awaiting API Specifications" pattern (40% of blocked issues), suggesting need for earlier involvement in API design process
+**Evidence:** 12 Jira issues, 8 GitHub PRs
+
+### Supporting evidence
+- Maintained 83% completion rate despite 26% carryover (EDU-101, EDU-204, EDU-310)
+- Low scope creep (28%) indicates effective scope protection (EDU-155, EDU-201)
+- 8.5-day average resolution time across completed issues
+
+### Actionable steps to improve
+- Reduce WIP: close or hand off two oldest carryover issues before starting new epics
+- Document delivery outcomes in Jira comments so reviewers can cite impact (moves toward Outperform)
+- Join API design kickoffs for two upcoming services to prevent "Awaiting API Specifications" blockers
 ```
 
 ---
@@ -703,7 +705,7 @@ The advanced metrics enhance competency assessment:
 
 **Use in analysis:**
 - Responsibility & Scope (escalation/resolution ability)
-- Areas to develop (obstacle management)
+- Actionable steps to improve (obstacle management, tied to competency rating)
 
 ---
 

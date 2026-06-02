@@ -73,8 +73,9 @@ Two reports saved to `reports/`:
    - Unfinished tasks with semantic blocker analysis and root cause identification
 
 2. **Performance Analysis** (`performance-analysis-[date-range].md`)
-   - Competency areas with strengths and development areas
-   - Summary of alignment
+   - Per-competency rating: **Need focus**, **On Track**, or **Outperform**
+   - Supporting evidence and actionable steps to improve each rating
+   - Summary with evaluation overview and priority development focus
 
 ## Supported levels
 
