@@ -39,7 +39,7 @@ Generate comprehensive performance-cycle reports for Technical Writers and Techn
 
 ## 1. Inputs & Data Retrieval
 
-**User provides:** Date range, role (Technical Writer L1-L3 or Technical Writing Manager L3-L6), level, and optional context.
+**User provides:** Date range, role (Technical Writer L1-L4 or Technical Writing Manager L3-L6), level, and optional context.
 
 **Automatically retrieve:**
 
@@ -57,8 +57,8 @@ Generate comprehensive performance-cycle reports for Technical Writers and Techn
    - Filter documentation files: `*.md`, `**/docs/**`, `**/documentation/**`, `README*`, `CONTRIBUTING*`
 
 3. **Load expectations:**
-   - Technical Writer → `context/technical-writer-career-path.json` (L1-L3)
-   - Technical Writing Manager → `context/technical-writing-manager-career-path.json` (L3-L6)
+   - Technical Writer → `context/technical-writer-career-path.json` (L1-L4). Use top-level `dimensions` to group granular `competencies` keys into report sections (`dimensions[].label`). Compare `levels[userLevel].competencies[key]` against evidence for each key listed in `dimensions[].competencies`.
+   - Technical Writing Manager → `context/technical-writing-manager-career-path.json` (L3-L6). Competency keys are already dimension-level.
 
 **Status Normalization** (case-insensitive):
 - **Completed:** Done, Resolved, Closed, Completed, Fixed, Verified, Deployed, Published, Released, Accepted, Approved, Merged, Shipped, Delivered, Finished, Finalized
@@ -235,7 +235,11 @@ Generate **two separate Markdown reports**:
 
 This analysis is based on the **VTEX Technical Writer Career Path**, using the **Technical Writer** framework for IC roles and **Technical Writing Manager** framework for manager roles. The manager track includes an additional **Management** competency.
 
-# Abstraction & Modeling
+**Technical Writer (IC):** One `#` section per entry in `dimensions[]` (use `label` as heading): Abstraction & Modeling, Responsibility & Scope, Autonomy & Execution, Communication, Writing. In bullets, reference granular competency keys (e.g., pattern_recognition) and level expectations from `levels[userLevel].competencies`.
+
+**Technical Writing Manager:** One `#` section per competency key: Abstraction & Modeling, Responsibility & Scope, Autonomy & Execution, Communication, Editorial Writing & Content Management, Technical Writing, Management.
+
+# [Dimension label — repeat per role framework above]
 
 **Evidence:** X Jira issues, Y GitHub PRs
 
@@ -244,24 +248,6 @@ This analysis is based on the **VTEX Technical Writer Career Path**, using the *
 
 ## Areas to develop
 - [3-5 bullets with issue/PR references]
-
-# Responsibility & Scope
-[Same structure]
-
-# Autonomy & Execution
-[Same structure]
-
-# Communication
-[Same structure]
-
-# Editorial, Writing & Content Management
-[Same structure]
-
-# Technical Writing
-[Same structure]
-
-# Management
-[Include only for Technical Writing Managers, same structure]
 
 # Summary of alignment
 

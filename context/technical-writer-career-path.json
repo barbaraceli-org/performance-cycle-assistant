@@ -1,6 +1,33 @@
 {
   "discipline": "Product",
   "career": "Technical Writer",
+  "dimensions": [
+    {
+      "id": "abstraction_and_modeling",
+      "label": "Abstraction & Modeling",
+      "competencies": ["pattern_recognition", "system_design"]
+    },
+    {
+      "id": "responsibility_and_scope",
+      "label": "Responsibility & Scope",
+      "competencies": ["domain_mastery", "ecosystem_collaboration", "operational_excellence"]
+    },
+    {
+      "id": "autonomy_and_execution",
+      "label": "Autonomy & Execution",
+      "competencies": ["professional_mastery", "execution_and_delivery_reliability", "decision_making"]
+    },
+    {
+      "id": "communication",
+      "label": "Communication",
+      "competencies": ["expectation_management", "problem_framing", "strategic_influence"]
+    },
+    {
+      "id": "writing",
+      "label": "Writing",
+      "competencies": ["content_strategy", "editorial_governance", "content_quality"]
+    }
+  ],
   "levels": {
     "L1": {
       "level": "L1",
