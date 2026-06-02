@@ -8,7 +8,7 @@ Generates performance-cycle reports for Technical Writers and Managers using Jir
 
 Open Cursor Chat (`Ctrl+L` or `Cmd+L`) and specify the date range, role, and level:
 
-> Specify whether you are an individual contributor or a manager. The IC (Technical Writer) track progresses up to **L3**, while the manager track starts at **L3**. Use "technical writer", "tech writer", "ic", or "individual collaborator" for IC, and "technical writing manager" or "manager" for managers.
+> Specify whether you are an individual contributor or a manager. The IC (Technical Writer) track progresses up to **L4**, while the manager track starts at **L3**. Use "technical writer", "tech writer", "ic", or "individual collaborator" for IC, and "technical writing manager" or "manager" for managers.
 
 **Technical writer examples:**
 ```
@@ -83,6 +83,7 @@ Two reports saved to `reports/`:
 - **L1** - Technical Writer I
 - **L2** - Technical Writer II
 - **L3** - Senior Technical Writer
+- **L4** - Staff Technical Writer
 
 **Technical Writing Managers**
 - **L3** - Technical Writing Manager I (first manager level)
@@ -138,7 +139,7 @@ performance-cycle/
 ├── CHANGELOG.md                               # Release history
 │
 ├── context/
-│   ├── technical-writer-career-path.json      # Expectations (writers L1–L3)
+│   ├── technical-writer-career-path.json      # Expectations (writers L1–L4)
 │   └── technical-writing-manager-career-path.json  # Expectations (managers L3–L6)
 │
 ├── docs/
