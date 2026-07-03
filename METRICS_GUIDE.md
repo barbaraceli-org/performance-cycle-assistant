@@ -632,9 +632,9 @@ The advanced metrics enhance competency assessment:
 ```markdown
 ## Execution and delivery reliability
 
-**Evaluation:** On Track
+**Evaluation:** Meets expectations
 
-**Rationale:** Five distinct Jira completions and three merged PRs show consistent delivery across the period. Scope creep stayed at 28% (below the 40% threshold). No third-party recognition signals tied specifically to delivery reliability.
+**Rationale:** Five distinct Jira completions and three merged PRs show consistent delivery at the scope expected for this level. Scope creep stayed at 28% (below the 40% threshold). No evidence yet of scope, complexity, or impact beyond what's expected at this level (e.g., no cross-team ownership or measurable efficiency gains tied to delivery reliability).
 
 **Evidence:** 12 Jira issues, 8 GitHub PRs
 
@@ -645,7 +645,7 @@ The advanced metrics enhance competency assessment:
 
 ### Actionable steps to improve
 - Reduce WIP: close or hand off two oldest carryover issues before starting new epics
-- Document delivery outcomes in Jira comments so reviewers can cite impact (moves toward Outperform)
+- Take ownership of one higher-complexity, cross-team issue next period to demonstrate scope beyond the current level (moves toward Exceeds expectations)
 - Join API design kickoffs for two upcoming services to prevent "Awaiting API Specifications" blockers
 ```
 

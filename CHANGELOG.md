@@ -3,7 +3,9 @@
 ## Unreleased
 
 ### Changed
-- **Performance analysis report:** Each competency now receives an explicit rating (**Need focus**, **On Track**, or **Outperform**) with rationale, supporting evidence, and actionable improvement steps. Replaces per-dimension Strengths/Areas to develop and Summary of alignment sections with an evaluation overview and priority development focus.
+- **Performance analysis report:** Each competency now receives an explicit rating (**Not yet meeting expectations**, **Meets expectations**, **Exceeds expectations**, or **Performing at the next level**) with rationale, supporting evidence, and actionable improvement steps. Replaces per-dimension Strengths/Areas to develop and Summary of alignment sections with an evaluation overview and priority development focus.
+- **Evaluation scale expanded to 4 levels:** Renamed the 3-level scale (Need focus / On Track / Outperform) to a 4-level scale (Not yet meeting expectations / Meets expectations / Exceeds expectations / Performing at the next level). The new top level requires evidence matching the next career level's competency expectations (`levels[nextLevel].competencies[key]`) and is not assignable at the top of each track (Technical Writer L4, Technical Writing Manager L6).
+- **Exceeds expectations criteria redefined:** The distinction between "Meets expectations" and "Exceeds expectations" is now based on scope, complexity, or measurable impact beyond what's expected at the user's level (e.g., higher-complexity work, cross-team scope, efficiency gains) rather than third-party recognition alone. Recognition by others can still support a rating but is no longer sufficient by itself.
 
 ## v2.5.0 — 2025-12-23
 

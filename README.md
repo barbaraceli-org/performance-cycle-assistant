@@ -73,7 +73,7 @@ Two reports saved to `reports/`:
    - Unfinished tasks with semantic blocker analysis and root cause identification
 
 2. **Performance Analysis** (`performance-analysis-[date-range].md`)
-   - Per-competency rating: **Need focus**, **On Track**, or **Outperform**
+   - Per-competency rating: **Not yet meeting expectations**, **Meets expectations**, **Exceeds expectations**, or **Performing at the next level**
    - Supporting evidence and actionable steps to improve each rating
    - Summary with evaluation overview and priority development focus
 

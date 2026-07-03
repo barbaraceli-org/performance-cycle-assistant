@@ -237,11 +237,12 @@ Assign **exactly one** rating per competency using this scale:
 
 | # | Evaluation | When to assign |
 | --- | --- | --- |
-| 1 | **Need focus** | Does not have consistent examples of how this ability was achieved in the period |
-| 2 | **On Track** | Has consistent examples (≥3 distinct, period-relevant instances) of how this ability was achieved |
-| 3 | **Outperform** | Has consistent examples (≥3) **and** the ability was recognized by others as standing out (e.g., explicit praise in Jira/GitHub comments, review/mentorship attribution, leadership callouts, disproportionate peer impact such as review-to-author ratio >1.5 tied to this competency) |
+| 1 | **Not yet meeting expectations** | Does not have consistent examples of how this ability was achieved in the period |
+| 2 | **Meets expectations** | Has consistent examples (≥3 distinct, period-relevant instances) of how this ability was achieved at the scope/complexity appropriate for the user's role/level |
+| 3 | **Exceeds expectations** | Has consistent examples (≥3) **and** the work shows scope, complexity, or impact beyond what's typically expected at the user's level (e.g., handling higher-complexity issues than peers at that level, taking on cross-team or cross-repo scope, driving measurable efficiency/quality gains, disproportionate peer impact such as review-to-author ratio >1.5, resolving or preventing systemic blockers for others). Third-party recognition (explicit praise, mentorship attribution, leadership callouts) can support the rating but is not sufficient on its own — it must be backed by a concrete scope/impact signal |
+| 4 | **Performing at the next level** | Meets the bar for "Exceeds expectations" **and** the evidence demonstrates competencies matching the next career level's expectations (compare against `levels[nextLevel].competencies[key]` in the career-path JSON, when a next level exists) |
 
-Display each rating as: **`Evaluation: [Need focus \| On Track \| Outperform]`** (include the number in parentheses on first mention in the report intro table only, if used).
+Display each rating as: **`Evaluation: [Not yet meeting expectations \| Meets expectations \| Exceeds expectations \| Performing at the next level]`** (include the number in parentheses on first mention in the report intro table only, if used). If the user is already at the top level of their track (Technical Writer L4 or Technical Writing Manager L6), "Performing at the next level" is not assignable — cap ratings at "Exceeds expectations" and note the level ceiling in the rationale when relevant.
 
 ### Structure:
 
@@ -254,9 +255,10 @@ This analysis is based on the **VTEX Technical Writer Career Path**, using the *
 
 | # | Evaluation | Description |
 | --- | --- | --- |
-| 1 | Need focus | Doesn't have consistent examples on how this ability was achieved |
-| 2 | On Track | Has consistent examples on how this ability was achieved |
-| 3 | Outperform | Has consistent examples on how this ability was achieved and this ability was recognized by others as something that stands out |
+| 1 | Not yet meeting expectations | Doesn't have consistent examples on how this ability was achieved |
+| 2 | Meets expectations | Has consistent examples on how this ability was achieved at the scope/complexity expected for the level |
+| 3 | Exceeds expectations | Has consistent examples and the work shows scope, complexity, or impact beyond what's expected at that level |
+| 4 | Performing at the next level | Exceeds expectations at the current level and shows evidence matching the next career level's expectations |
 
 **Technical Writer (IC):** One `#` section per entry in `dimensions[]` (use `label` as heading). Under each dimension, one `##` subsection per granular competency key listed in `dimensions[].competencies`. Compare against `levels[userLevel].competencies[key]`.
 
@@ -266,14 +268,14 @@ This analysis is based on the **VTEX Technical Writer Career Path**, using the *
 
 ## [competency_key — human-readable label, e.g., Pattern recognition]
 
-**Evaluation:** [Need focus | On Track | Outperform]
+**Evaluation:** [Not yet meeting expectations | Meets expectations | Exceeds expectations | Performing at the next level]
 
-**Rationale:** [2-4 sentences: why this rating was assigned against the scale above; cite evidence count and recognition signals, or lack thereof]
+**Rationale:** [2-4 sentences: why this rating was assigned against the scale above; cite evidence count and, for Exceeds expectations or higher, the specific scope/complexity/impact signal that goes beyond the expected level]
 
-**Evidence:** X Jira issues, Y GitHub PRs (or "Limited evidence" if <3)
+**Evidence:** X Jira issues, Y GitHub PRs (or "Limited evidence" if <3); if rated **Performing at the next level**, also cite which next-level competency expectations were matched
 
 ### Supporting evidence
-- [3-5 bullets with Jira keys/PR numbers when applicable; for Need focus, include what exists even if sparse]
+- [3-5 bullets with Jira keys/PR numbers when applicable; for Not yet meeting expectations, include what exists even if sparse]
 
 ### Actionable steps to improve
 - [3-5 concrete, prioritized actions tied to this competency and rating — see rules below]
@@ -286,13 +288,13 @@ This analysis is based on the **VTEX Technical Writer Career Path**, using the *
 
 | Competency | Evaluation |
 | --- | --- |
-| [key or label] | [Need focus \| On Track \| Outperform] |
+| [key or label] | [Not yet meeting expectations \| Meets expectations \| Exceeds expectations \| Performing at the next level] |
 
 ## Cross-cutting themes
 - [Patterns across competencies: strongest areas, systemic gaps, metrics that explain multiple ratings]
 
 ## Priority development focus
-- [Top 3 competencies rated Need focus or On Track with highest impact on level expectations, with 1-sentence why each matters now]
+- [Top 3 competencies rated Not yet meeting expectations or Meets expectations with highest impact on level expectations, with 1-sentence why each matters now]
 ```
 
 ### Competency Analysis Rules:
@@ -300,13 +302,15 @@ This analysis is based on the **VTEX Technical Writer Career Path**, using the *
 - **One evaluation per competency** — never leave a competency without an explicit rating from the scale
 - **Supporting evidence:** 3-5 bullets per competency; link Jira keys/PR numbers in parentheses
 - **Actionable steps to improve (required per competency):**
-  - **Need focus → On Track:** Steps to build consistent evidence (specific behaviors, artifact types, cadence, example issue types to own)
-  - **On Track → Outperform:** Steps to increase visibility and external recognition (stakeholder communication, leading reviews, presenting work, documenting outcomes for others to cite)
-  - **Outperform:** Steps to sustain and multiply impact (mentoring others, codifying practices, expanding scope)
+  - **Not yet meeting expectations → Meets expectations:** Steps to build consistent evidence (specific behaviors, artifact types, cadence, example issue types to own)
+  - **Meets expectations → Exceeds expectations:** Steps to expand scope, complexity, or measurable impact beyond the current level (own higher-complexity issues, take on cross-team/cross-repo work, drive efficiency or quality gains, help unblock others) — not just steps to get noticed
+  - **Exceeds expectations → Performing at the next level:** Steps to close the gap with next-level competency expectations (scope expansion, cross-team influence, ownership of next-level artifact types — cite the specific gap from `levels[nextLevel].competencies[key]`)
+  - **Performing at the next level:** Steps to sustain and multiply impact (mentoring others, codifying practices, expanding scope, preparing a promotion case)
   - Each step must be **specific and doable** in the next review period — avoid generic advice ("communicate better")
 - **Neutral tone:** Coaching-oriented, not judgmental or flattering
-- **Evidence tracking:** Count distinct examples per competency; <3 consistent examples → maximum rating is **Need focus**; ≥3 without recognition → **On Track**; ≥3 with documented third-party recognition → **Outperform**
-- **Limited evidence:** If <3 total data points, still assign **Need focus** and state "Limited evidence" in the Evidence line; actionable steps must address how to generate traceable examples in Jira/GitHub
+- **Evidence tracking:** Count distinct examples per competency; <3 consistent examples → maximum rating is **Not yet meeting expectations**; ≥3 at expected scope/complexity → **Meets expectations**; ≥3 with a concrete scope/complexity/impact signal beyond the expected level (recognition alone does not qualify) → **Exceeds expectations**; ≥3 meeting the "Exceeds expectations" bar **and** evidence matching next-level competency expectations → **Performing at the next level**
+- **Limited evidence:** If <3 total data points, still assign **Not yet meeting expectations** and state "Limited evidence" in the Evidence line; actionable steps must address how to generate traceable examples in Jira/GitHub
+- **Top-level ceiling:** For Technical Writer L4 or Technical Writing Manager L6 (no next level defined in the career-path JSON), do not assign "Performing at the next level"; cap at "Exceeds expectations"
 
 ### Advanced Metrics Interpretation:
 

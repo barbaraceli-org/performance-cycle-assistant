@@ -417,7 +417,7 @@ The assistant will:
    - Cluster into work areas (based on components, labels, themes, repositories)
    - Generate accomplishment bullets per area
    - Identify unfinished tasks
-   - Rate each competency (Need focus / On Track / Outperform) with evidence and actionable improvement steps
+   - Rate each competency (Not yet meeting expectations / Meets expectations / Exceeds expectations / Performing at the next level) with evidence and actionable improvement steps
    - Save two separate reports to `reports/`:
      - `work-summary-[date-range].md`
      - `performance-analysis-[date-range].md`
@@ -468,7 +468,7 @@ Expand the "Communication" competency section with more specific examples.
 ### Performance Analysis Report
 
 **Structure:**
-- **Evaluation scale** - Need focus (1), On Track (2), Outperform (3) — defined at the top of the report
+- **Evaluation scale** - Not yet meeting expectations (1), Meets expectations (2), Exceeds expectations (3), Performing at the next level (4) — defined at the top of the report
 - **Per competency** - Explicit rating, rationale, supporting evidence (Jira/GitHub links), and actionable steps to improve
 - **Summary** - Evaluation overview table, cross-cutting themes, and priority development focus
 
@@ -476,9 +476,10 @@ Expand the "Communication" competency section with more specific examples.
 
 | # | Rating | Meaning |
 | --- | --- | --- |
-| 1 | Need focus | No consistent examples of achieving this ability in the period |
-| 2 | On Track | Consistent examples (typically ≥3) of achieving this ability |
-| 3 | Outperform | Consistent examples plus recognition by others that this ability stands out |
+| 1 | Not yet meeting expectations | No consistent examples of achieving this ability in the period |
+| 2 | Meets expectations | Consistent examples (typically ≥3) of achieving this ability at the scope/complexity expected for the role/level |
+| 3 | Exceeds expectations | Consistent examples plus scope, complexity, or impact beyond what's expected at that level (e.g., higher-complexity work, cross-team scope, measurable efficiency gains). Recognition by others can support the rating but isn't sufficient on its own |
+| 4 | Performing at the next level | Exceeds expectations, with evidence matching the next career level's competency expectations (not assignable at the top level, L4 for writers / L6 for managers) |
 
 **Use for:**
 - Career development planning
