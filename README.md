@@ -32,7 +32,7 @@ I'm a Level 3 Technical Writing Manager.
 Q2 2025, manager, L3
 ```
 
-> **Note:** Jira and GitHub data are fetched automatically. Mention additional activities not tracked in systems (mentoring, presentations, process improvements, team outcomes, etc.).
+> **Note:** Jira and GitHub data are fetched automatically. Mention additional activities not tracked in systems (mentoring, presentations, process improvements, team outcomes, etc.), or add them to your local `context/additional-context.local.md` file (see [Additional Context](#additional-context-local-only) below).
 
 ### 📋 Best Practice: Generate Reports by Period
 
@@ -112,8 +112,17 @@ Two reports saved to `reports/`:
 - **[Metrics Guide](METRICS_GUIDE.md)** — all metrics explained: basic + advanced (carryover, review ratios, impact vs. effort, semantic blockers)
 - **[Examples](examples/example-request.md)** — sample requests
 - **[Example report](examples/example-report-with-metrics.md)** — full sample output
+- **[Example additional context](examples/additional-context.example.md)** — template and samples for your personal `context/additional-context.local.md`
 - **[Changelog](CHANGELOG.md)** — release history
 
+
+## Additional Context (local only)
+
+Each Technical Writer can keep a personal `context/additional-context.local.md` file to track evidence that isn't captured by the automatic Jira/GitHub retrieval — e.g., issues opened on repos outside the indexed scope, mentoring, presentations, or strategy work. This file (and any `context/*.local.md` or `context/additional-context*.md` file) is **git-ignored** and stays on your machine only, just like the generated `reports/` folder.
+
+When you ask for a report, mention that you have additional context saved, or paste the entries directly, and they'll be folded into the relevant work areas/competencies alongside the automatically retrieved data.
+
+> **Get started:** See [examples/additional-context.example.md](examples/additional-context.example.md) for the entry template and sample entries. Copy it to `context/additional-context.local.md` to start your own.
 
 ## Customization
 - Replace competency frameworks: `context/technical-writer-career-path.json` (writers) or `context/technical-writing-manager-career-path.json` (managers).
@@ -140,14 +149,16 @@ performance-cycle/
 │
 ├── context/
 │   ├── technical-writer-career-path.json      # Expectations (writers L1–L4)
-│   └── technical-writing-manager-career-path.json  # Expectations (managers L3–L6)
+│   ├── technical-writing-manager-career-path.json  # Expectations (managers L3–L6)
+│   └── additional-context.local.md            # Personal context (git-ignored, per TW)
 │
 ├── docs/
 │   └── SETUP.md                               # Setup, usage, and troubleshooting
 │
 ├── examples/
 │   ├── example-request.md                     # Sample requests
-│   └── example-report-with-metrics.md         # Complete example report
+│   ├── example-report-with-metrics.md         # Complete example report
+│   └── additional-context.example.md          # Template for personal local context file
 │
 └── reports/                                   # Generated reports (auto-created)
 ```

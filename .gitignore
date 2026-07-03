@@ -3,6 +3,10 @@ reports/
 *.md.backup
 *-backup.md
 
+# Per-Technical-Writer additional context (personal, local-only, not shared)
+context/*.local.md
+context/additional-context*.md
+
 # OS files
 .DS_Store
 Thumbs.db
