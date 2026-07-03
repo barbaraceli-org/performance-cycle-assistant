@@ -262,11 +262,15 @@ This analysis is based on the **VTEX Technical Writer Career Path**, using the *
 | 3 | Exceeds expectations | Has consistent examples and the work shows scope, complexity, or impact beyond what's expected at that level |
 | 4 | Performing at the next level | Exceeds expectations at the current level and shows evidence matching the next career level's expectations |
 
-**Technical Writer (IC):** One `#` section per entry in `dimensions[]` (use `label` as heading). Under each dimension, one `##` subsection per granular competency key listed in `dimensions[].competencies`. Compare against `levels[userLevel].competencies[key]`.
+**Technical Writer (IC):** One `#` section per entry in `dimensions[]` (use `label` as heading). Each dimension section MUST open with a dimension-level evaluation (rating + rationale) rolled up from its competencies, then contain one `##` subsection per granular competency key listed in `dimensions[].competencies`. Compare against `levels[userLevel].competencies[key]`.
 
-**Technical Writing Manager:** One `#` section per competency key in the manager framework (each key is already dimension-level; no nested `##` unless the JSON defines sub-keys).
+**Technical Writing Manager:** One `#` section per competency key in the manager framework (each key is already dimension-level; no nested `##` unless the JSON defines sub-keys). The manager framework has no separate dimension layer, so no dimension-level roll-up is produced.
 
 # [Dimension label — IC only; omit extra heading for manager if section title equals competency]
+
+**Dimension evaluation:** [Not yet meeting expectations | Meets expectations | Exceeds expectations | Performing at the next level]
+
+**Rationale:** [2-4 sentences rolling up the competency ratings in this dimension per the conservative roll-up rule below; name each competency's rating and the standout signal or the below-bar gap]
 
 ## [competency_key — human-readable label, e.g., Pattern recognition]
 
@@ -286,7 +290,15 @@ This analysis is based on the **VTEX Technical Writer Career Path**, using the *
 
 # Summary
 
-## Evaluation overview
+## Dimension evaluation overview
+
+[IC only; omit for the Technical Writing Manager framework, which has no dimension layer]
+
+| Dimension | Evaluation |
+| --- | --- |
+| [dimension label] | [Not yet meeting expectations \| Meets expectations \| Exceeds expectations \| Performing at the next level] |
+
+## Competency evaluation overview
 
 | Competency | Evaluation |
 | --- | --- |
@@ -302,6 +314,12 @@ This analysis is based on the **VTEX Technical Writer Career Path**, using the *
 ### Competency Analysis Rules:
 
 - **One evaluation per competency** — never leave a competency without an explicit rating from the scale
+- **Dimension roll-up (IC only) — be conservative:** After rating every competency in a dimension, assign the dimension exactly one rating using a **conservative** roll-up. A dimension is rated higher than "Meets expectations" ONLY when its competencies are *consistently* above bar; a single standout competency does not lift the dimension.
+  - **Not yet meeting expectations:** any competency in the dimension is "Not yet meeting expectations" AND the remaining ones do not clearly compensate — err toward flagging the gap; the dimension is at most "Meets expectations" whenever a below-bar competency exists.
+  - **Meets expectations:** competencies are at least a mix of "Meets" and "Exceeds" but NOT consistently above bar (e.g., one "Meets" + one "Exceeds"), or all "Meets". This is the default; when in doubt between two dimension ratings, choose the lower one.
+  - **Exceeds expectations:** ALL competencies in the dimension are rated "Exceeds expectations" (or higher).
+  - **Performing at the next level:** ALL competencies are "Performing at the next level".
+  - In the dimension rationale, name each competency's rating and call out the standout signal (for higher ratings) or the below-bar gap to close first (for lower ratings). Never round a dimension up on the strength of one competency.
 - **Supporting evidence:** 3-5 bullets per competency; link Jira keys/PR numbers in parentheses
 - **Actionable steps to improve (required per competency):**
   - **Not yet meeting expectations → Meets expectations:** Steps to build consistent evidence (specific behaviors, artifact types, cadence, example issue types to own)

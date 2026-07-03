@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+### Added
+- **Dimension-level evaluation (IC track):** The performance analysis report now assigns an explicit rating to each career-path dimension (from `dimensions[]`), shown at the top of each dimension section and in a new "Dimension evaluation overview" table in the Summary. Ratings use a **conservative roll-up**: a dimension exceeds "Meets expectations" only when its competencies are *consistently* above bar (all "Exceeds" for "Exceeds expectations"), a single standout competency never lifts the dimension, and any below-bar competency caps the dimension at "Meets expectations". Not applicable to the Technical Writing Manager track, which has no dimension layer.
+
 ### Changed
 - **Performance analysis report:** Each competency now receives an explicit rating (**Not yet meeting expectations**, **Meets expectations**, **Exceeds expectations**, or **Performing at the next level**) with rationale, supporting evidence, and actionable improvement steps. Replaces per-dimension Strengths/Areas to develop and Summary of alignment sections with an evaluation overview and priority development focus.
 - **Evaluation scale expanded to 4 levels:** Renamed the 3-level scale (Need focus / On Track / Outperform) to a 4-level scale (Not yet meeting expectations / Meets expectations / Exceeds expectations / Performing at the next level). The new top level requires evidence matching the next career level's competency expectations (`levels[nextLevel].competencies[key]`) and is not assignable at the top of each track (Technical Writer L4, Technical Writing Manager L6).

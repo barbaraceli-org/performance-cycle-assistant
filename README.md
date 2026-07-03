@@ -74,8 +74,9 @@ Two reports saved under `reports/[YYYY]/` (one subfolder per calendar year, base
 
 2. **Performance Analysis** (`reports/[YYYY]/performance-analysis-[date-range].md`)
    - Per-competency rating: **Not yet meeting expectations**, **Meets expectations**, **Exceeds expectations**, or **Performing at the next level**
+   - Per-dimension rating (IC track), rolled up **conservatively** from its competencies: a dimension only exceeds "Meets expectations" when its competencies are *consistently* above bar, and any below-bar competency caps the dimension at "Meets expectations"
    - Supporting evidence and actionable steps to improve each rating
-   - Summary with evaluation overview and priority development focus
+   - Summary with dimension and competency evaluation overviews and priority development focus
 
 ## Supported levels
 
