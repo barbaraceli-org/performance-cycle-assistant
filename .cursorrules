@@ -90,10 +90,12 @@ Generate comprehensive performance-cycle reports for Technical Writers and Techn
 
 ## 2. Report Structure
 
-Generate **two separate Markdown reports**:
+Generate **two separate Markdown reports** in a year subfolder under `reports/`:
 
-1. **`reports/work-summary-[date-range].md`** - Accomplishments and unfinished tasks
-2. **`reports/performance-analysis-[date-range].md`** - Competency-based analysis
+- **Year folder:** `reports/[YYYY]/`, where `[YYYY]` is the calendar year of the period **start** date (e.g., `2025-01-01` to `2025-06-30` → `reports/2025/`; `2025-11-01` to `2026-02-28` → `reports/2025/`). Create the subfolder if it does not exist.
+
+1. **`reports/[YYYY]/work-summary-[date-range].md`** - Accomplishments and unfinished tasks
+2. **`reports/[YYYY]/performance-analysis-[date-range].md`** - Competency-based analysis
 
 ---
 
@@ -343,6 +345,6 @@ This analysis is based on the **VTEX Technical Writer Career Path**, using the *
 - No placeholder text (e.g., "Accomplishment 1")
 - Valid Markdown hierarchy (# → ## → ###)
 - Neutral, evidence-based tone throughout
-- Save to `reports/` folder, inform user when complete
+- Save to `reports/[YYYY]/` (year from period start date); create the year subfolder if needed; inform user when complete with full paths
 
 **Priority:** Faithful reflection of activities, clarity, balanced view of accomplishments and development areas.

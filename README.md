@@ -64,15 +64,15 @@ Generate my report for Q1 2025
 
 ## What you get
 
-Two reports saved to `reports/`:
+Two reports saved under `reports/[YYYY]/` (one subfolder per calendar year, based on the period start date):
 
-1. **Work Summary** (`work-summary-[date-range].md`)
+1. **Work Summary** (`reports/[YYYY]/work-summary-[date-range].md`)
    - Jira metrics (completion rate, carryover analysis, scope creep, avg resolution time, etc.)
    - GitHub metrics (PRs, commits, reviews, review-to-author ratio - if configured)
    - Accomplishments by quarter and area
    - Unfinished tasks with semantic blocker analysis and root cause identification
 
-2. **Performance Analysis** (`performance-analysis-[date-range].md`)
+2. **Performance Analysis** (`reports/[YYYY]/performance-analysis-[date-range].md`)
    - Per-competency rating: **Not yet meeting expectations**, **Meets expectations**, **Exceeds expectations**, or **Performing at the next level**
    - Supporting evidence and actionable steps to improve each rating
    - Summary with evaluation overview and priority development focus
@@ -160,6 +160,9 @@ performance-cycle/
 │   ├── example-report-with-metrics.md         # Complete example report
 │   └── additional-context.example.md          # Template for personal local context file
 │
-└── reports/                                   # Generated reports (auto-created)
+└── reports/                                   # Generated reports (auto-created, git-ignored)
+    └── YYYY/                                  # One subfolder per calendar year (period start)
+        ├── work-summary-[date-range].md
+        └── performance-analysis-[date-range].md
 ```
 

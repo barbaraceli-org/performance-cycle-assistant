@@ -2,7 +2,7 @@
 
 This is an example of the personal `context/additional-context.local.md` file that any Technical Writer can create to feed extra evidence into their own performance reports.
 
-> **This file is git-ignored.** Copy it to `context/additional-context.local.md` (or create your own from scratch) — it will never be committed, just like the generated `reports/` folder. See `.gitignore`: `context/*.local.md` and `context/additional-context*.md`.
+> **This file is git-ignored.** Copy it to `context/additional-context.local.md` (or create your own from scratch) — it will never be committed, just like the generated `reports/` folder (including year subfolders such as `reports/2025/`). See `.gitignore`: `context/*.local.md` and `context/additional-context*.md`.
 
 Use it to track activities/evidence that aren't (or can't be) automatically retrieved via the Jira/GitHub queries defined in `.cursorrules` — e.g., issues opened on repos outside the indexed scope, mentoring/community work, strategy docs, presentations, certifications, etc.
 

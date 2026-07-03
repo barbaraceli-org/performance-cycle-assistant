@@ -418,7 +418,7 @@ The assistant will:
    - Generate accomplishment bullets per area
    - Identify unfinished tasks
    - Rate each competency (Not yet meeting expectations / Meets expectations / Exceeds expectations / Performing at the next level) with evidence and actionable improvement steps
-   - Save two separate reports to `reports/`:
+   - Save two separate reports to `reports/[YYYY]/` (year from period start date; create subfolder if needed):
      - `work-summary-[date-range].md`
      - `performance-analysis-[date-range].md`
 
@@ -452,6 +452,8 @@ Expand the "Communication" competency section with more specific examples.
 ---
 
 ## Understanding Your Reports
+
+Reports are saved in year-based subfolders under `reports/` (git-ignored). The folder name is the calendar year of the period **start** date — for example, a Q1 2025 report goes in `reports/2025/`, and a period spanning November 2025 through February 2026 also goes in `reports/2025/`.
 
 ### Work Summary Report
 
@@ -690,7 +692,7 @@ A: Provide your activities manually in the request. The assistant will still gen
 A: Yes! Request multiple reports and ask for comparison analysis.
 
 **Q: How do I share reports with my manager?**  
-A: Reports are saved as Markdown files in `reports/`. Share them directly or convert to PDF.
+A: Reports are saved as Markdown files in `reports/[YYYY]/` (e.g., `reports/2025/work-summary-Q1-2025.md`). Share them directly or convert to PDF.
 
 **Q: Can I customize the competency framework?**  
 A: Yes! Replace `context/technical-writer-career-path.json` with your organization's framework.

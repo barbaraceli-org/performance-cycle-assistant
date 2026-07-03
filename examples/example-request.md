@@ -19,8 +19,8 @@ I'm a Level 3 Technical Writer.
 - Groups work by quarter and area
 - Analyzes against L3 Technical Writer expectations
 - Saves two reports:
-  - `reports/work-summary-2025-H1.md`
-  - `reports/performance-analysis-2025-H1.md`
+  - `reports/2025/work-summary-2025-H1.md`
+  - `reports/2025/performance-analysis-2025-H1.md`
 
 ---
 
