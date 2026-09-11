@@ -46,6 +46,12 @@ Used by both `generate-work-summary` and `generate-performance-analysis`. Read t
 
 ## Automatic Retrieval
 
+0. **`context/additional-context.local.md` (ALWAYS check — not just when the user mentions it):**
+   - Read this file at the start of the workflow, before or alongside the Jira/GitHub retrieval below, for **every** work-summary and performance-analysis request. If the file doesn't exist, skip silently (it's optional/git-ignored).
+   - **Filter by period, per entry:** Parse each entry's `Date(s)` field and keep the entry only if at least one of its dates falls within the requested [[date range]] (inclusive of start and end). Skip entries entirely outside the period silently — do not mention skipped entries in the report. For entries with a date range (e.g., "Opened X, closed Y" or "X to Y"), keep the entry if that range overlaps the requested period at all.
+   - Use each kept entry as supporting evidence in the report per its `Suggested competency linkage` (performance analysis) or matching work area (work summary) — same treatment as a user-referenced Drive doc: it counts toward evidence totals (see evidence-tracking rule in `generate-performance-analysis/SKILL.md`) but is never aggregated into Overview Metrics.
+   - If any entry references a Drive/Slack/GitHub link, resolve it per the relevant source's rules below only if needed to enrich the bullet — the entry's own `Summary`/`Resolution/Outcome` fields are usually sufficient on their own.
+
 1. **Jira activities** (Atlassian MCP):
    - Get Cloud ID: `mcp_Atlassian-MCP-Server_getAccessibleAtlassianResources`
    - Search: `mcp_Atlassian-MCP-Server_searchJiraIssuesUsingJql`
@@ -74,7 +80,7 @@ Used by both `generate-work-summary` and `generate-performance-analysis`. Read t
 4. **Google Drive activities** (Google Drive plugin — additional-context source ONLY, never searched automatically):
    - Purpose: let the user cite specific documentation artifacts (docs, guides, specs, decks) as supporting evidence, without running any automatic Drive-wide search.
    - **DO NOT** call `search_files` or `list_recent_files` to proactively discover documents. Google Drive is not part of automatic retrieval.
-   - Only fetch a Drive file when the user explicitly references it by name, link, or file ID — either directly in the chat request or in their `context/additional-context.local.md` file.
+   - Only fetch a Drive file when the user explicitly references it by name, link, or file ID — either directly in the chat request or in a kept (in-period) entry of their `context/additional-context.local.md` file (see step 0 above).
    - Given a Drive URL or file ID from the user, call `get_file_metadata` and/or `read_file_content` (set `includeComments: true` if useful) to pull the title, summary, and last-modified date needed to write the supporting bullet.
    - If the user only names a document without a link/ID, ask them for the link/ID or the exact title before attempting any lookup — do not guess a `fileId`.
    - Treat each user-provided Drive doc as a single piece of supporting evidence tied to the work area/competency the user associates it with; do not aggregate Drive activity into Overview Metrics.

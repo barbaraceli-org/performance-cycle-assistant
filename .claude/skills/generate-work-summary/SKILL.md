@@ -9,7 +9,8 @@ Extract blocker reasons from issue descriptions, comments, and labels — don't 
 
 ## Steps
 
-1. Read `../_shared/data-collection.md` in full and follow it exactly: validate the Atlassian MCP connection first (mandatory — stop and report if it fails), then retrieve and process Jira/GitHub/Slack/Drive data as described there.
+0. This report is generated together with `generate-performance-analysis` by default for any "generate my performance cycle report" style request — don't ask the user which report(s) they want unless they explicitly asked for only one.
+1. Read `../_shared/data-collection.md` in full and follow it exactly: validate the Atlassian MCP connection first (mandatory — stop and report if it fails), then check `context/additional-context.local.md` (step 0 there, filtered to the requested period) and retrieve/process Jira/GitHub/Slack/Drive data as described there.
 2. Read `../_shared/writing-standards.md` for tone, evidence-linking, and output-location rules.
 3. Build the report using the structure and metrics below.
 4. Save to `reports/[YYYY]/work-summary-[date-range].md` (year folder per `writing-standards.md`).
