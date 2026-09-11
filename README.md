@@ -1,8 +1,8 @@
 # Performance Cycle Report Assistant
 
-Generates performance-cycle reports for Technical Writers and Managers using Jira and GitHub data with competency frameworks. Reports are fully formatted and saved automatically.
+Generates performance-cycle reports for Technical Writers and Managers using Jira, GitHub, and Slack data with competency frameworks, plus optional Google Drive documents you cite as evidence. Reports are fully formatted and saved automatically.
 
-> **Note:** Atlassian Rovo MCP is automatically configured via project `mcp.json`. For GitHub MCP, configure it in your global `~/.cursor/mcp.json` file (see [Setup Guide](docs/SETUP.md)).
+> **Note:** Atlassian Rovo MCP is automatically configured via project `mcp.json`. GitHub MCP is configured in your global `~/.cursor/mcp.json` file, while Slack and Google Drive are connected as Cursor Plugins (see [Setup Guide](docs/SETUP.md)). GitHub and Slack are optional automatic sources; Google Drive is only used when you explicitly reference a document — it's never searched.
 
 ## 🚀 Quick Start
 
@@ -32,7 +32,7 @@ I'm a Level 3 Technical Writing Manager.
 Q2 2025, manager, L3
 ```
 
-> **Note:** Jira and GitHub data are fetched automatically. Mention additional activities not tracked in systems (mentoring, presentations, process improvements, team outcomes, etc.), or add them to your local `context/additional-context.local.md` file (see [Additional Context](#additional-context-local-only) below).
+> **Note:** Jira, GitHub, and Slack data are fetched automatically (GitHub and Slack are optional). Google Drive is never searched automatically — reference a specific doc/link if you want it fetched as evidence. Mention additional activities not tracked in systems (mentoring, presentations, process improvements, team outcomes, etc.), or add them to your local `context/additional-context.local.md` file (see [Additional Context](#additional-context-local-only) below).
 
 ### 📋 Best Practice: Generate Reports by Period
 
@@ -69,7 +69,8 @@ Two reports saved under `reports/[YYYY]/` (one subfolder per calendar year, base
 1. **Work Summary** (`reports/[YYYY]/work-summary-[date-range].md`)
    - Jira metrics (completion rate, carryover analysis, scope creep, avg resolution time, etc.)
    - GitHub metrics (PRs, commits, reviews, review-to-author ratio - if configured)
-   - Accomplishments by quarter and area
+   - Slack metrics (messages/threads, thread-help ratio - if connected)
+   - Accomplishments by quarter and area, including any Google Drive docs you cited as evidence
    - Unfinished tasks with semantic blocker analysis and root cause identification
 
 2. **Performance Analysis** (`reports/[YYYY]/performance-analysis-[date-range].md`)
@@ -77,6 +78,10 @@ Two reports saved under `reports/[YYYY]/` (one subfolder per calendar year, base
    - Per-dimension rating (IC track), rolled up **conservatively** from its competencies: a dimension only exceeds "Meets expectations" when its competencies are *consistently* above bar, and any below-bar competency caps the dimension at "Meets expectations"
    - Supporting evidence and actionable steps to improve each rating
    - Summary with dimension and competency evaluation overviews and priority development focus
+
+### Regenerating a report
+
+Report filenames are derived from the report type and date range, so asking for the same period again targets the same file. The assistant **overwrites by default**, but asks first if the existing report is more than 7 days old or looks hand-edited. If you choose to keep both, the new one is saved as `[report-type]-[date-range]-[YYYY-MM-DD].md` with the regeneration date appended, and the original is never deleted. Either way, the assistant tells you the full path and whether the file was created, overwritten, or saved alongside.
 
 ## Supported levels
 
@@ -97,6 +102,8 @@ Two reports saved under `reports/[YYYY]/` (one subfolder per calendar year, base
 - Jira Cloud access with appropriate permissions
 - Atlassian account (authentication handled automatically via `mcp.json`)
 - GitHub account (optional, for repository contribution tracking) - see [Setup Guide](docs/SETUP.md)
+- Slack workspace account (optional, for communication/mentoring evidence) - see [Setup Guide](docs/SETUP.md)
+- Google account with Drive access (optional, only needed if you cite a specific Doc/Slide/Sheet as evidence) - see [Setup Guide](docs/SETUP.md)
 
 > **Note:** The assistant automatically validates the Jira connection before generating reports. If connection fails, you'll be directed to the [Setup Guide](docs/SETUP.md) for configuration help.
 
@@ -106,29 +113,60 @@ Two reports saved under `reports/[YYYY]/` (one subfolder per calendar year, base
   - Connection is validated automatically before report generation
   - If connection fails, see [Setup Guide](docs/SETUP.md) for configuration help
   - Issue types (Epic, New, Update, Review, Task) are detected automatically - see [Metrics Guide](METRICS_GUIDE.md#issue-type-breakdown)
-- **GitHub** (optional): Automatically included if GitHub MCP is configured (see [Setup Guide](docs/SETUP.md))
+- **GitHub** (optional, automatic): Included if GitHub MCP is configured (see [Setup Guide](docs/SETUP.md))
+- **Slack** (optional, automatic): Included if the Slack plugin is connected — messages, threads, and mentoring/help signals (see [Setup Guide](docs/SETUP.md))
+- **Google Drive** (optional, **manual/additional-context only**): Never searched automatically — fetches a Doc/Slide/Sheet's content only when you reference it by name or link (see [Setup Guide](docs/SETUP.md))
+
+> GitHub and Slack are skipped silently if not connected — only a failed Jira connection blocks report generation. Google Drive has no "connected/not connected" state that affects the run unless you reference a document.
 
 ## Documentation
-- **[Setup Guide](docs/SETUP.md)** — MCP configuration (Jira + GitHub), usage instructions, troubleshooting
+- **[Setup Guide](docs/SETUP.md)** — MCP/plugin configuration (Jira + GitHub + Slack + Google Drive), usage instructions, troubleshooting
 - **[Metrics Guide](METRICS_GUIDE.md)** — all metrics explained: basic + advanced (carryover, review ratios, impact vs. effort, semantic blockers)
 - **[Examples](examples/example-request.md)** — sample requests
-- **[Example report](examples/example-report-with-metrics.md)** — full sample output
+- **[Example work summary](examples/example-report-with-metrics.md)** — full sample output with metrics
+- **[Example performance analysis](examples/example-performance-analysis.md)** — full sample competency evaluation for the same period
 - **[Example additional context](examples/additional-context.example.md)** — template and samples for your personal `context/additional-context.local.md`
 - **[Changelog](CHANGELOG.md)** — release history
+
+## How agents load this project
+
+Cursor and Claude Code read the same files — there are no tool-specific copies to keep in sync.
+
+| File | What it does | When it loads |
+| --- | --- | --- |
+| [AGENTS.md](AGENTS.md) | Non-negotiable rules and project layout | Always |
+| `.claude/skills/generate-work-summary/SKILL.md` | Work summary structure and metrics | When you ask for a work summary |
+| `.claude/skills/generate-performance-analysis/SKILL.md` | Competency evaluation rules | When you ask for a competency evaluation |
+| `.claude/skills/_shared/*.md` | Retrieval and writing rules shared by both | Pulled in by whichever skill is active |
+
+Only `AGENTS.md` is always in context; the skills load on demand based on what you ask for. Cursor reads `AGENTS.md` as a root rule and picks up `.claude/skills/` as [Agent Skills](https://cursor.com/docs/skills) (it loads Claude's skills directory for compatibility), so the legacy `.cursorrules` file is gone and nothing needs to be generated.
+
+### Using this with Claude Code
+
+[CLAUDE.md](CLAUDE.md) is the entry point Claude Code loads automatically; it imports `AGENTS.md` and adds notes on invoking the Skills directly. Project MCP servers live in `.mcp.json` (Claude Code's expected filename); `mcp.json` is the Cursor equivalent with the same Atlassian server.
+
+## Privacy
+
+Your performance data stays on your machine. `.gitignore` already excludes the generated `reports/` folder, your personal `context/*.local.md` and `context/additional-context*.md` files, and common secret/token files. Nothing you generate or paste into your local context file is committed by default — but if you fork or reuse this template, re-check `.gitignore` before your first commit, and keep MCP tokens in your **global** `~/.cursor/mcp.json` rather than in this repo.
 
 
 ## Additional Context (local only)
 
-Each Technical Writer can keep a personal `context/additional-context.local.md` file to track evidence that isn't captured by the automatic Jira/GitHub retrieval — e.g., issues opened on repos outside the indexed scope, mentoring, presentations, or strategy work. This file (and any `context/*.local.md` or `context/additional-context*.md` file) is **git-ignored** and stays on your machine only, just like the generated `reports/` folder.
+Each Technical Writer can keep a personal `context/additional-context.local.md` file to track evidence that isn't captured by the automatic Jira/GitHub/Slack retrieval — e.g., issues opened on repos outside the indexed scope, mentoring, presentations, strategy work, or **Google Drive documents** (Docs/Slides/Sheets) you want cited as evidence. This file (and any `context/*.local.md` or `context/additional-context*.md` file) is **git-ignored** and stays on your machine only, just like the generated `reports/` folder.
 
-When you ask for a report, mention that you have additional context saved, or paste the entries directly, and they'll be folded into the relevant work areas/competencies alongside the automatically retrieved data.
+When you ask for a report, mention that you have additional context saved, or paste the entries directly, and they'll be folded into the relevant work areas/competencies alongside the automatically retrieved data. For Google Drive, either list the doc's link/title in this file or paste the link directly in your chat request — the assistant only fetches a Drive doc when you name it; it never searches Drive on its own.
 
 > **Get started:** See [examples/additional-context.example.md](examples/additional-context.example.md) for the entry template and sample entries. Copy it to `context/additional-context.local.md` to start your own.
 
 ## Customization
+
+Every change is made in one place and picked up by both Cursor and Claude Code — there's nothing to regenerate.
+
 - Replace competency frameworks: `context/technical-writer-career-path.json` (writers) or `context/technical-writing-manager-career-path.json` (managers).
-- Adjust report format and metrics in `.cursorrules` (sections 4.1 and 4.2).
-- Tweak JQL filters in `.cursorrules` section 1 if your Jira workflow differs.
+- Adjust report structure and metrics: `.claude/skills/generate-work-summary/SKILL.md` and `.claude/skills/generate-performance-analysis/SKILL.md`.
+- Tweak JQL filters, status normalization, or work-area clustering: `.claude/skills/_shared/data-collection.md`.
+- Change tone, output location, or the report regeneration policy: `.claude/skills/_shared/writing-standards.md`.
+- Change the always-on rules or project layout: `AGENTS.md`.
 
 ## Jira Configuration
 
@@ -140,13 +178,26 @@ See [Setup Guide](docs/SETUP.md#troubleshooting) for detailed troubleshooting st
 ## Project structure
 ```
 performance-cycle/
-├── .cursorrules                               # Assistant configuration
-├── .gitignore                                 # Git ignore rules
-├── mcp.json                                   # Atlassian MCP configuration (project-level)
+├── AGENTS.md                                  # Source of truth: non-negotiable rules and project layout
+├── CLAUDE.md                                  # Claude Code entry point (imports AGENTS.md)
+├── .gitignore                                 # Git ignore rules (excludes reports/ and local context)
+├── .mcp.json                                  # Atlassian MCP configuration (Claude Code filename)
+├── mcp.json                                   # Atlassian MCP configuration (Cursor filename)
+│                                              # GitHub MCP is global; Slack/Google Drive are plugins;
+│                                              # Google Drive is additional-context only, never auto-searched
 │
 ├── README.md                                  # Overview and quick start (this file)
-├── METRICS_GUIDE.md                           # All metrics: basic + advanced
+├── METRICS_GUIDE.md                           # All metrics: basic + advanced, plus competency mapping
 ├── CHANGELOG.md                               # Release history
+│
+├── .claude/
+│   ├── settings.json                          # Claude Code project settings
+│   └── skills/
+│       ├── _shared/
+│       │   ├── data-collection.md             # Connection validation, retrieval, processing rules
+│       │   └── writing-standards.md           # Tone, output location, regeneration policy
+│       ├── generate-work-summary/SKILL.md     # Work summary structure and metrics
+│       └── generate-performance-analysis/SKILL.md  # Competency evaluation rules
 │
 ├── context/
 │   ├── technical-writer-career-path.json      # Expectations (writers L1–L4)
@@ -158,7 +209,8 @@ performance-cycle/
 │
 ├── examples/
 │   ├── example-request.md                     # Sample requests
-│   ├── example-report-with-metrics.md         # Complete example report
+│   ├── example-report-with-metrics.md         # Complete example work summary
+│   ├── example-performance-analysis.md        # Complete example performance analysis
 │   └── additional-context.example.md          # Template for personal local context file
 │
 └── reports/                                   # Generated reports (auto-created, git-ignored)

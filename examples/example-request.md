@@ -228,7 +228,8 @@ The assistant will automatically include your GitHub activity if configured!
 
 ## 🔗 Next Steps
 
-- **See a complete example:** [example-report-with-metrics.md](example-report-with-metrics.md)
+- **See a complete work summary:** [example-report-with-metrics.md](example-report-with-metrics.md)
+- **See a complete performance analysis:** [example-performance-analysis.md](example-performance-analysis.md)
 - **Understand metrics:** [../METRICS_GUIDE.md](../METRICS_GUIDE.md) - All metrics explained (basic + advanced)
 - **Setup & usage:** [../docs/SETUP.md](../docs/SETUP.md) - Complete guide for setup, usage, and troubleshooting
 - **Quick start:** [../README.md](../README.md) - Project overview and quick start

@@ -7,22 +7,30 @@ Complete guide for setting up, using, and troubleshooting the Performance Cycle 
 1. [Setup](#setup)
    - [Atlassian MCP (Jira)](#atlassian-rovo-mcp-configuration)
    - [GitHub MCP (Optional)](#github-mcp-configuration-optional)
+   - [Slack Plugin (Optional)](#slack-plugin-configuration-optional)
+   - [Google Drive Plugin (Optional)](#google-drive-plugin-configuration-optional)
 2. [How to Use](#how-to-use)
 3. [Understanding Your Reports](#understanding-your-reports)
 4. [GitHub Integration](#github-integration)
-5. [Troubleshooting](#troubleshooting)
-6. [Customization](#customization)
-7. [Best Practices](#best-practices)
+5. [Slack Integration](#slack-integration)
+6. [Google Drive Integration](#google-drive-integration)
+7. [Troubleshooting](#troubleshooting)
+8. [Customization](#customization)
+9. [Best Practices](#best-practices)
 
 ---
 
 ## Setup
 
-This project integrates with two MCP servers:
+This project integrates with these data sources:
 - **Atlassian MCP** (required): Fetches Jira data
-- **GitHub MCP** (optional): Fetches PR, commit, and review data
+- **GitHub MCP** (optional, automatic): Fetches PR, commit, and review data
+- **Slack plugin** (optional, automatic): Fetches messages/threads showing communication, mentoring, and collaboration
+- **Google Drive plugin** (optional, **additional-context only**): Fetches a specific Doc/Slide/Sheet only when you explicitly reference it — never searched automatically
 
-> **✅ Automatic Setup:** This project includes `mcp.json` which automatically configures the Atlassian Rovo MCP. For GitHub MCP, you need to configure it in your global Cursor MCP configuration file (see below).
+> **✅ Automatic Setup:** This project includes `mcp.json` which automatically configures the Atlassian Rovo MCP. For GitHub MCP, you need to configure it in your global Cursor MCP configuration file (see below). Slack and Google Drive are connected as **Cursor Plugins** (a different mechanism from `mcp.json`) — see their dedicated sections below.
+>
+> GitHub and Slack are **optional and automatic**: if either is not connected, the assistant skips it silently and generates the report from the remaining sources — only a failed Jira connection blocks report generation. Google Drive is **optional and manual**: the assistant never searches your Drive on its own; it only fetches a document when you name it or paste its link, the same way you'd add other [additional context](../README.md#additional-context-local-only).
 
 ---
 
@@ -376,11 +384,124 @@ gh auth status
 
 ---
 
+## Slack Plugin Configuration (Optional)
+
+The Slack plugin fetches messages, threads, and canvases to surface communication, mentoring, and cross-team collaboration that Jira/GitHub don't capture. This is **optional** but recommended for technical writers whose collaboration happens primarily in Slack.
+
+### What Gets Tracked
+
+When the Slack plugin is connected, the assistant automatically fetches:
+- Messages/threads you authored in the review period
+- Threads where you replied to someone else's question (mentoring/help signal)
+- Messages mentioning a Jira key (e.g., "EDU-123") or PR number, to link discussion back to specific work areas
+- Canvases you authored or updated
+
+### Prerequisites
+
+- A Slack workspace account
+- The Slack plugin enabled and connected in Cursor
+
+### Step 1: Enable and Connect the Slack Plugin
+
+1. Open **Cursor Settings** (`Ctrl+,`)
+2. Navigate to the plugins/integrations panel (Settings → Tools & Integrations, or Settings → Features → Plugins, depending on your Cursor version)
+3. Find **Slack** in the available plugins and enable it
+4. Follow the prompt to sign in to your Slack workspace and authorize access
+5. Restart Cursor's AI assistant/tools pane if prompted
+
+### Step 2: Verify Configuration
+
+Test the connection in Cursor Chat:
+
+```
+Search Slack for my recent messages
+```
+
+If configured correctly, you should see a list of your recent Slack messages/threads.
+
+### Privacy Note
+
+- Public-channel search (`slack_search_public`) does not require extra consent.
+- Searching private channels and DMs (`slack_search_public_and_private`) requires your explicit consent in Cursor. If you don't grant it, the assistant falls back to public-channel search only and notes the narrower scope in the report.
+
+### Troubleshooting Slack Plugin
+
+**"Slack plugin not found" or tools unavailable:**
+- Verify the plugin is enabled in Cursor Settings and shows as connected
+- Restart Cursor completely (not just the chat pane)
+- Re-authenticate: disconnect and reconnect the Slack plugin
+
+**"No messages found":**
+- Verify you have activity in the requested date range
+- Try a broader query first (e.g., "Show me my recent Slack activity") to confirm the connection works
+- Check whether private/DM search consent is needed for the content you're looking for
+
+**Report shows "Slack: not connected":**
+- This means the assistant detected the plugin was unavailable and skipped it — reports still generate normally using the remaining sources. Reconnect the plugin and regenerate if you want Slack evidence included.
+
+---
+
+## Google Drive Plugin Configuration (Optional, Additional Context Only)
+
+The Google Drive plugin lets you cite a specific Doc, Slide, or Sheet as supporting evidence for a work area or competency. **The assistant never searches your Drive automatically** — it only fetches a document when you explicitly name it or paste its link, exactly like the manual entries in `context/additional-context.local.md`.
+
+### What Gets Fetched
+
+The assistant only touches Google Drive when you reference a document, for example:
+```
+Include this doc as evidence for the API Documentation work area:
+https://docs.google.com/document/d/1AbCdEfGhIjKlMnOpQrStUvWxYz/edit
+```
+or by mentioning it in your `context/additional-context.local.md` file. When referenced, the assistant fetches:
+- The document's title and last-modified date (metadata)
+- A content summary (via `read_file_content`), used to write a one-line supporting-evidence bullet
+
+No automatic search, listing, or aggregation of your Drive files ever happens.
+
+### Prerequisites
+
+- A Google account with Drive access
+- The Google Drive plugin enabled and connected in Cursor (only needed at the moment you reference a doc)
+
+### Step 1: Enable and Connect the Google Drive Plugin
+
+1. Open **Cursor Settings** (`Ctrl+,`)
+2. Navigate to the plugins/integrations panel (Settings → Tools & Integrations, or Settings → Features → Plugins, depending on your Cursor version)
+3. Find **Google Drive** in the available plugins and enable it
+4. Follow the prompt to sign in to your Google account and authorize Drive access
+5. Restart Cursor's AI assistant/tools pane if prompted
+
+### Step 2: Verify Configuration
+
+Test the connection in Cursor Chat by referencing one specific file you own:
+
+```
+Read this Google Doc for me: <paste a Drive link>
+```
+
+If configured correctly, you should see a summary of that document's content.
+
+### Troubleshooting Google Drive Plugin
+
+**"Google Drive plugin not found" or tools unavailable:**
+- Verify the plugin is enabled in Cursor Settings and shows as connected
+- Restart Cursor completely (not just the chat pane)
+- Re-authenticate: disconnect and reconnect the Google Drive plugin
+
+**"File not found" when referencing a doc:**
+- Double-check the link/ID you provided is correct and you have access to the file
+- Try pasting the full Drive URL rather than just the title
+
+**Report shows "Google Drive: not connected — couldn't fetch [title/link]":**
+- This means you referenced a doc but the plugin was unavailable — the report still generates normally, using your own description of the document as evidence instead. Reconnect the plugin and regenerate if you want the fetched content included.
+
+---
+
 ## How to Use
 
 > **Note:** The Atlassian Rovo MCP is automatically configured via `mcp.json` in this project. No setup required!
 >
-> **Callout:** Always state whether you are an individual contributor or a manager. IC (Technical Writer) levels end at **L3**; the manager track starts at **L3**. Use "technical writer", "tech writer", "ic", or "individual collaborator" for IC roles, and "technical writing manager" or "manager" for manager roles.
+> **Callout:** Always state whether you are an individual contributor or a manager. The IC (Technical Writer) track progresses up to **L4**; the manager track starts at **L3** and goes up to **L6**. Use "technical writer", "tech writer", "ic", or "individual collaborator" for IC roles, and "technical writing manager" or "manager" for manager roles.
 >
 > **Frameworks:** IC requests use `context/technical-writer-career-path.json`; manager requests use `context/technical-writing-manager-career-path.json` (includes Management expectations). Your stated role selects the correct competencies for analysis.
 
@@ -413,6 +534,8 @@ The assistant will:
 2. **Only if connection succeeds:**
    - Fetch your Jira issues (created, updated, or resolved in date range)
    - Fetch your GitHub activity (if configured): PRs, commits, reviews
+   - Fetch your Slack activity (if the plugin is connected): messages, threads, mentoring/help signals
+   - Fetch any specific Google Drive document you referenced by name/link (never searched automatically)
    - Group by calendar quarters (Q1-Q4)
    - Cluster into work areas (based on components, labels, themes, repositories)
    - Generate accomplishment bullets per area
@@ -426,7 +549,7 @@ The assistant will:
 
 1. **Keep Jira updated** - Add meaningful descriptions, labels, and components
 2. **Provide context** - Mention non-Jira/GitHub activities, special projects, challenges
-3. **Be specific** - State your role and exact level (Technical Writer L1/L2/L3 or Technical Writing Manager L3/L4/L5/L6)
+3. **Be specific** - State your role and exact level (Technical Writer L1/L2/L3/L4 or Technical Writing Manager L3/L4/L5/L6)
 4. **Review and iterate** - Ask for refinements or additional detail
 
 ### Advanced Usage
@@ -454,6 +577,17 @@ Expand the "Communication" competency section with more specific examples.
 ## Understanding Your Reports
 
 Reports are saved in year-based subfolders under `reports/` (git-ignored). The folder name is the calendar year of the period **start** date — for example, a Q1 2025 report goes in `reports/2025/`, and a period spanning November 2025 through February 2026 also goes in `reports/2025/`.
+
+### Regenerating a report for the same period
+
+Filenames are derived from the report type and date range, so regenerating a period targets the file that already exists. The policy is:
+
+- **Overwrite by default** — no `-v2` suffixes or timestamped copies are created automatically.
+- **You're asked first** if the existing report is more than 7 days old (it may already have been shared or annotated) or if it looks hand-edited.
+- **If you choose to keep both**, the new report is saved as `[report-type]-[date-range]-[YYYY-MM-DD].md`, where the suffix is the regeneration date. The original is never deleted.
+- The assistant always states the full path and whether the file was created, overwritten, or saved alongside an existing one.
+
+Because `reports/` is git-ignored, there's no version history for these files — if you want to keep a specific version, ask for it to be saved alongside rather than overwritten.
 
 ### Work Summary Report
 
@@ -614,6 +748,87 @@ Use only Jira data, skip GitHub.
 
 ---
 
+## Slack Integration
+
+The Slack plugin integration automatically captures communication, mentoring, and cross-team collaboration evidence when connected.
+
+### What Gets Tracked
+
+When the Slack plugin is connected, the assistant automatically fetches:
+
+1. **Messages/Threads Authored**
+   - Messages/threads you posted during the review period
+   - Channel and permalink for each result
+
+2. **Threads Helped/Answered**
+   - Threads started by someone else where you replied
+   - Used to compute the thread-help ratio (mentoring signal)
+
+3. **Jira/PR Mentions**
+   - Messages mentioning a Jira key (e.g., "EDU-123") or PR number
+   - Linked back to the corresponding work area/bullet
+
+4. **Canvases**
+   - Canvases you authored or updated, when relevant to a work area
+
+### How Slack Work Appears in Reports
+
+Slack-sourced evidence is folded into existing Jira/GitHub bullets when a Jira key or PR number is mentioned, or added as a standalone "non-Jira activity" bullet (e.g., mentoring, cross-team support) when it isn't. Slack metrics appear in the Overview Metrics section (if the plugin is connected) and in the "Communication"/"Collaboration" competency evidence.
+
+**Example accomplishment:**
+```markdown
+- Helped unblock 4 teammates on API documentation formatting questions across #dev-docs threads
+```
+
+**Optional: Disable Slack integration temporarily:**
+```
+Generate my Q2 report. I'm L2 IC.
+Skip Slack, use only Jira and GitHub.
+```
+
+---
+
+## Google Drive Integration
+
+Unlike GitHub and Slack, the Google Drive plugin is **never used for automatic retrieval**. It exists purely to let you cite a specific Doc/Slide/Sheet as evidence — the same role as `context/additional-context.local.md`, but with the assistant fetching the actual content for you instead of you pasting it in.
+
+### What Gets Fetched (Only When You Reference a Document)
+
+1. **A named/linked document**
+   - You provide a title, file ID, or Drive link in your request, or list it in `context/additional-context.local.md`
+   - The assistant fetches title, last-modified date, and a content summary for that one file
+
+2. **No automatic discovery**
+   - The assistant never calls Drive-wide search or "list recent files" to find evidence on its own
+   - If you don't reference a document, Google Drive is not touched at all during report generation
+
+### How Google Drive Work Appears in Reports
+
+A user-referenced Drive doc becomes a single supporting-evidence bullet under the work area/competency you associate it with. There is no "Google Drive Activity" Overview Metrics section and no aggregate counts — it's evidence, not a tracked metric source.
+
+**Example request:**
+```
+Generate my Q2 report. I'm L2 IC.
+
+Also include this doc as evidence for Documentation Strategy:
+https://docs.google.com/document/d/1AbCdEfGhIjKlMnOpQrStUvWxYz/edit
+```
+
+**Example resulting accomplishment:**
+```markdown
+- Authored the Q2 documentation style guide (Google Doc), later adopted across 3 work areas
+```
+
+**If you don't reference any Drive documents, Google Drive is simply not part of the report — no setup or connection is required.**
+
+**Optional: Disable Google Drive integration temporarily:**
+```
+Generate my Q2 report. I'm L2 IC.
+Skip Google Drive, use only Jira and GitHub.
+```
+
+---
+
 ## Customization
 
 ### For Your Organization
@@ -624,12 +839,18 @@ Use only Jira data, skip GitHub.
    - Add your organization's levels and expectations
 
 2. **Adjust metrics:**
-   - Edit `.cursorrules` section 4.2
+   - Edit the "Metrics Calculation" section of `.claude/skills/generate-work-summary/SKILL.md`
    - Customize which metrics to include/exclude
 
 3. **Modify report structure:**
-   - Edit `.cursorrules` sections 4.1 and 5.1
+   - Edit the "Structure" section of `.claude/skills/generate-work-summary/SKILL.md` or `.claude/skills/generate-performance-analysis/SKILL.md`
    - Adjust bullet counts, sections, or formatting
+
+4. **Adjust retrieval or writing rules shared by both reports:**
+   - JQL, status normalization, work-area clustering: `.claude/skills/_shared/data-collection.md`
+   - Tone, output location, report regeneration policy: `.claude/skills/_shared/writing-standards.md`
+
+> **Note:** There's nothing to regenerate after these edits. Cursor and Claude Code both read `AGENTS.md` and `.claude/skills/` directly, so a change in one place applies to both tools on the next request.
 
 ### For Your Workflow
 
@@ -697,7 +918,7 @@ A: Reports are saved as Markdown files in `reports/[YYYY]/` (e.g., `reports/2025
 **Q: Can I customize the competency framework?**  
 A: Yes! Replace `context/technical-writer-career-path.json` with your organization's framework.
 
-**Q: What if my level isn't L1, L2, or L3?**  
+**Q: What if my level isn't L1-L4 (writers) or L3-L6 (managers)?**  
 A: Update the JSON file with your organization's levels and expectations.
 
 ---
@@ -705,7 +926,8 @@ A: Update the JSON file with your organization's levels and expectations.
 ## Next Steps
 
 - **[Metrics Guide](../METRICS_GUIDE.md)** - Understand all metrics (basic + advanced)
-- **[Examples](../examples/example-report-with-metrics.md)** - See a complete example report
+- **[Example work summary](../examples/example-report-with-metrics.md)** - See a complete example report
+- **[Example performance analysis](../examples/example-performance-analysis.md)** - See a complete competency evaluation
 - **[README](../README.md)** - Project overview and quick start
 - **[Changelog](../CHANGELOG.md)** - Release history and updates
 
