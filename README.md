@@ -2,7 +2,7 @@
 
 Generates performance-cycle reports for Technical Writers and Managers using Jira, GitHub, and Slack data with competency frameworks, plus optional Google Drive documents you cite as evidence. Reports are fully formatted and saved automatically.
 
-> **Note:** Atlassian Rovo MCP is automatically configured via project `mcp.json`. GitHub MCP is configured in your global `~/.cursor/mcp.json` file, while Slack and Google Drive are connected as Cursor Plugins (see [Setup Guide](docs/SETUP.md)). GitHub and Slack are optional automatic sources; Google Drive is only used when you explicitly reference a document — it's never searched.
+> **Note:** Atlassian Rovo MCP is automatically configured via the project's `.mcp.json`. GitHub, Slack, and Google Drive are connected as Cursor Plugins (see [Setup Guide](docs/SETUP.md)). Jira and GitHub are required; Slack is an optional automatic source; Google Drive is only used when you explicitly reference a document — it's never searched.
 
 ## 🚀 Quick Start
 
@@ -32,7 +32,7 @@ I'm a Level 3 Technical Writing Manager.
 Q2 2025, manager, L3
 ```
 
-> **Note:** Jira, GitHub, and Slack data are fetched automatically (GitHub and Slack are optional). Google Drive is never searched automatically — reference a specific doc/link if you want it fetched as evidence. Mention additional activities not tracked in systems (mentoring, presentations, process improvements, team outcomes, etc.), or add them to your local `context/additional-context.local.md` file (see [Additional Context](#additional-context-local-only) below).
+> **Note:** Jira, GitHub, and Slack data are fetched automatically (Jira and GitHub are required; Slack is optional). Google Drive is never searched automatically — reference a specific doc/link if you want it fetched as evidence. Mention additional activities not tracked in systems (mentoring, presentations, process improvements, team outcomes, etc.), or add them to your local `context/additional-context.local.md` file (see [Additional Context](#additional-context-local-only) below).
 
 ### 📋 Best Practice: Generate Reports by Period
 
@@ -68,7 +68,7 @@ Two reports saved under `reports/[YYYY]/` (one subfolder per calendar year, base
 
 1. **Work Summary** (`reports/[YYYY]/work-summary-[date-range].md`)
    - Jira metrics (completion rate, carryover analysis, scope creep, avg resolution time, etc.)
-   - GitHub metrics (PRs, commits, reviews, review-to-author ratio - if configured)
+   - GitHub metrics (PRs, commits, reviews, review-to-author ratio)
    - Slack metrics (messages/threads, thread-help ratio - if connected)
    - Accomplishments by quarter and area, including any Google Drive docs you cited as evidence
    - Unfinished tasks with semantic blocker analysis and root cause identification
@@ -100,12 +100,12 @@ Report filenames are derived from the report type and date range, so asking for 
 ## Prerequisites
 - Cursor IDE (latest)
 - Jira Cloud access with appropriate permissions
-- Atlassian account (authentication handled automatically via `mcp.json`)
-- GitHub account (optional, for repository contribution tracking) - see [Setup Guide](docs/SETUP.md)
+- Atlassian account (authentication handled automatically via `.mcp.json`)
+- GitHub account with the GitHub plugin connected (required, for repository contribution tracking) - see [Setup Guide](docs/SETUP.md)
 - Slack workspace account (optional, for communication/mentoring evidence) - see [Setup Guide](docs/SETUP.md)
 - Google account with Drive access (optional, only needed if you cite a specific Doc/Slide/Sheet as evidence) - see [Setup Guide](docs/SETUP.md)
 
-> **Note:** The assistant automatically validates the Jira connection before generating reports. If connection fails, you'll be directed to the [Setup Guide](docs/SETUP.md) for configuration help.
+> **Note:** The assistant automatically validates the Jira and GitHub connections before generating reports. If either fails, you'll be directed to the [Setup Guide](docs/SETUP.md) for configuration help.
 
 ## Data Sources
 
@@ -113,11 +113,13 @@ Report filenames are derived from the report type and date range, so asking for 
   - Connection is validated automatically before report generation
   - If connection fails, see [Setup Guide](docs/SETUP.md) for configuration help
   - Issue types (Epic, New, Update, Review, Task) are detected automatically - see [Metrics Guide](METRICS_GUIDE.md#issue-type-breakdown)
-- **GitHub** (optional, automatic): Included if GitHub MCP is configured (see [Setup Guide](docs/SETUP.md))
+- **GitHub** (required, automatic): Fetched via the GitHub plugin (see [Setup Guide](docs/SETUP.md))
+  - Connection is validated automatically before report generation
+  - If connection fails, see [Setup Guide](docs/SETUP.md) for configuration help
 - **Slack** (optional, automatic): Included if the Slack plugin is connected — messages, threads, and mentoring/help signals (see [Setup Guide](docs/SETUP.md))
 - **Google Drive** (optional, **manual/additional-context only**): Never searched automatically — fetches a Doc/Slide/Sheet's content only when you reference it by name or link (see [Setup Guide](docs/SETUP.md))
 
-> GitHub and Slack are skipped silently if not connected — only a failed Jira connection blocks report generation. Google Drive has no "connected/not connected" state that affects the run unless you reference a document.
+> Slack is skipped silently if not connected — a failed Jira or GitHub connection blocks report generation. Google Drive has no "connected/not connected" state that affects the run unless you reference a document.
 
 ## Documentation
 - **[Setup Guide](docs/SETUP.md)** — MCP/plugin configuration (Jira + GitHub + Slack + Google Drive), usage instructions, troubleshooting
@@ -143,7 +145,7 @@ Only `AGENTS.md` is always in context; the skills load on demand based on what y
 
 ### Using this with Claude Code
 
-[CLAUDE.md](CLAUDE.md) is the entry point Claude Code loads automatically; it imports `AGENTS.md` and adds notes on invoking the Skills directly. Project MCP servers live in `.mcp.json` (Claude Code's expected filename); `mcp.json` is the Cursor equivalent with the same Atlassian server.
+[CLAUDE.md](CLAUDE.md) is the entry point Claude Code loads automatically; it imports `AGENTS.md` and adds notes on invoking the Skills directly. Project MCP servers live in `.mcp.json`, which Cursor and Claude Code both read — there's no tool-specific copy to keep in sync.
 
 ## Privacy
 
@@ -181,9 +183,8 @@ performance-cycle/
 ├── AGENTS.md                                  # Source of truth: non-negotiable rules and project layout
 ├── CLAUDE.md                                  # Claude Code entry point (imports AGENTS.md)
 ├── .gitignore                                 # Git ignore rules (excludes reports/ and local context)
-├── .mcp.json                                  # Atlassian MCP configuration (Claude Code filename)
-├── mcp.json                                   # Atlassian MCP configuration (Cursor filename)
-│                                              # GitHub MCP is global; Slack/Google Drive are plugins;
+├── .mcp.json                                  # Atlassian MCP configuration (read by Cursor and Claude Code)
+│                                              # GitHub/Slack/Google Drive are plugins;
 │                                              # Google Drive is additional-context only, never auto-searched
 │
 ├── README.md                                  # Overview and quick start (this file)

@@ -4,7 +4,7 @@ This guide explains the quantitative metrics automatically included in your work
 
 ## Overview
 
-The Performance Cycle Report Assistant automatically calculates and includes quantitative metrics from Jira, GitHub, and Slack (if configured) at three levels. Google Drive documents you explicitly reference are included as supporting evidence, but are not part of automatic metric calculation:
+The Performance Cycle Report Assistant automatically calculates and includes quantitative metrics from Jira, GitHub, and Slack (Slack only if connected) at three levels. Google Drive documents you explicitly reference are included as supporting evidence, but are not part of automatic metric calculation:
 
 1. **Overall metrics** - Summary of all work during the review period
 2. **Per-quarter metrics** - Breakdown by calendar quarter
@@ -13,8 +13,8 @@ The Performance Cycle Report Assistant automatically calculates and includes qua
 ## Data Sources
 
 - **Jira** (required): Task tracking, issue management, project work
-- **GitHub** (optional): Pull requests, code reviews, documentation commits
-  - Automatically included if GitHub MCP server is configured
+- **GitHub** (required): Pull requests, code reviews, documentation commits
+  - Automatically included via the GitHub plugin, which must be connected
   - See [Setup Guide](docs/SETUP.md) for GitHub configuration
 - **Slack** (optional): Messages, threads, and canvases showing communication, mentoring, and collaboration
   - Automatically included if the Slack plugin is connected
@@ -79,9 +79,9 @@ Shows how work was prioritized:
 
 Helps demonstrate focus on high-impact work.
 
-### GitHub Metrics (Optional)
+### GitHub Metrics
 
-These metrics track your GitHub contributions when GitHub MCP is configured:
+These metrics track your GitHub contributions:
 
 | Metric | Definition | Why It Matters |
 |--------|------------|----------------|

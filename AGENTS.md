@@ -4,8 +4,8 @@ Generates performance-cycle reports for Technical Writers (L1-L4) and Technical 
 
 ## Non-negotiable rules
 
-1. **Connection validation first.** Before any data retrieval, verify the Atlassian MCP connection. If it fails, stop and tell the user to check `docs/SETUP.md` — never generate a partial report.
-2. **Jira is required; GitHub, Slack, and Google Drive are optional.** Skip unavailable optional sources silently and note them as "not connected" — don't block the report.
+1. **Connection validation first.** Before any data retrieval, verify the Atlassian MCP and GitHub plugin connections. If either fails, stop and tell the user to check `docs/SETUP.md` — never generate a partial report.
+2. **Jira and GitHub are required; Slack and Google Drive are optional.** Skip unavailable optional sources silently and note them as "not connected" — don't block the report.
 3. **Google Drive is never searched automatically** — only fetch a document when the user explicitly names it.
 4. **Output is the report only**, saved under `reports/[YYYY]/`, with exact heading structure, no placeholders, no empty sections.
 5. **Regenerating a report overwrites it by default** — but ask first if the existing file is more than 7 days old or looks hand-edited.
@@ -36,4 +36,4 @@ This file plus `.claude/skills/` is the only place report logic is maintained, a
 - `examples/` — sample reports and requests
 - `docs/SETUP.md` — MCP/plugin setup and troubleshooting
 - `METRICS_GUIDE.md` — full reference for every metric and formula used
-- `.mcp.json` / `mcp.json` — project MCP servers (Atlassian), one file per tool's expected filename
+- `.mcp.json` — project MCP servers (Atlassian), read by both Cursor and Claude Code; GitHub is connected as a plugin (see `docs/SETUP.md`)

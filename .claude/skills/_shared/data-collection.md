@@ -10,23 +10,30 @@ Used by both `generate-work-summary` and `generate-performance-analysis`. Read t
    - Call `mcp_Atlassian-MCP-Server_getAccessibleAtlassianResources` immediately
    - If the call fails or returns an error, **STOP immediately** and inform the user
 
-2. **If connection fails:**
+2. **Test GitHub connection:**
+   - Call `get_me` (GitHub plugin) immediately
+   - If the call fails, returns an error, or the GitHub plugin isn't connected, **STOP immediately** and inform the user
+
+3. **If either connection fails:**
    - **DO NOT proceed** with report generation
    - **DO NOT attempt** to retrieve Jira data
    - **DO NOT attempt** to retrieve GitHub or Slack data
    - **DO NOT generate** any reports or partial reports
    - **STOP all processing** and wait for user input
-   - Inform the user: "Unable to connect to Jira. Please check your Atlassian MCP server connection. See `docs/SETUP.md` for configuration instructions."
-   - Reference the setup documentation: The project includes an MCP config for automatic configuration (`.mcp.json` for Claude Code, `mcp.json` for Cursor). If connection fails, check:
-     - Verify the MCP config exists in the project root with the Atlassian MCP configuration
-     - Check your tool's MCP settings
+   - Inform the user which connection failed:
+     - Jira: "Unable to connect to Jira. Please check your Atlassian MCP server connection. See `docs/SETUP.md` for configuration instructions."
+     - GitHub: "Unable to connect to GitHub. Please connect the GitHub plugin. See `docs/SETUP.md` for configuration instructions."
+   - Reference the setup documentation: The project's `.mcp.json` configures Atlassian automatically for both Cursor and Claude Code; GitHub is connected as a plugin. If connection fails, check:
+     - Verify `.mcp.json` exists in the project root with the Atlassian MCP configuration
+     - Verify the GitHub plugin is installed and authenticated (or, on GitHub Enterprise Cloud, that the fallback GitHub MCP server is configured in your global MCP config with a valid Personal Access Token)
+     - Check your tool's MCP and plugin settings
      - Restart the tool completely after configuration changes
      - See `docs/SETUP.md` for complete setup instructions and troubleshooting
    - **Wait for the user to fix the connection before proceeding**
 
-3. **If connection succeeds:**
+4. **If both connections succeed:**
    - Proceed with normal data retrieval below
-   - GitHub and Slack are **optional automatic** evidence sources: if either plugin/connection is unavailable or returns errors, skip that source silently, note it as "not connected" in the report's data-source context, and continue with the remaining sources. Only a failed Jira connection blocks the whole run.
+   - Slack is an **optional automatic** evidence source: if the plugin/connection is unavailable or returns errors, skip that source silently, note it as "not connected" in the report's data-source context, and continue with the remaining sources. Only a failed Jira or GitHub connection blocks the whole run.
    - Google Drive is **never searched automatically**. It is only used to fetch a specific document when the user explicitly references it (see item 4 below).
 
 **This check is mandatory and must happen before ANY data retrieval attempts (Jira, GitHub, OR Slack).**
@@ -49,10 +56,10 @@ Used by both `generate-work-summary` and `generate-performance-analysis`. Read t
    - Fields: `["summary", "description", "status", "issuetype", "priority", "created", "updated", "resolutiondate", "labels", "components", "changelog"]`
    - Extract "in progress" date: changelog → updated date → comment dates → created date (track fallback method)
 
-2. **GitHub activities** (GitHub MCP, if available):
-   - PRs authored: `mcp_github_search_pull_requests` with `author:@me created:YYYY-MM-DD..YYYY-MM-DD`
-   - PRs reviewed: `mcp_github_search_pull_requests` with `reviewed-by:@me created:YYYY-MM-DD..YYYY-MM-DD`
-   - Commits: `mcp_github_search_commits` with `author:@me committer-date:YYYY-MM-DD..YYYY-MM-DD`
+2. **GitHub activities** (GitHub plugin — required source):
+   - PRs authored: `search_pull_requests` with `author:@me created:YYYY-MM-DD..YYYY-MM-DD`
+   - PRs reviewed: `search_pull_requests` with `reviewed-by:@me created:YYYY-MM-DD..YYYY-MM-DD`
+   - Commits: `search_commits` with `author:@me committer-date:YYYY-MM-DD..YYYY-MM-DD`
    - Filter documentation files: `*.md`, `**/docs/**`, `**/documentation/**`, `README*`, `CONTRIBUTING*`
 
 3. **Slack activities** (Slack plugin, if connected — optional evidence source):
