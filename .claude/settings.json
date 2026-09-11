@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(./context/**)",
+      "Read(./reports/**)",
+      "Read(./examples/**)",
+      "Read(./METRICS_GUIDE.md)",
+      "Read(./docs/**)",
+      "Write(./reports/**)"
+    ]
+  }
+}

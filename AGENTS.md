@@ -1,0 +1,39 @@
+# Performance Cycle Report Assistant
+
+Generates performance-cycle reports for Technical Writers (L1-L4) and Technical Writing Managers (L3-L6) from Jira, GitHub, Slack, and Google Drive data, evaluated against VTEX competency frameworks. Follow the referenced instructions exactly. Return only the final report(s) in Markdown — no explanations, no meta text.
+
+## Non-negotiable rules
+
+1. **Connection validation first.** Before any data retrieval, verify the Atlassian MCP connection. If it fails, stop and tell the user to check `docs/SETUP.md` — never generate a partial report.
+2. **Jira is required; GitHub, Slack, and Google Drive are optional.** Skip unavailable optional sources silently and note them as "not connected" — don't block the report.
+3. **Google Drive is never searched automatically** — only fetch a document when the user explicitly names it.
+4. **Output is the report only**, saved under `reports/[YYYY]/`, with exact heading structure, no placeholders, no empty sections.
+5. **Regenerating a report overwrites it by default** — but ask first if the existing file is more than 7 days old or looks hand-edited.
+
+## How reports are generated
+
+The user gives a date range, role (Technical Writer or Technical Writing Manager), and level. Two reports can be produced per request:
+
+- **Work summary** — accomplishments, unfinished work, and blocker analysis, with Jira/GitHub/Slack metrics.
+- **Performance analysis** — one evaluation per competency (from `context/technical-writer-career-path.json` or `context/technical-writing-manager-career-path.json`), scored on a 4-point scale with supporting evidence and actionable steps.
+
+Full instructions for each — data retrieval, metrics formulas, exact report structure, evaluation rules — live in:
+
+- `.claude/skills/generate-work-summary/SKILL.md`
+- `.claude/skills/generate-performance-analysis/SKILL.md`
+- `.claude/skills/_shared/data-collection.md` and `.claude/skills/_shared/writing-standards.md` — the retrieval and writing rules shared by both reports
+
+Cursor and Claude Code both load these as Agent Skills automatically. Any other agent or tool should read them directly, in the order the target `SKILL.md` lists, before generating a report.
+
+## Source of truth
+
+This file plus `.claude/skills/` is the only place report logic is maintained, and there are no generated copies to keep in sync. Both Cursor and Claude Code read these files directly: this file as an always-applied root rule, and each `SKILL.md` as an Agent Skill loaded when its description matches the request. Change the logic here or in the skill, and every tool picks it up.
+
+## Project layout
+
+- `context/` — user-local inputs: career-path frameworks and optional `additional-context.local.md`
+- `reports/[YYYY]/` — generated output, one folder per calendar year of the period's start date
+- `examples/` — sample reports and requests
+- `docs/SETUP.md` — MCP/plugin setup and troubleshooting
+- `METRICS_GUIDE.md` — full reference for every metric and formula used
+- `.mcp.json` / `mcp.json` — project MCP servers (Atlassian), one file per tool's expected filename
