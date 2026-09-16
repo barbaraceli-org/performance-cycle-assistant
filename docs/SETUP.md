@@ -6,23 +6,31 @@ Complete guide for setting up, using, and troubleshooting the Performance Cycle 
 
 1. [Setup](#setup)
    - [Atlassian MCP (Jira)](#atlassian-rovo-mcp-configuration)
-   - [GitHub MCP (Optional)](#github-mcp-configuration-optional)
+   - [GitHub Plugin (Required)](#github-plugin-configuration-required)
+   - [Slack Plugin (Optional)](#slack-plugin-configuration-optional)
+   - [Google Drive Plugin (Optional)](#google-drive-plugin-configuration-optional)
 2. [How to Use](#how-to-use)
 3. [Understanding Your Reports](#understanding-your-reports)
 4. [GitHub Integration](#github-integration)
-5. [Troubleshooting](#troubleshooting)
-6. [Customization](#customization)
-7. [Best Practices](#best-practices)
+5. [Slack Integration](#slack-integration)
+6. [Google Drive Integration](#google-drive-integration)
+7. [Troubleshooting](#troubleshooting)
+8. [Customization](#customization)
+9. [Best Practices](#best-practices)
 
 ---
 
 ## Setup
 
-This project integrates with two MCP servers:
+This project integrates with these data sources:
 - **Atlassian MCP** (required): Fetches Jira data
-- **GitHub MCP** (optional): Fetches PR, commit, and review data
+- **GitHub plugin** (required, automatic): Fetches PR, commit, and review data
+- **Slack plugin** (optional, automatic): Fetches messages/threads showing communication, mentoring, and collaboration
+- **Google Drive plugin** (optional, **additional-context only**): Fetches a specific Doc/Slide/Sheet only when you explicitly reference it — never searched automatically
 
-> **✅ Automatic Setup:** This project includes `mcp.json` which automatically configures the Atlassian Rovo MCP. For GitHub MCP, you need to configure it in your global Cursor MCP configuration file (see below).
+> **✅ Automatic Setup:** This project includes `.mcp.json` which automatically configures the Atlassian Rovo MCP. GitHub, Slack, and Google Drive are connected as **Cursor Plugins** (a different mechanism from `.mcp.json`) — see their dedicated sections below.
+>
+> Jira and GitHub are **required and automatic**: if either is not connected, the assistant stops and asks you to fix the connection instead of generating a partial report. Slack is **optional and automatic**: if it's not connected, the assistant skips it silently and generates the report from the remaining sources. Google Drive is **optional and manual**: the assistant never searches your Drive on its own; it only fetches a document when you name it or paste its link, the same way you'd add other [additional context](../README.md#additional-context-local-only).
 
 ---
 
@@ -38,7 +46,7 @@ The Atlassian Rovo MCP (Model Context Protocol) server automatically fetches Jir
 
 ### Automatic Configuration
 
-The `mcp.json` file in this project automatically configures the Atlassian MCP when you open the project in Cursor:
+The `.mcp.json` file in this project automatically configures the Atlassian MCP when you open the project in Cursor:
 
 ```json
 {
@@ -196,71 +204,71 @@ Add the same JSON configuration as shown in Step 2.
 
 ---
 
-## GitHub MCP Configuration (Optional)
+## GitHub Plugin Configuration (Required)
 
-The GitHub MCP server fetches pull requests, commits, code reviews, and repository contributions. This is **optional** but recommended for technical writers who work in code repositories.
+The GitHub plugin fetches pull requests, commits, code reviews, and repository contributions. This is **required** — the assistant validates the GitHub connection before retrieving any data and won't generate a report without it.
 
-> **📝 Global Configuration Required:** GitHub MCP must be configured in your **global** Cursor MCP configuration file (`~/.cursor/mcp.json` on Mac/Linux, `C:\Users\YourName\.cursor\mcp.json` on Windows). This keeps your token secure and makes GitHub MCP available across all projects.
+> **📝 Use the plugin, not a token.** The GitHub plugin signs you in through GitHub's own authorization flow, so there's no Personal Access Token to generate, store, rotate, or revoke. This is the same mechanism used by the Slack and Google Drive plugins below. A token-based fallback for GitHub Enterprise Cloud is documented at the end of this section.
+
+### What Gets Tracked
+
+When the GitHub plugin is connected, the assistant automatically fetches:
+- Pull requests you authored in the review period (merged, open, closed)
+- Pull requests you reviewed for others
+- Commits to documentation files
+- The repositories you contributed to
+
+See [GitHub Integration](#github-integration) for the full breakdown and how this work appears in reports.
 
 ### Prerequisites
 
 - GitHub account with access to relevant repositories
-- GitHub Personal Access Token (PAT)
+- The GitHub plugin enabled and connected in Cursor
 
-### Security: Token Management
+### Step 1: Enable and Connect the GitHub Plugin
 
-**⚠️ NEVER commit GitHub tokens to Git!**
+1. Open **Cursor Settings** (`Ctrl+,`)
+2. Navigate to the plugins/integrations panel (Settings → Tools & Integrations, or Settings → Features → Plugins, depending on your Cursor version)
+3. Find **GitHub** in the available plugins and enable it
+4. Follow the prompt to sign in to GitHub and authorize access to the organizations whose repositories you need
+5. Restart Cursor's AI assistant/tools pane if prompted
 
-The GitHub MCP server requires authentication using a Personal Access Token. You'll add the token directly to your global MCP configuration file, which is stored outside your project directory and never committed to Git.
+> **Organization access:** If your documentation repos live in an org that requires approval for third-party access, the authorization step may need an org admin to approve it. Without that approval the plugin connects but returns no results for those repos.
 
-### Step 1: Generate a GitHub Personal Access Token
+### Step 2: Verify Configuration
 
-1. Go to https://github.com/settings/tokens
-2. Click **"Generate new token (classic)"**
-3. Give it a descriptive name (e.g., "Cursor Performance Cycle Reports")
-4. Select scopes:
-   - ✅ `repo` - Full control of private repositories
-   - ✅ `read:org` - Read org and team membership
-   - ✅ `read:user` - Read user profile data
-5. Click **"Generate token"**
-6. **Copy the token immediately** (you won't see it again)
+Test the connection in Cursor Chat:
 
-### Step 2: Configure GitHub MCP in Global Settings
-
-**Locate your global MCP configuration file:**
-
-- **Windows:** `C:\Users\YourName\.cursor\mcp.json`
-- **Mac/Linux:** `~/.cursor/mcp.json`
-
-**If the file doesn't exist, create it.**
-
-**Add GitHub MCP configuration:**
-
-Open the file and add the GitHub MCP server configuration. If you already have other MCP servers configured, add the `github` entry to the existing `mcpServers` object:
-
-```json
-{
-  "mcpServers": {
-    "github": {
-      "url": "https://api.githubcopilot.com/mcp/",
-      "headers": {
-        "Authorization": "Bearer YOUR_GITHUB_PAT"
-      }
-    }
-  }
-}
+```
+Show me my recent GitHub pull requests
 ```
 
-**Replace `YOUR_GITHUB_PAT` with your actual Personal Access Token from Step 1.**
+If configured correctly, you should see your recent PRs.
 
-**Important:**
-- Keep the `Bearer ` prefix
-- Keep the quotes around the entire value
-- Your token should start with `ghp_` (classic tokens) or `github_pat_` (fine-grained tokens)
+### Troubleshooting the GitHub Plugin
 
-**For GitHub Enterprise:**
+**"GitHub plugin not found" or tools unavailable:**
+- Verify the plugin is enabled in Cursor Settings and shows as connected
+- Restart Cursor completely (not just the chat pane)
+- Re-authenticate: disconnect and reconnect the GitHub plugin
 
-If using GitHub Enterprise Cloud, change the URL:
+**"No pull requests found":**
+- Verify you have PRs in the date range
+- Check repository permissions, and confirm org access was approved during authorization
+- Try a broader query first (e.g., "Show me my GitHub activity") to confirm the connection works
+- Ensure you're authenticated to the correct GitHub account
+
+**Report generation stops with "Unable to connect to GitHub":**
+- GitHub is a required source, so the assistant stops rather than generating a partial report. Reconnect the plugin and request the report again.
+
+### Fallback: GitHub MCP Server with a Personal Access Token
+
+Use this only if the plugin can't reach your GitHub instance — most commonly on **GitHub Enterprise Cloud**. It requires you to manage a token yourself, which is why it isn't the default.
+
+**⚠️ NEVER commit GitHub tokens to Git.** Configure this in your **global** Cursor MCP configuration file (`~/.cursor/mcp.json` on Mac/Linux, `C:\Users\YourName\.cursor\mcp.json` on Windows), which lives outside the project directory — never in the project's `.mcp.json`.
+
+1. Generate a token at https://github.com/settings/tokens with the `repo`, `read:org`, and `read:user` scopes, and copy it immediately.
+2. Add a `github` entry to the `mcpServers` object in your global config:
 
 ```json
 {
@@ -275,79 +283,18 @@ If using GitHub Enterprise Cloud, change the URL:
 }
 ```
 
-### Step 3: Save and Restart Cursor
+   Use `https://api.githubcopilot.com/mcp/` as the URL for github.com rather than Enterprise Cloud. Keep the `Bearer ` prefix; tokens start with `ghp_` (classic) or `github_pat_` (fine-grained).
+3. Save the file, quit Cursor completely, and restart.
 
-1. **Save** the global `mcp.json` file
-2. **Close Cursor completely** (not just the window - fully quit the application)
-3. **Restart Cursor**
-4. The GitHub MCP will now be available in all your projects
+**Token hygiene:** rotate tokens periodically, prefer fine-grained tokens with minimal scopes, never share the config file or paste tokens into screenshots, and if a token is exposed, revoke it at https://github.com/settings/tokens before issuing a replacement.
 
-### Verify GitHub Configuration
+**If the token route fails:** check that the token hasn't expired, that the JSON syntax is valid, that the `Bearer ` prefix and scopes are correct, and that you fully restarted Cursor.
 
-Test the connection in Cursor Chat:
-
-```
-Show me my recent GitHub pull requests
-```
-
-If configured correctly, you should see your recent PRs.
-
-### Security Best Practices
-
-**DO:**
-- ✅ Store tokens in your global `~/.cursor/mcp.json` (not in project files)
-- ✅ Add `.cursor/` to `.gitignore` if you version control your home directory
-- ✅ Rotate tokens periodically
-- ✅ Use fine-grained tokens with minimal scopes when possible
-- ✅ Revoke tokens immediately if compromised
-- ✅ Keep your global MCP config file private
-
-**DON'T:**
-- ❌ Commit tokens to Git (global config is outside project directory)
-- ❌ Share tokens in screenshots or documentation
-- ❌ Use tokens with more permissions than needed
-- ❌ Store tokens in project-level `mcp.json` files
-- ❌ Share your global MCP configuration file
-
-### Troubleshooting GitHub MCP
-
-#### "GitHub MCP not found"
-
-**Solution:**
-- Verify GitHub MCP is configured in your **global** `~/.cursor/mcp.json` file (Windows: `C:\Users\YourName\.cursor\mcp.json`)
-- Ensure you've **fully restarted Cursor** after configuration (quit completely, not just close the window)
-- Check that the token in the config file is valid and not expired
-- Verify the JSON syntax is correct (use a JSON validator if needed)
-- Make sure the file path is correct for your operating system
-
-#### "Authentication failed"
-
-**Solution:**
-- Verify your token is valid: https://github.com/settings/tokens
-- Check token has required scopes (`repo`, `read:org`, `read:user`)
-- Regenerate token if expired
-- Ensure the token in your global `mcp.json` file is correct (check for typos, extra spaces, or missing `Bearer ` prefix)
-
-#### "No pull requests found"
-
-**Solution:**
-- Verify you have PRs in the date range
-- Check repository permissions
-- Try: "Show me my GitHub activity"
-- Ensure you're authenticated to the correct GitHub account
-
-#### Token Compromised?
-
-**Immediate action:**
-1. Go to https://github.com/settings/tokens
-2. Find and **revoke** the compromised token
-3. Generate a new token
-4. Update the token in your global `~/.cursor/mcp.json` file
-5. Restart Cursor
+> **Note:** When you use this fallback, the assistant's GitHub tools are namespaced under the server name instead of the plugin. The retrieval steps in `.claude/skills/_shared/data-collection.md` name the plugin's tools (`get_me`, `search_pull_requests`, `search_commits`); the equivalents here are the same tools exposed by the `github` MCP server.
 
 ### Alternative: GitHub CLI Authentication
 
-If you have GitHub CLI installed, you can use it for authentication. However, the recommended approach is to use the hosted GitHub MCP server with a Personal Access Token as described above.
+If you have GitHub CLI installed, you can use it as another token-free option, though the plugin above is the recommended path.
 
 If you prefer GitHub CLI, add this to your global `~/.cursor/mcp.json`:
 
@@ -376,11 +323,124 @@ gh auth status
 
 ---
 
+## Slack Plugin Configuration (Optional)
+
+The Slack plugin fetches messages, threads, and canvases to surface communication, mentoring, and cross-team collaboration that Jira/GitHub don't capture. This is **optional** but recommended for technical writers whose collaboration happens primarily in Slack.
+
+### What Gets Tracked
+
+When the Slack plugin is connected, the assistant automatically fetches:
+- Messages/threads you authored in the review period
+- Threads where you replied to someone else's question (mentoring/help signal)
+- Messages mentioning a Jira key (e.g., "EDU-123") or PR number, to link discussion back to specific work areas
+- Canvases you authored or updated
+
+### Prerequisites
+
+- A Slack workspace account
+- The Slack plugin enabled and connected in Cursor
+
+### Step 1: Enable and Connect the Slack Plugin
+
+1. Open **Cursor Settings** (`Ctrl+,`)
+2. Navigate to the plugins/integrations panel (Settings → Tools & Integrations, or Settings → Features → Plugins, depending on your Cursor version)
+3. Find **Slack** in the available plugins and enable it
+4. Follow the prompt to sign in to your Slack workspace and authorize access
+5. Restart Cursor's AI assistant/tools pane if prompted
+
+### Step 2: Verify Configuration
+
+Test the connection in Cursor Chat:
+
+```
+Search Slack for my recent messages
+```
+
+If configured correctly, you should see a list of your recent Slack messages/threads.
+
+### Privacy Note
+
+- Public-channel search (`slack_search_public`) does not require extra consent.
+- Searching private channels and DMs (`slack_search_public_and_private`) requires your explicit consent in Cursor. If you don't grant it, the assistant falls back to public-channel search only and notes the narrower scope in the report.
+
+### Troubleshooting Slack Plugin
+
+**"Slack plugin not found" or tools unavailable:**
+- Verify the plugin is enabled in Cursor Settings and shows as connected
+- Restart Cursor completely (not just the chat pane)
+- Re-authenticate: disconnect and reconnect the Slack plugin
+
+**"No messages found":**
+- Verify you have activity in the requested date range
+- Try a broader query first (e.g., "Show me my recent Slack activity") to confirm the connection works
+- Check whether private/DM search consent is needed for the content you're looking for
+
+**Report shows "Slack: not connected":**
+- This means the assistant detected the plugin was unavailable and skipped it — reports still generate normally using the remaining sources. Reconnect the plugin and regenerate if you want Slack evidence included.
+
+---
+
+## Google Drive Plugin Configuration (Optional, Additional Context Only)
+
+The Google Drive plugin lets you cite a specific Doc, Slide, or Sheet as supporting evidence for a work area or competency. **The assistant never searches your Drive automatically** — it only fetches a document when you explicitly name it or paste its link, exactly like the manual entries in `context/additional-context.local.md`.
+
+### What Gets Fetched
+
+The assistant only touches Google Drive when you reference a document, for example:
+```
+Include this doc as evidence for the API Documentation work area:
+https://docs.google.com/document/d/1AbCdEfGhIjKlMnOpQrStUvWxYz/edit
+```
+or by mentioning it in your `context/additional-context.local.md` file. When referenced, the assistant fetches:
+- The document's title and last-modified date (metadata)
+- A content summary (via `read_file_content`), used to write a one-line supporting-evidence bullet
+
+No automatic search, listing, or aggregation of your Drive files ever happens.
+
+### Prerequisites
+
+- A Google account with Drive access
+- The Google Drive plugin enabled and connected in Cursor (only needed at the moment you reference a doc)
+
+### Step 1: Enable and Connect the Google Drive Plugin
+
+1. Open **Cursor Settings** (`Ctrl+,`)
+2. Navigate to the plugins/integrations panel (Settings → Tools & Integrations, or Settings → Features → Plugins, depending on your Cursor version)
+3. Find **Google Drive** in the available plugins and enable it
+4. Follow the prompt to sign in to your Google account and authorize Drive access
+5. Restart Cursor's AI assistant/tools pane if prompted
+
+### Step 2: Verify Configuration
+
+Test the connection in Cursor Chat by referencing one specific file you own:
+
+```
+Read this Google Doc for me: <paste a Drive link>
+```
+
+If configured correctly, you should see a summary of that document's content.
+
+### Troubleshooting Google Drive Plugin
+
+**"Google Drive plugin not found" or tools unavailable:**
+- Verify the plugin is enabled in Cursor Settings and shows as connected
+- Restart Cursor completely (not just the chat pane)
+- Re-authenticate: disconnect and reconnect the Google Drive plugin
+
+**"File not found" when referencing a doc:**
+- Double-check the link/ID you provided is correct and you have access to the file
+- Try pasting the full Drive URL rather than just the title
+
+**Report shows "Google Drive: not connected — couldn't fetch [title/link]":**
+- This means you referenced a doc but the plugin was unavailable — the report still generates normally, using your own description of the document as evidence instead. Reconnect the plugin and regenerate if you want the fetched content included.
+
+---
+
 ## How to Use
 
-> **Note:** The Atlassian Rovo MCP is automatically configured via `mcp.json` in this project. No setup required!
+> **Note:** The Atlassian Rovo MCP is automatically configured via `.mcp.json` in this project. No setup required!
 >
-> **Callout:** Always state whether you are an individual contributor or a manager. IC (Technical Writer) levels end at **L3**; the manager track starts at **L3**. Use "technical writer", "tech writer", "ic", or "individual collaborator" for IC roles, and "technical writing manager" or "manager" for manager roles.
+> **Callout:** Always state whether you are an individual contributor or a manager. The IC (Technical Writer) track progresses up to **L4**; the manager track starts at **L3** and goes up to **L6**. Use "technical writer", "tech writer", "ic", or "individual collaborator" for IC roles, and "technical writing manager" or "manager" for manager roles.
 >
 > **Frameworks:** IC requests use `context/technical-writer-career-path.json`; manager requests use `context/technical-writing-manager-career-path.json` (includes Management expectations). Your stated role selects the correct competencies for analysis.
 
@@ -405,14 +465,16 @@ gh auth status
 ### What Happens Automatically
 
 The assistant will:
-1. **Validate Jira connection** (automatic check before proceeding)
-   - Tests Atlassian MCP connection
-   - **If connection fails, stops immediately and does NOT proceed with any data retrieval or report generation**
+1. **Validate Jira and GitHub connections** (automatic check before proceeding)
+   - Tests the Atlassian MCP and GitHub plugin connections
+   - **If either connection fails, stops immediately and does NOT proceed with any data retrieval or report generation**
    - Provides setup instructions and references this guide for configuration help
    - **Waits for you to fix the connection before proceeding**
-2. **Only if connection succeeds:**
+2. **Only if both connections succeed:**
    - Fetch your Jira issues (created, updated, or resolved in date range)
-   - Fetch your GitHub activity (if configured): PRs, commits, reviews
+   - Fetch your GitHub activity: PRs, commits, reviews
+   - Fetch your Slack activity (if the plugin is connected): messages, threads, mentoring/help signals
+   - Fetch any specific Google Drive document you referenced by name/link (never searched automatically)
    - Group by calendar quarters (Q1-Q4)
    - Cluster into work areas (based on components, labels, themes, repositories)
    - Generate accomplishment bullets per area
@@ -426,7 +488,7 @@ The assistant will:
 
 1. **Keep Jira updated** - Add meaningful descriptions, labels, and components
 2. **Provide context** - Mention non-Jira/GitHub activities, special projects, challenges
-3. **Be specific** - State your role and exact level (Technical Writer L1/L2/L3 or Technical Writing Manager L3/L4/L5/L6)
+3. **Be specific** - State your role and exact level (Technical Writer L1/L2/L3/L4 or Technical Writing Manager L3/L4/L5/L6)
 4. **Review and iterate** - Ask for refinements or additional detail
 
 ### Advanced Usage
@@ -454,6 +516,17 @@ Expand the "Communication" competency section with more specific examples.
 ## Understanding Your Reports
 
 Reports are saved in year-based subfolders under `reports/` (git-ignored). The folder name is the calendar year of the period **start** date — for example, a Q1 2025 report goes in `reports/2025/`, and a period spanning November 2025 through February 2026 also goes in `reports/2025/`.
+
+### Regenerating a report for the same period
+
+Filenames are derived from the report type and date range, so regenerating a period targets the file that already exists. The policy is:
+
+- **Overwrite by default** — no `-v2` suffixes or timestamped copies are created automatically.
+- **You're asked first** if the existing report is more than 7 days old (it may already have been shared or annotated) or if it looks hand-edited.
+- **If you choose to keep both**, the new report is saved as `[report-type]-[date-range]-[YYYY-MM-DD].md`, where the suffix is the regeneration date. The original is never deleted.
+- The assistant always states the full path and whether the file was created, overwritten, or saved alongside an existing one.
+
+Because `reports/` is git-ignored, there's no version history for these files — if you want to keep a specific version, ask for it to be saved alongside rather than overwritten.
 
 ### Work Summary Report
 
@@ -506,11 +579,11 @@ See **[METRICS_GUIDE.md](../METRICS_GUIDE.md)** for complete details on:
 
 ## GitHub Integration
 
-The GitHub MCP integration automatically captures your documentation work in code repositories when configured.
+The GitHub integration automatically captures your documentation work in code repositories.
 
 ### What Gets Tracked
 
-When GitHub MCP is configured, the assistant automatically fetches:
+The assistant automatically fetches:
 
 1. **Pull Requests Authored**
    - All PRs you created during the review period
@@ -606,10 +679,87 @@ Focus on:
 - Documentation reviews for the engineering team
 ```
 
-**Optional: Disable GitHub integration temporarily:**
+> **Note:** GitHub can't be skipped. It's a required source, so the assistant always fetches it and stops if the connection fails.
+
+---
+
+## Slack Integration
+
+The Slack plugin integration automatically captures communication, mentoring, and cross-team collaboration evidence when connected.
+
+### What Gets Tracked
+
+When the Slack plugin is connected, the assistant automatically fetches:
+
+1. **Messages/Threads Authored**
+   - Messages/threads you posted during the review period
+   - Channel and permalink for each result
+
+2. **Threads Helped/Answered**
+   - Threads started by someone else where you replied
+   - Used to compute the thread-help ratio (mentoring signal)
+
+3. **Jira/PR Mentions**
+   - Messages mentioning a Jira key (e.g., "EDU-123") or PR number
+   - Linked back to the corresponding work area/bullet
+
+4. **Canvases**
+   - Canvases you authored or updated, when relevant to a work area
+
+### How Slack Work Appears in Reports
+
+Slack-sourced evidence is folded into existing Jira/GitHub bullets when a Jira key or PR number is mentioned, or added as a standalone "non-Jira activity" bullet (e.g., mentoring, cross-team support) when it isn't. Slack metrics appear in the Overview Metrics section (if the plugin is connected) and in the "Communication"/"Collaboration" competency evidence.
+
+**Example accomplishment:**
+```markdown
+- Helped unblock 4 teammates on API documentation formatting questions across #dev-docs threads
+```
+
+**Optional: Disable Slack integration temporarily:**
 ```
 Generate my Q2 report. I'm L2 IC.
-Use only Jira data, skip GitHub.
+Skip Slack, use only Jira and GitHub.
+```
+
+---
+
+## Google Drive Integration
+
+Unlike GitHub and Slack, the Google Drive plugin is **never used for automatic retrieval**. It exists purely to let you cite a specific Doc/Slide/Sheet as evidence — the same role as `context/additional-context.local.md`, but with the assistant fetching the actual content for you instead of you pasting it in.
+
+### What Gets Fetched (Only When You Reference a Document)
+
+1. **A named/linked document**
+   - You provide a title, file ID, or Drive link in your request, or list it in `context/additional-context.local.md`
+   - The assistant fetches title, last-modified date, and a content summary for that one file
+
+2. **No automatic discovery**
+   - The assistant never calls Drive-wide search or "list recent files" to find evidence on its own
+   - If you don't reference a document, Google Drive is not touched at all during report generation
+
+### How Google Drive Work Appears in Reports
+
+A user-referenced Drive doc becomes a single supporting-evidence bullet under the work area/competency you associate it with. There is no "Google Drive Activity" Overview Metrics section and no aggregate counts — it's evidence, not a tracked metric source.
+
+**Example request:**
+```
+Generate my Q2 report. I'm L2 IC.
+
+Also include this doc as evidence for Documentation Strategy:
+https://docs.google.com/document/d/1AbCdEfGhIjKlMnOpQrStUvWxYz/edit
+```
+
+**Example resulting accomplishment:**
+```markdown
+- Authored the Q2 documentation style guide (Google Doc), later adopted across 3 work areas
+```
+
+**If you don't reference any Drive documents, Google Drive is simply not part of the report — no setup or connection is required.**
+
+**Optional: Disable Google Drive integration temporarily:**
+```
+Generate my Q2 report. I'm L2 IC.
+Skip Google Drive, use only Jira and GitHub.
 ```
 
 ---
@@ -624,12 +774,18 @@ Use only Jira data, skip GitHub.
    - Add your organization's levels and expectations
 
 2. **Adjust metrics:**
-   - Edit `.cursorrules` section 4.2
+   - Edit the "Metrics Calculation" section of `.claude/skills/generate-work-summary/SKILL.md`
    - Customize which metrics to include/exclude
 
 3. **Modify report structure:**
-   - Edit `.cursorrules` sections 4.1 and 5.1
+   - Edit the "Structure" section of `.claude/skills/generate-work-summary/SKILL.md` or `.claude/skills/generate-performance-analysis/SKILL.md`
    - Adjust bullet counts, sections, or formatting
+
+4. **Adjust retrieval or writing rules shared by both reports:**
+   - JQL, status normalization, work-area clustering: `.claude/skills/_shared/data-collection.md`
+   - Tone, output location, report regeneration policy: `.claude/skills/_shared/writing-standards.md`
+
+> **Note:** There's nothing to regenerate after these edits. Cursor and Claude Code both read `AGENTS.md` and `.claude/skills/` directly, so a change in one place applies to both tools on the next request.
 
 ### For Your Workflow
 
@@ -697,7 +853,7 @@ A: Reports are saved as Markdown files in `reports/[YYYY]/` (e.g., `reports/2025
 **Q: Can I customize the competency framework?**  
 A: Yes! Replace `context/technical-writer-career-path.json` with your organization's framework.
 
-**Q: What if my level isn't L1, L2, or L3?**  
+**Q: What if my level isn't L1-L4 (writers) or L3-L6 (managers)?**  
 A: Update the JSON file with your organization's levels and expectations.
 
 ---
@@ -705,7 +861,8 @@ A: Update the JSON file with your organization's levels and expectations.
 ## Next Steps
 
 - **[Metrics Guide](../METRICS_GUIDE.md)** - Understand all metrics (basic + advanced)
-- **[Examples](../examples/example-report-with-metrics.md)** - See a complete example report
+- **[Example work summary](../examples/example-report-with-metrics.md)** - See a complete example report
+- **[Example performance analysis](../examples/example-performance-analysis.md)** - See a complete competency evaluation
 - **[README](../README.md)** - Project overview and quick start
 - **[Changelog](../CHANGELOG.md)** - Release history and updates
 

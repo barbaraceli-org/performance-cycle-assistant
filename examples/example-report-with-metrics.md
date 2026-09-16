@@ -13,6 +13,7 @@ This example shows what a work summary report looks like with the quantitative m
 - Understand the new advanced metrics
 
 **Related:**
+- [Example performance analysis](example-performance-analysis.md) - The companion report for this same period
 - [Example Requests](example-request.md) - How to request reports
 - [Metrics Guide](../METRICS_GUIDE.md) - Understanding all metrics (basic + advanced)
 - [Setup & Usage](../docs/SETUP.md) - Complete guide

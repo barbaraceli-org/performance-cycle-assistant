@@ -73,7 +73,7 @@ Also include:
 - Shows mentoring and leadership
 - Demonstrates professional development
 
-**Note:** If GitHub MCP is configured, your PRs, commits, and reviews are automatically included!
+**Note:** Your GitHub PRs, commits, and reviews are automatically included — GitHub is a required connection.
 
 ---
 
@@ -167,7 +167,7 @@ Highlight differences in volume and focus areas.
 ### ❌ DON'T Need To:
 
 - List Jira issues manually (automatic)
-- List GitHub PRs manually (automatic if configured)
+- List GitHub PRs manually (automatic)
 - Export data (automatic)
 - Mention the expectations file (automatic)
 - Calculate metrics (automatic)
@@ -204,7 +204,7 @@ Also include:
 
 ## 🐙 GitHub Integration Examples
 
-If you have GitHub MCP configured, you can explicitly mention GitHub work:
+GitHub is required and always fetched, but you can explicitly steer which GitHub work to emphasize:
 
 ```
 Generate my H1 2025 report.
@@ -222,13 +222,14 @@ Focus on:
 Generate my Q2 2025 report. I'm L2 IC.
 ```
 
-The assistant will automatically include your GitHub activity if configured!
+The assistant always includes your GitHub activity.
 
 ---
 
 ## 🔗 Next Steps
 
-- **See a complete example:** [example-report-with-metrics.md](example-report-with-metrics.md)
+- **See a complete work summary:** [example-report-with-metrics.md](example-report-with-metrics.md)
+- **See a complete performance analysis:** [example-performance-analysis.md](example-performance-analysis.md)
 - **Understand metrics:** [../METRICS_GUIDE.md](../METRICS_GUIDE.md) - All metrics explained (basic + advanced)
 - **Setup & usage:** [../docs/SETUP.md](../docs/SETUP.md) - Complete guide for setup, usage, and troubleshooting
 - **Quick start:** [../README.md](../README.md) - Project overview and quick start

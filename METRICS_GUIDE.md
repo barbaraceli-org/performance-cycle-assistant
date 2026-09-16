@@ -4,7 +4,7 @@ This guide explains the quantitative metrics automatically included in your work
 
 ## Overview
 
-The Performance Cycle Report Assistant automatically calculates and includes quantitative metrics from Jira and GitHub (if configured) at three levels:
+The Performance Cycle Report Assistant automatically calculates and includes quantitative metrics from Jira, GitHub, and Slack (Slack only if connected) at three levels. Google Drive documents you explicitly reference are included as supporting evidence, but are not part of automatic metric calculation:
 
 1. **Overall metrics** - Summary of all work during the review period
 2. **Per-quarter metrics** - Breakdown by calendar quarter
@@ -13,9 +13,16 @@ The Performance Cycle Report Assistant automatically calculates and includes qua
 ## Data Sources
 
 - **Jira** (required): Task tracking, issue management, project work
-- **GitHub** (optional): Pull requests, code reviews, documentation commits
-  - Automatically included if GitHub MCP server is configured
+- **GitHub** (required): Pull requests, code reviews, documentation commits
+  - Automatically included via the GitHub plugin, which must be connected
   - See [Setup Guide](docs/SETUP.md) for GitHub configuration
+- **Slack** (optional): Messages, threads, and canvases showing communication, mentoring, and collaboration
+  - Automatically included if the Slack plugin is connected
+  - See [Setup Guide](docs/SETUP.md) for Slack configuration
+- **Google Drive** (optional, additional-context only): A Doc/Slide/Sheet is fetched only when you explicitly reference it by name or link
+  - Never searched or aggregated automatically — no "Google Drive Metrics" are computed
+  - Appears as a supporting-evidence bullet for the work area/competency you name, the same way manual entries in `context/additional-context.local.md` do
+  - See [Setup Guide](docs/SETUP.md) for Google Drive configuration
 
 ## Metric Definitions
 
@@ -72,9 +79,9 @@ Shows how work was prioritized:
 
 Helps demonstrate focus on high-impact work.
 
-### GitHub Metrics (Optional)
+### GitHub Metrics
 
-These metrics track your GitHub contributions when GitHub MCP is configured:
+These metrics track your GitHub contributions:
 
 | Metric | Definition | Why It Matters |
 |--------|------------|----------------|
@@ -98,6 +105,37 @@ These metrics track your GitHub contributions when GitHub MCP is configured:
 - Contributions by repository
 - PR counts per repo
 - Documentation files modified per repo
+
+### Slack Metrics (Optional)
+
+These metrics track your Slack communication and collaboration when the Slack plugin is connected:
+
+| Metric | Definition | Why It Matters |
+|--------|------------|----------------|
+| **Messages/threads authored** | Distinct messages/threads you posted in the period | Shows communication volume and engagement |
+| **Threads helped/answered** | Threads started by someone else where you replied | Demonstrates mentoring and cross-team support |
+| **Threads started (asked for help)** | Threads you started asking for help | Baseline for the help ratio below |
+| **Thread-help ratio** | Threads helped/answered ÷ threads started | Mirrors the GitHub review-to-author ratio - >1.5 indicates "Force Multiplier" behavior via async support; <0.5 may indicate limited team engagement |
+| **Jira/PR mentions found** | Messages containing a Jira key or PR number | Links Slack discussion back to specific work areas |
+| **Channel distribution** | Breakdown of activity by channel | Shows breadth of cross-team engagement |
+
+**Notes:**
+- If the user hasn't granted consent for private-channel/DM search, only public-channel activity is included, and the report notes the narrower scope.
+- If the Slack plugin isn't connected, this section is omitted entirely rather than shown as zero.
+
+### Google Drive Evidence (Optional, Additional Context Only)
+
+Google Drive is **not a metrics source** — there's no automatic search, aggregation, or dedicated Overview Metrics subsection for it. Instead, when you explicitly reference a Doc/Slide/Sheet (by name or link, in your request or in `context/additional-context.local.md`), the assistant:
+
+| What happens | Why It Matters |
+|--------------|-----------------|
+| Fetches the document's title, last-modified date, and a content summary | Confirms the artifact exists and captures enough detail for a supporting-evidence bullet |
+| Adds one supporting-evidence bullet under the work area/competency you named | Surfaces documentation artifacts (style guides, specs, decks) without needing them tracked in Jira/GitHub |
+| Links the doc to a Jira key/work area only if you or the doc's content clearly indicate one | Keeps the link accurate instead of guessing from a broad search |
+
+**Notes:**
+- If you don't reference any Drive documents, this source contributes nothing to the report — no "not connected" note, no empty section.
+- If you reference a doc but the plugin isn't connected, the report notes "Google Drive: not connected — couldn't fetch [title/link]" and falls back to your own description of the document.
 
 ### Per-Quarter Metrics
 
@@ -307,7 +345,7 @@ This approach provides a fairer view of your productivity by including all work 
 
 **Review-to-author ratio >1.5 (GitHub)**: "Force Multiplier" behavior - unblocking others more than creating own work. Key trait for L2/L3 Technical Writers.
 
-**Review-to-author ratio <0.5 (GitHub)**: May indicate siloed work or limited team collaboration. Development area for Communication competency.
+**Review-to-author ratio <0.5 (GitHub)**: May indicate siloed work or limited team collaboration. Development area for `strategic_influence` (Communication) and `ecosystem_collaboration` (Responsibility & Scope).
 
 **Fast PR merge time (GitHub)**: Indicates efficient collaboration and clear documentation
 
@@ -374,7 +412,7 @@ If you have questions about:
 - **How to interpret your results**: See "Using Metrics in Performance Reviews" above
 - **Advanced metrics deep dive**: See "Advanced Metrics Deep Dive" section above
 - **Quick metric lookup**: See "Advanced Metrics Quick Reference" section above
-- **Customizing metrics**: Modify `.cursorrules` section 4.2
+- **Customizing metrics**: Edit the "Metrics Calculation" section of `.claude/skills/generate-work-summary/SKILL.md`
 
 ---
 
@@ -443,20 +481,20 @@ The following advanced metrics were introduced in December 2025 to provide deepe
 
 | Ratio | Interpretation | Level Alignment |
 |-------|---------------|-----------------|
-| **>1.5** | Force Multiplier - unblocking others more than creating own work | L2/L3 "Responsibility & Scope" |
+| **>1.5** | Force Multiplier — unblocking others more than creating own work | L2/L3 `ecosystem_collaboration` (Responsibility & Scope) |
 | **0.8-1.5** | Balanced contribution - appropriate mix of creation and review | L1-L2 |
 | **<0.5** | Potential siloed work or limited team collaboration | Development area |
 
-**Competency Mapping:**
+**Competency Mapping** (IC keys; see [Competency vocabulary mapping](#competency-vocabulary-mapping) for manager equivalents):
 
 **High ratio (>1.5) provides evidence for:**
-- **Responsibility & Scope** - Supporting team success beyond individual contributions
-- **Communication** - Active engagement with team members
-- **Technical Writing** - Providing technical review and guidance
+- **`ecosystem_collaboration`** (Responsibility & Scope) - Supporting team success beyond individual contributions
+- **`strategic_influence`** (Communication) - Active engagement with team members
+- **`content_quality`** (Writing) - Providing technical review and guidance
 
 **Low ratio (<0.5) may indicate development needs in:**
-- **Communication** - Limited peer interaction
-- **Responsibility & Scope** - Focus on individual work over team support
+- **`strategic_influence`** (Communication) - Limited peer interaction
+- **`ecosystem_collaboration`** (Responsibility & Scope) - Focus on individual work over team support
 
 **Example:**
 ```markdown
@@ -468,9 +506,9 @@ The following advanced metrics were introduced in December 2025 to provide deepe
 - L2/L3 trait: Responsibility beyond individual contributions
 
 **Competency evidence:**
-- Responsibility & Scope: Supporting team velocity through reviews
-- Communication: Active engagement across 8 repositories
-- Technical Writing: Providing technical guidance to peers
+- `ecosystem_collaboration`: Supporting team velocity through reviews
+- `strategic_influence`: Active engagement across 8 repositories
+- `content_quality`: Providing technical guidance to peers
 ```
 
 ---
@@ -538,7 +576,7 @@ The system automatically flags outliers:
 
 **Use in Performance Analysis:**
 
-**Autonomy & Execution competency:**
+**`decision_making` and `execution_and_delivery_reliability` (Autonomy & Execution):**
 - Effective prioritization: High-priority work receives appropriate attention
 - Efficiency: Effort aligns with priority and business impact
 - Judgment: Recognizing when to invest deeply vs. move quickly
@@ -590,7 +628,7 @@ Instead of just listing "Blocked" issues, the system:
 
 **Use in Performance Analysis:**
 
-**Responsibility & Scope competency:**
+**`operational_excellence` (Responsibility & Scope):**
 - **Recurring blockers** → Assess ability to escalate and resolve systemic issues
 - **Diverse blockers** → Context-dependent challenges requiring adaptability
 - **Mitigation strategies** → Proactive problem-solving and process improvement
@@ -609,24 +647,42 @@ Instead of just listing "Blocked" issues, the system:
 
 ## Using Advanced Metrics in Performance Reviews
 
+### Competency vocabulary mapping
+
+Metrics are described here with friendly names, but the performance analysis report is generated from the competency **keys** in the career-path JSON files. The two tracks use different keys, so use this table to route a metric to the right place. Anything not listed below is already a literal key or dimension label.
+
+| Friendly name used in this guide | Technical Writer (IC) — dimension → competency key(s) | Technical Writing Manager — competency key |
+| --- | --- | --- |
+| Abstraction & Modeling | `abstraction_and_modeling` → `pattern_recognition`, `system_design` | `abstraction_and_modeling` |
+| Responsibility & Scope | `responsibility_and_scope` → `domain_mastery`, `ecosystem_collaboration`, `operational_excellence` | `responsibility_and_scope` |
+| Autonomy & Execution | `autonomy_and_execution` → `professional_mastery`, `execution_and_delivery_reliability`, `decision_making` | `autonomy_and_execution` |
+| Communication | `communication` → `expectation_management`, `problem_framing`, `strategic_influence` | `communication` |
+| Collaboration | `responsibility_and_scope` → `ecosystem_collaboration` | `responsibility_and_scope` |
+| Technical Writing | `writing` → `content_quality` | `technical_writing` |
+| Documentation Strategy | `writing` → `content_strategy` | `editorial_writing_content_management` |
+| Editorial governance / guidelines | `writing` → `editorial_governance` | `editorial_writing_content_management` |
+| Team management, hiring, coaching | *not in the IC framework* | `management` |
+
+**Rule:** a metric always attaches to a **competency** key, never to a dimension alone. On the IC track the dimension rating is rolled up from its competencies, so a metric that supports "Responsibility & Scope" must be cited under the specific key it evidences (usually `ecosystem_collaboration` for peer-support signals, `operational_excellence` for process/blocker signals).
+
 ### Integration with Competency Analysis
 
-The advanced metrics enhance competency assessment:
+The advanced metrics enhance competency assessment. Keys below are IC-track keys; see the mapping table above for the manager equivalents.
 
-#### Abstraction & Modeling
-- **Impact vs. Effort flags** → Evidence of strategic thinking and complexity management
+#### Abstraction & Modeling (`pattern_recognition`, `system_design`)
+- **Impact vs. Effort flags** → Evidence of strategic thinking and complexity management (`pattern_recognition`)
 
-#### Responsibility & Scope
-- **Review-to-author ratio** → Team support and "Force Multiplier" behavior
-- **Semantic blocker patterns** → Ability to escalate and resolve systemic issues
+#### Responsibility & Scope (`domain_mastery`, `ecosystem_collaboration`, `operational_excellence`)
+- **Review-to-author ratio** → Team support and "Force Multiplier" behavior (`ecosystem_collaboration`)
+- **Semantic blocker patterns** → Ability to escalate and resolve systemic issues (`operational_excellence`)
 
-#### Autonomy & Execution
-- **Carryover & scope creep** → Planning and scope management skills
-- **Impact vs. Effort flags** → Prioritization and efficiency
+#### Autonomy & Execution (`professional_mastery`, `execution_and_delivery_reliability`, `decision_making`)
+- **Carryover & scope creep** → Planning and scope management skills (`execution_and_delivery_reliability`)
+- **Impact vs. Effort flags** → Prioritization and efficiency (`decision_making`)
 
-#### Communication
-- **Review-to-author ratio** → Peer collaboration and engagement
-- **Semantic blocker analysis** → Stakeholder management and escalation
+#### Communication (`expectation_management`, `problem_framing`, `strategic_influence`)
+- **Review-to-author ratio** → Peer collaboration and engagement (`strategic_influence`)
+- **Semantic blocker analysis** → Stakeholder management and escalation (`expectation_management`)
 
 **Example Performance Analysis (excerpt):**
 ```markdown
@@ -668,15 +724,38 @@ The advanced metrics enhance competency assessment:
 
 | Ratio | Interpretation | Level | Action |
 |-------|---------------|-------|--------|
-| **>1.5** | Force Multiplier | L2/L3 trait | Highlight in "Responsibility & Scope" |
+| **>1.5** | Force Multiplier | L2/L3 trait | Highlight under `ecosystem_collaboration` (Responsibility & Scope) |
 | **0.8-1.5** | Balanced | L1-L2 | Appropriate contribution mix |
 | **<0.5** | Siloed work | Development area | Increase peer review participation |
 
 **Formula:** PRs reviewed ÷ PRs authored
 
 **Competency evidence:**
-- High ratio → Responsibility & Scope, Communication
-- Low ratio → Development area for Communication
+- High ratio → `ecosystem_collaboration` (Responsibility & Scope), `strategic_influence` (Communication)
+- Low ratio → Development area for `strategic_influence` (Communication)
+
+### Slack Thread-Help Ratio (Optional)
+
+| Ratio | Interpretation | Level | Action |
+|-------|---------------|-------|--------|
+| **>1.5** | Force Multiplier (async support) | L2/L3 trait | Highlight under `strategic_influence` (Communication) and `ecosystem_collaboration` (Responsibility & Scope) |
+| **0.8-1.5** | Balanced | L1-L2 | Appropriate contribution mix |
+| **<0.5** | Limited engagement | Development area | Combine with GitHub ratio to check for compounding siloed-work signal |
+
+**Formula:** threads helped/answered ÷ threads started
+
+**Competency evidence:**
+- High ratio → `strategic_influence` (Communication), `ecosystem_collaboration` (Responsibility & Scope) — mentoring signal
+- Low ratio combined with low GitHub review-to-author ratio → Stronger development-area signal than either alone
+
+### Google Drive Authorship Signal (Optional, based only on docs you reference)
+
+| Pattern | Interpretation | Likely Use |
+|---------|----------------|-------------|
+| **A referenced doc you authored, broadly shared/commented** | Strong ownership signal | Evidence for `content_quality` and `content_strategy` (Writing) |
+| **Referenced docs are only comments/edits on others' work, none authored** | Reviewer-only pattern | Evidence for `ecosystem_collaboration`, but flag as a gap for `content_strategy` and other ownership-focused competencies |
+
+This signal is based entirely on the doc(s) you choose to cite — there is no automatic scan of your Drive to compute it in aggregate.
 
 ### Impact vs. Effort Flags
 
@@ -686,7 +765,7 @@ The advanced metrics enhance competency assessment:
 | **Low priority** | >1000 | Over-engineering? | Misaligned priorities, scope creep |
 
 **Use in analysis:**
-- Autonomy & Execution competency
+- `decision_making` and `execution_and_delivery_reliability` (Autonomy & Execution)
 - Prioritization and efficiency assessment
 
 ### Semantic Blocker Categories
@@ -704,7 +783,7 @@ The advanced metrics enhance competency assessment:
 - Recurring impediment patterns
 
 **Use in analysis:**
-- Responsibility & Scope (escalation/resolution ability)
+- `operational_excellence` (Responsibility & Scope) — escalation/resolution ability
 - Actionable steps to improve (obstacle management, tied to competency rating)
 
 ---
@@ -752,7 +831,7 @@ A: Investigate each flag. High-priority/low-output may be strategic work (good).
 A: The AI analyzes issue descriptions, comments, and labels to identify themes. Accuracy improves with detailed issue documentation. Review and provide context if categories seem off.
 
 **Q: Can I customize the thresholds?**  
-A: Yes! Edit `.cursorrules` to adjust thresholds for carryover, scope creep, and review ratios based on your team's norms.
+A: Yes! Edit `.claude/skills/generate-work-summary/SKILL.md` to adjust thresholds for carryover, scope creep, and review ratios based on your team's norms.
 
 ---
 
@@ -762,6 +841,8 @@ A: Yes! Edit `.cursorrules` to adjust thresholds for carryover, scope creep, and
 
 - **Jira**: Issue status history (changelog), creation dates, assignment dates, resolution dates
 - **GitHub**: PR authorship, review activity, lines changed, file types
+- **Slack** (optional, via Slack plugin): Message/thread authorship, thread reply role, channel, Jira key/PR number mentions
+- **Google Drive** (optional, via Google Drive plugin, additional-context only): For a document you explicitly reference — title, last-modified date, content summary, comments; never searched or aggregated automatically
 - **AI Analysis**: Issue descriptions, comments, labels for semantic blocker categorization
 
 ### JQL Data Retrieval
@@ -801,7 +882,7 @@ AND NOT statusCategory changed to "In Progress" during ("START", "END")
 ORDER BY created DESC
 ```
 
-If `statusCategory` is unavailable, use explicit status names from your workflow (e.g. `status changed to ("In Progress", "In Review") during (...)`). Customize JQL in `.cursorrules` section 1 if your workflow differs.
+If `statusCategory` is unavailable, use explicit status names from your workflow (e.g. `status changed to ("In Progress", "In Review") during (...)`). Customize the JQL in `.claude/skills/_shared/data-collection.md` if your workflow differs.
 
 Metrics (carryover, completion rate, avg resolution, scope creep %) are still computed from **changelog** and normalized statuses on the fetched issue set.
 
