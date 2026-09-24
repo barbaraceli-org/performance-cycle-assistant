@@ -484,6 +484,18 @@ The assistant will:
      - `work-summary-[date-range].md`
      - `performance-analysis-[date-range].md`
 
+### Brag Documents
+
+Brag docs need the same connections as the performance-cycle reports: Jira and GitHub are validated first and are required; Slack and Google Drive stay optional. Role defaults to Technical Writer and level is optional.
+
+They also read `context/hibob-goals.local.md` to draft the Hibob goals update. Create it from [examples/hibob-goals.example.md](../examples/hibob-goals.example.md) and keep it in sync with Bob; if it's missing, the brag doc skips the Hibob section.
+
+```
+Generate my weekly brag doc for last week.
+```
+
+Brag docs are saved to `reports/[YYYY]/brag/`. See the [README](../README.md#brag-documents) for cadences and filenames.
+
 ### Tips for Best Results
 
 1. **Keep Jira updated** - Add meaningful descriptions, labels, and components

@@ -226,6 +226,45 @@ The assistant always includes your GitHub activity.
 
 ---
 
+## 🏅 Brag Documents
+
+Brag docs are a separate request: give a cadence and a period. They never generate the Work Summary or Performance Analysis.
+
+```
+Generate my weekly brag doc for last week.
+```
+
+```
+Brag doc, daily, yesterday.
+```
+
+```
+Generate my biweekly brag doc for 2026-02-09 to 2026-02-22.
+```
+
+```
+Brag doc, monthly, February 2026.
+Also include:
+- Presented at team sync
+- Mentored new hire
+```
+
+```
+Generate my brag doc for Q1 2026.
+```
+
+```
+Generate my semester brag doc for H1 2026.
+```
+
+**What happens:**
+- Fetches the same Jira, GitHub, Slack, and additional-context evidence as the performance-cycle reports, for the period only
+- Tags each accomplishment with the career-path competencies it demonstrates
+- Reads `context/hibob-goals.local.md` and writes a paste-ready progress note for each KR that moved, in the KR's language
+- Saves to `reports/[YYYY]/brag/` (e.g., `reports/2026/brag/brag-weekly-2026-W38.md`)
+
+---
+
 ## 🔗 Next Steps
 
 - **See a complete work summary:** [example-report-with-metrics.md](example-report-with-metrics.md)

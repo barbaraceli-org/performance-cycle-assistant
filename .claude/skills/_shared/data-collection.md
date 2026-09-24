@@ -1,6 +1,6 @@
 # Shared: Connection Validation & Data Retrieval
 
-Used by both `generate-work-summary` and `generate-performance-analysis`. Read this file in full and follow it exactly before retrieving any data or generating a report.
+Used by `generate-work-summary`, `generate-performance-analysis`, and `generate-brag-doc`. Read this file in full and follow it exactly before retrieving any data or generating a report.
 
 ## Connection Validation (MANDATORY FIRST STEP)
 
@@ -44,10 +44,12 @@ Used by both `generate-work-summary` and `generate-performance-analysis`. Read t
 
 **User provides:** Date range, role (Technical Writer L1-L4 or Technical Writing Manager L3-L6), level, and optional context.
 
+**Brag docs** (`generate-brag-doc`) take a cadence and period instead; role defaults to Technical Writer and level is optional. Resolve the period to a date range and use it wherever this file says [[date range]].
+
 ## Automatic Retrieval
 
 0. **`context/additional-context.local.md` (ALWAYS check — not just when the user mentions it):**
-   - Read this file at the start of the workflow, before or alongside the Jira/GitHub retrieval below, for **every** work-summary and performance-analysis request. If the file doesn't exist, skip silently (it's optional/git-ignored).
+   - Read this file at the start of the workflow, before or alongside the Jira/GitHub retrieval below, for **every** work-summary, performance-analysis, and brag-doc request. If the file doesn't exist, skip silently (it's optional/git-ignored).
    - **Filter by period, per entry:** Parse each entry's `Date(s)` field and keep the entry only if at least one of its dates falls within the requested [[date range]] (inclusive of start and end). Skip entries entirely outside the period silently — do not mention skipped entries in the report. For entries with a date range (e.g., "Opened X, closed Y" or "X to Y"), keep the entry if that range overlaps the requested period at all.
    - Use each kept entry as supporting evidence in the report per its `Suggested competency linkage` (performance analysis) or matching work area (work summary) — same treatment as a user-referenced Drive doc: it counts toward evidence totals (see evidence-tracking rule in `generate-performance-analysis/SKILL.md`) but is never aggregated into Overview Metrics.
    - If any entry references a Drive/Slack/GitHub link, resolve it per the relevant source's rules below only if needed to enrich the bullet — the entry's own `Summary`/`Resolution/Outcome` fields are usually sufficient on their own.
@@ -59,7 +61,7 @@ Used by both `generate-work-summary` and `generate-performance-analysis`. Read t
      `(assignee = currentUser() OR assignee was currentUser() during ("YYYY-MM-DD", "YYYY-MM-DD")) AND (statusCategory changed to "In Progress" during ("YYYY-MM-DD", "YYYY-MM-DD") OR statusCategory was "In Progress" on "YYYY-MM-DD" OR statusCategory was "In Progress" on "YYYY-MM-DD" OR (resolved >= "YYYY-MM-DD" AND resolved <= "YYYY-MM-DD")) ORDER BY updated DESC`
    - **Optional scope-creep JQL** (run if needed; merge with primary results and dedupe by issue key): `assignee = currentUser() AND created >= "YYYY-MM-DD" AND created <= "YYYY-MM-DD" AND statusCategory != "In Progress" AND NOT statusCategory changed to "In Progress" during ("YYYY-MM-DD", "YYYY-MM-DD") ORDER BY created DESC`
    - If `statusCategory` is unavailable in your Jira instance, replace `statusCategory` clauses with explicit `status changed to` / `status was` using your workflow's in-progress status names (see `METRICS_GUIDE.md` → Technical Implementation Details).
-   - Fields: `["summary", "description", "status", "issuetype", "priority", "created", "updated", "resolutiondate", "labels", "components", "changelog"]`
+   - Fields: `["summary", "description", "status", "issuetype", "priority", "created", "updated", "resolutiondate", "labels", "components", "parent", "changelog"]`
    - Extract "in progress" date: changelog → updated date → comment dates → created date (track fallback method)
 
 2. **GitHub activities** (GitHub plugin — required source):
@@ -86,7 +88,12 @@ Used by both `generate-work-summary` and `generate-performance-analysis`. Read t
    - Treat each user-provided Drive doc as a single piece of supporting evidence tied to the work area/competency the user associates it with; do not aggregate Drive activity into Overview Metrics.
    - If the Google Drive plugin is not connected/authenticated when the user references a doc, note "Google Drive: not connected — couldn't fetch [title/link]" and proceed with the rest of the report using the user's own description of the document as evidence.
 
-5. **Load expectations:**
+5. **Brag docs** (work-summary and performance-analysis requests only; a brag doc never reads other brag docs):
+   - **Which files to read:** the files in `reports/[YYYY]/brag/` whose period overlaps the requested [[date range]]. Take each file's period from its filename (see `generate-brag-doc/SKILL.md` → Filenames) and check every year folder the range touches. If none exist, skip silently.
+   - **Source of truth:** Jira and GitHub stay the source of truth. Merge brag bullets into the retrieved data by Jira key and PR number. Only brag content with no Jira or GitHub match (Slack, extra context) counts as new evidence, treated the same as a kept `additional-context.local.md` entry (step 0). Brag docs never feed the Overview Metrics.
+   - **Competency tags:** treat them as hints for the Performance Analysis, not as ratings. Competencies that never appear in any brag doc during the period are worth flagging as gaps.
+
+6. **Load expectations:**
    - Technical Writer → `context/technical-writer-career-path.json` (L1-L4). Use top-level `dimensions` to group granular `competencies` keys into report sections (`dimensions[].label`). Compare `levels[userLevel].competencies[key]` against evidence for each key listed in `dimensions[].competencies`.
    - Technical Writing Manager → `context/technical-writing-manager-career-path.json` (L3-L6). Competency keys are already dimension-level.
 
