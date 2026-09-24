@@ -1,12 +1,13 @@
 # Shared: Report Location, Writing Standards & Output Rules
 
-Used by both `generate-work-summary` and `generate-performance-analysis`.
+Used by `generate-work-summary`, `generate-performance-analysis`, and `generate-brag-doc`.
 
 ## Report location
 
 Generate the report as Markdown in a year subfolder under `reports/`:
 
 - **Year folder:** `reports/[YYYY]/`, where `[YYYY]` is the calendar year of the period **start** date (e.g., `2025-01-01` to `2025-06-30` → `reports/2025/`; `2025-11-01` to `2026-02-28` → `reports/2025/`). Create the subfolder if it does not exist.
+- **Brag docs:** saved in a `brag/` subfolder of the year folder — `reports/[YYYY]/brag/` — using the cadence filenames defined in `generate-brag-doc/SKILL.md`.
 
 ## Regeneration policy (overwrite vs. version)
 

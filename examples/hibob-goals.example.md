@@ -22,6 +22,8 @@ Copy this template for each goal your leader set:
   2. [KR text]
 ```
 
+**Don't add competencies to entries.** `generate-brag-doc` infers the linked competencies for each KR from the work that actually advanced it, using the keys in the career-path JSON.
+
 **Two things worth knowing when writing entries:**
 
 - `Status` **matters.** `Validated (matches Bob)` means you've checked this goal/KRs against Bob's UI and they match exactly — these count as reliable evidence. `Draft` means the KRs were proposed (by you or with AI help) but haven't been entered into Bob yet — treat these as a to-do, not settled evidence, until validated.
@@ -41,7 +43,6 @@ Copy this template for each goal your leader set:
 - **Key Results:**
   1. Establish a recurring sync with the product team owning your top documentation area to track upcoming feature work before it hits your backlog.
   2. Get an explicit sign-off from the product owner before finalizing at least one large documentation deliverable this cycle.
-- **Linked competencies:** `ecosystem_collaboration` (recurring cross-team sync); `expectation_management` (sign-off loop before finalizing)
 
 ---
 

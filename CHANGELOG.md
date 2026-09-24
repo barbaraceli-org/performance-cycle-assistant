@@ -1,5 +1,20 @@
 # Changelog
 
+## v2.7.0 — 2026-09-23
+
+### Added
+- **Brag documents (`generate-brag-doc` skill):** daily, weekly, biweekly, monthly, quarter, and semester brag docs, ported from the standalone `tech-writer-brag-docs` project, which this replaces. Brag docs reuse `_shared/data-collection.md` and `_shared/writing-standards.md`, so they draw on the same sources as the performance-cycle reports: Jira and GitHub (required), Slack (optional), user-referenced Drive docs, and `context/additional-context.local.md`. They are saved to `reports/[YYYY]/brag/` with the same filenames as before. A brag request never generates the Work Summary or Performance Analysis.
+- **Competency tagging in brag docs:** each accomplishment is tagged with 1–3 competency keys from the career-path JSON, based on the behavior the work shows. Tags aren't ratings. A closing "Competency coverage" list counts how often each key was tagged.
+- **Hibob goals update in brag docs:** every brag doc reads `context/hibob-goals.local.md`. For each goal, it lists the KRs that moved in the period, their evidence, the competencies inferred from that evidence, and a paste-ready progress note for Bob written in the KR's language. Draft goals are flagged as not yet entered in Bob.
+- **Hibob goals template** (`examples/hibob-goals.example.md`) for the git-ignored `context/hibob-goals.local.md`.
+- **Project grouping in brag docs:** Highlights are grouped by the Jira Epic each issue rolls up to (walking up `parent` until an Epic is reached), with headings like `### [Store Framework] 26H2 (EDU-18912)`. Reviews and work without an Epic go under "Other". Grouping order is parent epic → components → labels → repo.
+- **Brag docs as performance-cycle input:** the Work Summary and Performance Analysis read brag docs whose period overlaps the requested range. Jira and GitHub remain the source of truth; brag bullets are merged by Jira key and PR number, only unmatched content (Slack, extra context) counts as new evidence, and brag docs never feed Overview Metrics. Competency tags are hints, and competencies never tagged in the period are flagged as gaps.
+
+### Changed
+- **Hibob goals no longer store linked competencies:** the brag doc infers them from the work that advanced each KR. The field was removed from the example template.
+- **Brag-only Jira filter:** brag docs keep the old project's exclusions (Epics and `LOC`/`LOC REVIEW` issues). The performance-cycle reports are unchanged.
+- `AGENTS.md`, `CLAUDE.md`, `README.md`, `docs/SETUP.md`, `examples/example-request.md`, and the shared skill files now cover brag docs.
+
 ## v2.6.0 — 2026-09-10
 
 ### Added
