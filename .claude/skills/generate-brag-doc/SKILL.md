@@ -23,15 +23,16 @@ One brag doc per request. Structure and length depend on the cadence. The brag d
 ## Steps
 
 1. Read `../_shared/data-collection.md` in full and follow it exactly for the requested period: validate the Atlassian MCP and GitHub connections first (mandatory — stop and report if either fails), check `context/additional-context.local.md` filtered to the period, and retrieve Jira, GitHub, Slack, and user-referenced Drive data.
-2. **Brag-only Jira filter:** after retrieval, drop Epics and issues whose summary contains the word `LOC` or the phrase `LOC REVIEW` (case-insensitive, whole word — "location" is not excluded). Dropped Epics still name the project headings (see "Grouping by project").
-3. **Read `context/hibob-goals.local.md`** (always, not only when the user mentions it). Keep the `## Cycle: YYYY` block matching the year of the period's start date. If the file or the block doesn't exist, omit the Hibob goals update section and say so in the completion message.
-4. **Load the career-path framework** for the role:
+2. **Record each source's status** for the "Sources checked" line (see below): Jira and GitHub are always `connected` (the run would have stopped in step 1 otherwise). Slack is `connected` if the plugin/connection succeeded and was queried, or `not connected` if it was skipped. Google Drive is `referenced` if the user named a document this run — directly or via a kept `additional-context.local.md` entry — or `not referenced` if no document was named.
+3. **Brag-only Jira filter:** after retrieval, drop Epics and issues whose summary contains the word `LOC` or the phrase `LOC REVIEW` (case-insensitive, whole word — "location" is not excluded). Dropped Epics still name the project headings (see "Grouping by project").
+4. **Read `context/hibob-goals.local.md`** (always, not only when the user mentions it). Keep the `## Cycle: YYYY` block matching the year of the period's start date. If the file or the block doesn't exist, omit the Hibob goals update section and say so in the completion message.
+5. **Load the career-path framework** for the role:
    - Technical Writer → `context/technical-writer-career-path.json`. Competency keys are listed in `dimensions[].competencies`; use `dimensions[].label` as the dimension name.
    - Technical Writing Manager → `context/technical-writing-manager-career-path.json`. Keys are dimension-level (`levels[level].competencies`).
    - Read the behavior each key describes from `levels[userLevel].competencies[key]`. If no level was given, read the key's descriptions across all levels to understand the behavior it names.
-5. Read `../_shared/writing-standards.md` for tone, evidence-linking, regeneration, and output rules. **Brag exception:** bullets use active, outcome-focused verbs ("Shipped…", "Unblocked…", "Reduced…") while staying evidence-based and free of flattery.
-6. Group the work, link competencies, match it to Hibob KRs, and build the report using the structure for the cadence below.
-7. Save to `reports/[YYYY]/brag/[filename]` (year of the period's start date; create the folder if needed). The regeneration policy in `writing-standards.md` applies.
+6. Read `../_shared/writing-standards.md` for tone, evidence-linking, regeneration, and output rules. **Brag exception:** bullets use active, outcome-focused verbs ("Shipped…", "Unblocked…", "Reduced…") while staying evidence-based and free of flattery.
+7. Group the work, link competencies, match it to Hibob KRs, and build the report using the structure for the cadence below — starting with the `**Sources checked:**` line from step 2.
+8. Save to `reports/[YYYY]/brag/[filename]` (year of the period's start date; create the folder if needed). The regeneration policy in `writing-standards.md` applies.
 
 ## Grouping by project
 
@@ -90,6 +91,18 @@ Every cadence ends with a short list of each competency key tagged in the report
 - `content_quality` (Writing): 3 bullets
 ```
 
+## Sources checked line
+
+Every report opens with one line, right after the title and before the first section, stating which sources fed the report:
+
+```markdown
+**Sources checked:** Jira, GitHub, Slack ([connected|not connected]), Google Drive ([referenced|not referenced])
+```
+
+- Jira and GitHub always read `Jira, GitHub` with no status — a failed connection stops the run before any report is written.
+- Slack and Google Drive always show their status from step 2, so the reader knows at a glance whether a source was skipped rather than simply empty of results.
+- Keep the line as-is; don't add explanations or extra sources.
+
 ## Filenames
 
 - Daily: `brag-daily-YYYY-MM-DD.md`
@@ -108,6 +121,8 @@ Each structure below is followed by `## Hibob goals update` and `## Competency c
 ```markdown
 # Brag doc — YYYY-MM-DD
 
+**Sources checked:** Jira, GitHub, Slack ([connected|not connected]), Google Drive ([referenced|not referenced])
+
 ## Highlights
 ### [Epic summary] (EPIC-KEY)
 - [3–5 bullets in total: what you did + impact; Jira/PR refs in parentheses; competency tags]
@@ -121,6 +136,8 @@ Each structure below is followed by `## Hibob goals update` and `## Competency c
 
 ```markdown
 # Brag doc — Week of YYYY-MM-DD to YYYY-MM-DD
+
+**Sources checked:** Jira, GitHub, Slack ([connected|not connected]), Google Drive ([referenced|not referenced])
 
 ## Highlights
 ### [Epic summary] (EPIC-KEY)
@@ -137,6 +154,8 @@ Each structure below is followed by `## Hibob goals update` and `## Competency c
 
 ```markdown
 # Brag doc — Week of YYYY-MM-DD to YYYY-MM-DD
+
+**Sources checked:** Jira, GitHub, Slack ([connected|not connected]), Google Drive ([referenced|not referenced])
 
 ## Highlights
 ### [Epic summary] (EPIC-KEY)
@@ -156,6 +175,8 @@ Each structure below is followed by `## Hibob goals update` and `## Competency c
 ```markdown
 # Brag doc — Month YYYY-MM
 
+**Sources checked:** Jira, GitHub, Slack ([connected|not connected]), Google Drive ([referenced|not referenced])
+
 ## Overview
 - Short summary sentence and key metrics (issues completed, PRs, projects).
 
@@ -174,6 +195,8 @@ Each structure below is followed by `## Hibob goals update` and `## Competency c
 
 ```markdown
 # Brag doc — Qn YYYY (or H1/H2 YYYY)
+
+**Sources checked:** Jira, GitHub, Slack ([connected|not connected]), Google Drive ([referenced|not referenced])
 
 ## Overview
 - Metrics: issues completed, in progress, PRs merged, reviews, projects.
