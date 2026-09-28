@@ -10,7 +10,7 @@ Extract blocker reasons from issue descriptions, comments, and labels — don't 
 ## Steps
 
 0. This report is generated together with `generate-performance-analysis` by default for any "generate my performance cycle report" style request — don't ask the user which report(s) they want unless they explicitly asked for only one.
-1. Read `../_shared/data-collection.md` in full and follow it exactly: validate the Atlassian MCP connection first (mandatory — stop and report if it fails), then check `context/additional-context.local.md` (step 0 there, filtered to the requested period) and retrieve/process Jira/GitHub/Slack/Drive data as described there.
+1. Read `../_shared/data-collection.md` in full and follow it exactly. Run its "Connection Validation" section first, unabridged: **both** the Atlassian MCP and the GitHub connection are mandatory, and a failure of either one stops the run before any data retrieval. Then check `context/additional-context.local.md` (step 0 there, filtered to the requested period) and retrieve/process Jira/GitHub/Slack/Drive data as described there.
 2. Read `../_shared/writing-standards.md` for tone, evidence-linking, and output-location rules.
 3. Build the report using the structure and metrics below.
 4. Save to `reports/[YYYY]/work-summary-[date-range].md` (year folder per `writing-standards.md`).
@@ -112,31 +112,32 @@ Extract blocker reasons from issue descriptions, comments, and labels — don't 
 ## Metrics Calculation
 
 **Jira:**
-- **Worked on:** Issues that were "In Progress" at any point during [[date range]], including:
+- **Worked on:** the union of (a) issues that were "In Progress" at any point during [[date range]] and (b) issues resolved during [[date range]]. This includes:
   - Issues that moved to "In Progress" during the period (new starts)
   - Issues that were already "In Progress" at period start (carryover work)
-  - This reflects all work that was "on your plate" during the period, regardless of when it was originally started
+  - Issues closed during the period without ever being "In Progress" (cancelled, duplicate, resolved straight from the backlog)
+  - This reflects all work that was "on your plate" during the period, regardless of when it was originally started. **Completed is always a subset of worked on** — branch (b) exists precisely so the completion rate can never exceed 100%. Issues tagged `scope-creep-supplement` during retrieval are excluded from this count.
 - **Carryover issues:** Issues with status = "In Progress" before period start date. Flag high carryover (>30% of worked on) to contextualize completion rate—indicates complexity, persistence, or inherited workload
-- **New issues started:** Issues that transitioned to "In Progress" during [[date range]] (created_date OR first "In Progress" transition within period)
-- **Scope creep:** Issues created AND assigned to user after period start date. High scope creep (>40% of new starts) indicates reactive work or poor planning
+- **New issues started:** Issues that transitioned to "In Progress" during [[date range]] (first "In Progress" transition within period, per the changelog)
+- **Scope creep:** Issues created after period start date and assigned to the user — counted whether or not they were ever started. The count has two sources: issues from the Primary JQL whose `created` falls inside the period, plus the issues tagged `scope-creep-supplement` (created in period, never started). Dedupe by issue key. High scope creep (>40% of new starts) indicates reactive work or poor planning. Because the supplement contributes to this metric only, scope creep can exceed 100% of new starts when most new requests were never started — report the raw counts alongside the percentage when that happens instead of presenting the percentage alone
 - **Completed:** Normalized status = "Completed" AND resolutiondate within [[date range]]
 - **In progress:** Normalized status = "In Progress" at period end (includes issues that may also be blocked)
 - **Blocked:** Normalized status = "Blocked" at period end (may overlap with in progress if issue is both active and blocked)
 - **Unfinished:** Normalized status = "Backlog" or other non-completed statuses at period end, excluding in progress and blocked
-- **Completion rate:** (completed / worked on) × 100, rounded to whole number. Include context: "X issues still in progress" and "Y carryover issues" to provide clarity when rate appears low due to active work or inherited complexity
+- **Completion rate:** (completed / worked on) × 100, rounded to whole number. Include context: "X issues still in progress" and "Y carryover issues" to provide clarity when rate appears low due to active work or inherited complexity. The result is never above 100%; if a draft says otherwise, the "worked on" set is missing the issues resolved without ever being "In Progress"
 - **Resolution time:** avg(resolutiondate - in_progress_date) in days, 1 decimal place
 
 **GitHub:**
-- **PRs authored:** All PRs during [[date range]] (total count)
-  - **Merged:** state = "merged" AND merged_at within [[date range]]
-  - **Open:** state = "open" at period end
-  - **Closed:** state = "closed" AND NOT merged (closed without merging)
-- **PRs merged:** state = "merged" AND merged_at within [[date range]]
-- **PRs reviewed:** Count of PRs where user submitted review comments (exclude self-authored PRs)
+- **PRs authored:** PRs the user opened during [[date range]] (`created:` search). Merged/open/closed below are reported as the disposition of that same set at period end, so the three add up to the total
+  - **Merged:** of the authored set, those merged by period end
+  - **Open:** of the authored set, those still open at period end
+  - **Closed:** of the authored set, those closed without merging
+- **PRs merged:** PRs merged during [[date range]] (`merged:` search) regardless of when they were opened. This is a different set from "authored → merged" above and is the one used for merge-time and documentation-commit metrics; when the two counts differ, it's because work opened before the period landed inside it
+- **PRs reviewed:** Count of PRs where the user submitted a review **dated inside [[date range]]**, regardless of when the PR was opened (exclude self-authored PRs)
 - **Review-to-author ratio:** (PRs reviewed / PRs authored), 1 decimal place. Ratio >1.5 indicates "Force Multiplier" behavior (unblocking others), a key trait for L2/L3 Technical Writers. Ratio <0.5 may indicate siloed work or limited team collaboration
-- **Merge time:** avg(merged_at - created_at) in days, 1 decimal place (calculated only for merged PRs)
+- **Merge time:** avg(merged_at - created_at) in days, 1 decimal place, over the PRs merged in the period
 - **Documentation commits:** Count commits in PRs (or standalone commits if applicable) that modify documentation files (*.md, **/docs/**, README*, CONTRIBUTING*)
-- **Lines changed:** Sum of additions/deletions in documentation files. If data unavailable, show "N/A" instead of placeholder text
+- **Lines changed:** Sum of additions/deletions in documentation files, from the per-PR detail calls described in `../_shared/data-collection.md`. Show "N/A" if those details couldn't be retrieved for the whole set — never scale up from a sample
 - **Impact vs. Effort flags:** Identify outliers:
   - High-priority Jira issues (<50 lines changed): Potential invisible complexity or blocked work
   - Low-priority Jira issues (>1000 lines changed): Potential over-engineering or misaligned priorities

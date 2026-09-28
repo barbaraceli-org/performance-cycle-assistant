@@ -563,10 +563,15 @@ Because `reports/` is git-ignored, there's no version history for these files �
 
 | # | Rating | Meaning |
 | --- | --- | --- |
-| 1 | Not yet meeting expectations | No consistent examples of achieving this ability in the period |
-| 2 | Meets expectations | Consistent examples (typically ≥3) of achieving this ability at the scope/complexity expected for the role/level |
+| 1 | Not yet meeting expectations | Some evidence in the period, but not enough of it — or not at the scope/complexity expected for the role/level |
+| 2 | Meets expectations | Consistent examples of achieving this ability at the scope/complexity expected for the role/level (how many counts as consistent is below) |
 | 3 | Exceeds expectations | Consistent examples plus scope, complexity, or impact beyond what's expected at that level (e.g., higher-complexity work, cross-team scope, measurable efficiency gains). Recognition by others can support the rating but isn't sufficient on its own |
 | 4 | Performing at the next level | Exceeds expectations, with evidence matching the next career level's competency expectations (not assignable at the top level, L4 for writers / L6 for managers) |
+| — | Insufficient evidence for this period | Nothing in the period maps to this competency. Reported as a data limitation, not as a low rating, and excluded from the dimension roll-up |
+
+**How much evidence counts as "consistent"** depends on the period: 3 distinct instances for 90 days or more, 2 for a 28-to-89-day range. Periods under 28 days aren't long enough to evidence competencies — the assistant says so and points you to a brag doc instead of rating everything at the bottom of the scale.
+
+**Dimension ratings (IC track)** take the lowest rating among the dimension's competencies. One below-bar competency sets the dimension, and a single strong one never lifts it.
 
 **Use for:**
 - Career development planning

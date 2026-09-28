@@ -39,7 +39,7 @@ These metrics track your Jira activity:
 | **Issues completed** | Issues with status Done/Resolved/Closed during the period | Demonstrates productivity and delivery |
 | **Issues in progress** | Issues actively being worked on at period end | Shows current workload and pipeline |
 | **Issues blocked/unfinished** | Issues that couldn't be completed | Highlights obstacles and dependencies |
-| **Completion rate** | (Completed ÷ Worked on) × 100 | Measures efficiency and delivery success - counts all issues that were actively being worked on during the period (including carryover from before the period) |
+| **Completion rate** | (Completed ÷ Worked on) × 100 | Measures efficiency and delivery success - counts all issues that were actively being worked on during the period (including carryover from before the period) and all issues resolved in it, so completed is always a subset of worked on and the rate never exceeds 100% |
 | **Average resolution time** | Mean time from "in progress" to completion (days) | Indicates actual work velocity and complexity |
 | **Work areas covered** | Number of distinct projects/initiatives | Shows breadth of contribution |
 
@@ -261,9 +261,9 @@ This approach provides a fairer view of your productivity by including all work 
 - **Documentation commits**: Filtered by file patterns (*.md, docs/**, README*, CONTRIBUTING*, etc.)
 - **Lines changed**: Sum of additions and deletions in documentation files only
 - **Repository counting**: Each distinct repository where you had activity counts once
-- **Review counting**: Includes all review types (approve, request changes, comment); excludes self-authored PRs
+- **Review counting**: Includes all review types (approve, request changes, comment); excludes self-authored PRs. Counted by the date of **your review**, not the date the PR was opened — reviewing an older PR still counts in the period you reviewed it
 - **Review-to-author ratio**: (PRs reviewed ÷ PRs authored), rounded to 1 decimal place
-- **Date filtering**: GitHub activities included if they occurred during the review period
+- **Date filtering**: each GitHub metric is queried on the event it's defined by — PRs authored by `created:`, PRs merged by `merged:`, reviews by review date. Filtering everything by creation date would drop work that spans a period boundary in both directions
 - **Impact vs. Effort analysis**: Correlates Jira priority with GitHub lines changed to identify outliers
 
 ### Average Resolution Time Calculation
@@ -273,8 +273,8 @@ This approach provides a fairer view of your productivity by including all work 
 **Formula:** `avg(resolutiondate - in_progress_date)` for completed issues
 
 **How "in progress" date is determined:**
-1. **Primary method**: Extract from Jira changelog the first time the issue status changed to "In Progress" (or "In Review", "In Development")
-2. **Fallback method**: If changelog is unavailable, use the `updated` date when the issue status is "In Progress"
+1. **Primary method**: Extract from Jira changelog the first time the issue status changed to "In Progress" (or "In Review", "In Development"). The changelog comes from a per-issue call, not from the search results
+2. **Fallback method**: If changelog is unavailable, use the `updated` date when the issue status is "In Progress". This is a weak proxy — it can shift resolution time in either direction — so the report states how many issues were computed this way
 
 **Why this matters:**
 - More accurately reflects your actual work velocity
@@ -847,18 +847,20 @@ A: Yes! Edit `.claude/skills/generate-work-summary/SKILL.md` to adjust threshold
 
 ### JQL Data Retrieval
 
-Reports fetch Jira issues with a **primary JQL** aligned to metric definitions (not generic `updated` activity alone):
+Reports fetch Jira issues with a **primary JQL** aligned to metric definitions (not generic `updated` activity alone).
+
+**Date boundaries first:** Jira reads a bare `"YYYY-MM-DD"` as midnight at the *start* of that day, so `<= "END"` drops everything that happened on the period's last day — and a single-day period returns nothing. Every upper bound below therefore uses `END+1`, the day *after* the period ends, with a strict `<`. "State at period end" is likewise `on "END+1"`, not `on "END"`.
 
 ```jql
 (
   assignee = currentUser()
-  OR assignee was currentUser() during ("START", "END")
+  OR assignee was currentUser() during ("START", "END+1")
 )
 AND (
-  statusCategory changed to "In Progress" during ("START", "END")
+  statusCategory changed to "In Progress" during ("START", "END+1")
   OR statusCategory was "In Progress" on "START"
-  OR statusCategory was "In Progress" on "END"
-  OR (resolved >= "START" AND resolved <= "END")
+  OR statusCategory was "In Progress" on "END+1"
+  OR (resolved >= "START" AND resolved < "END+1")
 )
 ORDER BY updated DESC
 ```
@@ -867,20 +869,26 @@ ORDER BY updated DESC
 |------------|----------------|
 | `statusCategory changed to "In Progress" during (...)` | New issues started; total worked on |
 | `statusCategory was "In Progress" on "START"` | Carryover; total worked on (including stale carryover with no updates in period) |
-| `statusCategory was "In Progress" on "END"` | Issues in progress at period end |
-| `resolved >= START AND resolved <= END` | Issues completed in period |
+| `statusCategory was "In Progress" on "END+1"` | Issues in progress at period end |
+| `resolved >= START AND resolved < END+1` | Issues completed in period; also the branch that keeps completion rate at or below 100% by pulling in issues closed without ever being "In Progress" |
 | `assignee was currentUser() during (...)` | Work owned during the period but since reassigned |
 
-**Optional scope-creep supplement** (merge and dedupe by issue key with primary results):
+Results are **paginated until complete** — the search endpoint returns one page per call, and a half-fetched set produces a fully formatted report built on partial data. The retrieved count is checked against the `total` the API reports, and any shortfall is stated in the report rather than absorbed silently.
+
+`changelog` is **not** a field of the search endpoint. It's fetched per issue in a second call, and it's what carryover, new starts, and average resolution time are computed from; when it can't be retrieved for an issue, the report says how many issues fell back to a proxy date.
+
+**Optional scope-creep supplement:**
 
 ```jql
 assignee = currentUser()
 AND created >= "START"
-AND created <= "END"
+AND created < "END+1"
 AND statusCategory != "In Progress"
-AND NOT statusCategory changed to "In Progress" during ("START", "END")
+AND NOT statusCategory changed to "In Progress" during ("START", "END+1")
 ORDER BY created DESC
 ```
+
+This returns only issues created in the period that were **never started** — backlog additions, not work performed. They feed the scope-creep metric and nothing else: they're excluded from "total worked on", completion rate, per-quarter metrics, and work areas, so they can't inflate delivery numbers. Issues created in the period that *did* start come from the primary query and make up the rest of the scope-creep count.
 
 If `statusCategory` is unavailable, use explicit status names from your workflow (e.g. `status changed to ("In Progress", "In Review") during (...)`). Customize the JQL in `.claude/skills/_shared/data-collection.md` if your workflow differs.
 
@@ -897,9 +905,12 @@ Carryover % = (carryover_issues / total_worked_on) × 100
 
 **Scope Creep:**
 ```
-Issues with created >= period_start_date AND assignee = currentUser()
+Issues with created >= period_start_date AND assignee = currentUser(),
+whether or not they were ever started — the started ones come from the
+primary query, the never-started ones from the supplement, deduped by key
 Scope creep % = (scope_creep_issues / new_issues_started) × 100
 ```
+Because the never-started issues count toward the numerator only, this percentage can exceed 100% in a period where most incoming requests were never picked up. That's a real signal, not an error — reports show the raw counts next to the percentage when it happens.
 
 **Review-to-Author Ratio:**
 ```
