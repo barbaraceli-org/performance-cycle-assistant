@@ -27,7 +27,7 @@ Copy this template for each item:
 
 **Two things worth knowing when writing entries:**
 
-- **These entries count as evidence.** A manually provided item counts toward the ≥3 threshold a competency needs, on equal footing with Jira issues and GitHub PRs — but only if it names a concrete artifact or outcome. That's what **Resolution/Outcome** is for; an entry without one doesn't count.
+- **These entries count as evidence.** A manually provided item counts toward the evidence threshold a competency needs (3 distinct instances for a quarter or longer, 2 for a one- or two-month period), on equal footing with Jira issues and GitHub PRs — but only if it names a concrete artifact or outcome. That's what **Resolution/Outcome** is for; an entry without one doesn't count.
 - **Use real competency keys** from `context/technical-writer-career-path.json` (or `context/technical-writing-manager-career-path.json` for managers). Invented names like "team collaboration" can't be matched to a competency section. See the [competency vocabulary mapping](../METRICS_GUIDE.md#competency-vocabulary-mapping) if you're unsure which key a friendly name corresponds to.
 
 ---

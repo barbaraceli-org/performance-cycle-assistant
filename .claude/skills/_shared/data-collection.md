@@ -46,6 +46,16 @@ Used by `generate-work-summary`, `generate-performance-analysis`, and `generate-
 
 **Brag docs** (`generate-brag-doc`) take a cadence and period instead; role defaults to Technical Writer and level is optional. Resolve the period to a date range and use it wherever this file says [[date range]].
 
+## Date Boundaries (read before writing any query)
+
+Jira reads a bare `"YYYY-MM-DD"` as **midnight at the start of that day**, so `resolved <= "[[end]]"` silently excludes everything that happened during the last day of the period. A single-day period (any daily brag doc) returns nothing at all. To avoid this, every query below uses three resolved values:
+
+- **`[[start]]`** — the period's first day, `YYYY-MM-DD`.
+- **`[[end]]`** — the period's last day, `YYYY-MM-DD`. Used only for display, never as a query upper bound.
+- **`[[end+1]]`** — the day *after* the period's last day, `YYYY-MM-DD`. Every upper bound uses this with a strict `<`, or as the `on`/`during` argument when the intent is "state at period end".
+
+Rules: upper bounds are always `< "[[end+1]]"`, never `<= "[[end]]"`. `during (...)` windows always run `("[[start]]", "[[end+1]]")`. "State at period start" is `on "[[start]]"` (midnight before the first day); "state at period end" is `on "[[end+1]]"` (midnight after the last day), **not** `on "[[end]]"`. GitHub search is different — its `created:A..B` / `merged:A..B` ranges are inclusive of both whole days, so pass `[[start]]..[[end]]` there.
+
 ## Automatic Retrieval
 
 0. **`context/additional-context.local.md` (ALWAYS check — not just when the user mentions it):**
@@ -57,21 +67,31 @@ Used by `generate-work-summary`, `generate-performance-analysis`, and `generate-
 1. **Jira activities** (Atlassian MCP):
    - Get Cloud ID: `mcp_Atlassian-MCP-Server_getAccessibleAtlassianResources`
    - Search: `mcp_Atlassian-MCP-Server_searchJiraIssuesUsingJql`
-   - **Primary JQL** (use period **start** for the first date in each pair and period **end** for the second; the two `on` dates are period start and period end respectively):
-     `(assignee = currentUser() OR assignee was currentUser() during ("YYYY-MM-DD", "YYYY-MM-DD")) AND (statusCategory changed to "In Progress" during ("YYYY-MM-DD", "YYYY-MM-DD") OR statusCategory was "In Progress" on "YYYY-MM-DD" OR statusCategory was "In Progress" on "YYYY-MM-DD" OR (resolved >= "YYYY-MM-DD" AND resolved <= "YYYY-MM-DD")) ORDER BY updated DESC`
-   - **Optional scope-creep JQL** (run if needed; merge with primary results and dedupe by issue key): `assignee = currentUser() AND created >= "YYYY-MM-DD" AND created <= "YYYY-MM-DD" AND statusCategory != "In Progress" AND NOT statusCategory changed to "In Progress" during ("YYYY-MM-DD", "YYYY-MM-DD") ORDER BY created DESC`
+   - **Primary JQL** (substitute the values defined in "Date Boundaries" above):
+     `(assignee = currentUser() OR assignee was currentUser() during ("[[start]]", "[[end+1]]")) AND (statusCategory changed to "In Progress" during ("[[start]]", "[[end+1]]") OR statusCategory was "In Progress" on "[[start]]" OR statusCategory was "In Progress" on "[[end+1]]" OR (resolved >= "[[start]]" AND resolved < "[[end+1]]")) ORDER BY updated DESC`
+   - **Optional scope-creep JQL** (run if needed): `assignee = currentUser() AND created >= "[[start]]" AND created < "[[end+1]]" AND statusCategory != "In Progress" AND NOT statusCategory changed to "In Progress" during ("[[start]]", "[[end+1]]") ORDER BY created DESC`
+     - **Tag the provenance of every issue it returns as `scope-creep-supplement`.** This query deliberately returns only issues that were created in the period and *never* started — backlog additions, not work performed. Merge them into the issue set and dedupe by key, but they feed **only** the scope-creep metric. They are never counted in "Total issues worked on", "Issues completed", "Issues in progress", per-quarter metrics, or any work area, and they never produce an accomplishment bullet. Issues created inside the period that *did* start come from the Primary JQL and are the other half of the scope-creep count (see `generate-work-summary/SKILL.md` → Metrics Calculation).
    - If `statusCategory` is unavailable in your Jira instance, replace `statusCategory` clauses with explicit `status changed to` / `status was` using your workflow's in-progress status names (see `METRICS_GUIDE.md` → Technical Implementation Details).
    - **If the Primary JQL returns a 400 error** (some Jira Cloud instances reject the `changed to` / `was ... on` temporal operators on `statusCategory` specifically, even though the field itself exists and plain equality works): fall back to this broader query, then filter client-side —
-     `assignee = currentUser() AND (status changed to "In Progress" DURING ("YYYY-MM-DD", "YYYY-MM-DD") OR statusCategory = "In Progress" OR (resolutiondate >= "YYYY-MM-DD" AND resolutiondate <= "YYYY-MM-DD")) ORDER BY updated DESC`
-     This is intentionally wider than the Primary JQL — `statusCategory = "In Progress"` matches every issue currently in that category regardless of when it got there, not just ones touched in the period. After retrieving results, **keep only issues whose `updated` or `resolutiondate` falls inside [[date range]]**; drop the rest (they're old in-progress issues untouched this period). Note in the completion message that this fallback was used, since `updated` is a proxy for "was in progress during the period" rather than a direct confirmation.
-   - Fields: `["summary", "description", "status", "issuetype", "priority", "created", "updated", "resolutiondate", "labels", "components", "parent", "changelog"]`
-   - Extract "in progress" date: changelog → updated date → comment dates → created date (track fallback method)
+     `assignee = currentUser() AND (status changed to "In Progress" DURING ("[[start]]", "[[end+1]]") OR statusCategory = "In Progress" OR (resolutiondate >= "[[start]]" AND resolutiondate < "[[end+1]]")) ORDER BY updated DESC`
+     This is intentionally wider than the Primary JQL — `statusCategory = "In Progress"` matches every issue currently in that category regardless of when it got there, not just ones touched in the period. After retrieving results, **keep only issues whose `updated` or `resolutiondate` falls inside [[date range]]**; drop the rest (they're old in-progress issues untouched this period).
+     - **The fallback changes what two metrics mean, so say so.** It drops `assignee was currentUser() during (...)`, so work owned during the period but since reassigned is missing entirely; and filtering on `updated` drops stale carryover (issues in progress all period with no update in it), which the Primary JQL captures on purpose. State both limitations in the completion message and add a one-line note under Overview Metrics: `*Retrieved via fallback JQL: reassigned work and untouched carryover may be missing.*`
+   - **Paginate until the result set is complete.** The search endpoint returns one page per call. Keep requesting pages until you have every issue, and compare the number of issues you hold against the `total` the API reports. If you cannot retrieve them all, **do not publish the metrics as if they were complete** — say how many of how many issues the report is based on, in the completion message and under Overview Metrics.
+   - Fields: `["summary", "description", "status", "issuetype", "priority", "created", "updated", "resolutiondate", "labels", "components", "parent"]`
+   - **Changelog is a second call, not a search field.** `changelog` is not returned by the search endpoint; request it per issue (`getJiraIssue` with the changelog expanded). Do this for every issue that feeds a time-based metric — carryover, new issues started, average resolution time, issues in progress at period end. Resolve each issue once and reuse the result.
+   - Extract "in progress" date: changelog → updated date → comment dates → created date. Track which method was used per issue; if the changelog was unavailable for any issue, note under Overview Metrics that `N` issues used a proxy date, since `updated` is a weak stand-in for "entered progress" and it inflates or deflates resolution time unpredictably.
 
 2. **GitHub activities** (GitHub plugin — required source):
-   - PRs authored: `search_pull_requests` with `author:@me created:YYYY-MM-DD..YYYY-MM-DD`
-   - PRs reviewed: `search_pull_requests` with `reviewed-by:@me created:YYYY-MM-DD..YYYY-MM-DD`
-   - Commits: `search_commits` with `author:@me committer-date:YYYY-MM-DD..YYYY-MM-DD`
+   - GitHub search ranges are inclusive of both whole days, so use `[[start]]..[[end]]` here (not `[[end+1]]`).
+   - **Query by the event each metric is defined on, not by creation date.** A PR opened in December and merged in January belongs to January's "PRs merged"; a review given in March on a PR opened in February belongs to March's review count. Filtering everything by `created:` — as earlier versions of this file did — silently drops both, and understates the review-to-author ratio that three competencies depend on.
+     - PRs authored/opened in the period: `search_pull_requests` with `author:@me created:[[start]]..[[end]]`
+     - PRs merged in the period: `search_pull_requests` with `author:@me merged:[[start]]..[[end]]`
+     - PRs authored and still open at period end: derive this from the authored set rather than querying `is:open`, which reports today's state and would be wrong for any past period. A PR counts as open at period end when it was created on or before `[[end]]` and was neither merged nor closed on or before `[[end]]`.
+     - PRs reviewed in the period: `search_pull_requests` with `reviewed-by:@me updated:[[start]]..[[end]]`, then keep only those whose review by the user is dated inside [[date range]] (confirm with `pull_request_read` when the search result alone doesn't show the review date). Exclude self-authored PRs.
+   - Commits: `search_commits` with `author:@me committer-date:[[start]]..[[end]]`
+   - Paginate every search until complete, same rule as Jira above.
    - Filter documentation files: `*.md`, `**/docs/**`, `**/documentation/**`, `README*`, `CONTRIBUTING*`
+   - **Lines changed and files modified need a per-PR call.** Search results don't carry additions/deletions or file lists. Fetch them with `pull_request_read` for the merged PRs that feed the metric; if that's not possible for all of them, report "Lines changed: N/A" rather than extrapolating from a subset.
 
 3. **Slack activities** (Slack plugin, if connected — optional evidence source):
    - Purpose: surface communication, collaboration, mentoring, and cross-team work that Jira/GitHub don't capture.

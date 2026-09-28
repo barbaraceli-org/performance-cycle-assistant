@@ -4,7 +4,7 @@ This example shows what a performance analysis report looks like for an **L2 Tec
 
 **Use this to:**
 - See how each competency gets exactly one rating from the 4-point scale
-- Understand the **conservative dimension roll-up** (a single standout competency never lifts the dimension)
+- Understand the **dimension roll-up** (the dimension takes the lowest rating among its competencies, so a single standout never lifts it)
 - See how metrics from the work summary become competency evidence
 - See what "Limited evidence" looks like and how actionable steps differ per rating
 
@@ -33,12 +33,13 @@ This analysis is based on the **VTEX Technical Writer Career Path**, using the *
 | 2 | Meets expectations | Has consistent examples on how this ability was achieved at the scope/complexity expected for the level |
 | 3 | Exceeds expectations | Has consistent examples and the work shows scope, complexity, or impact beyond what's expected at that level |
 | 4 | Performing at the next level | Exceeds expectations at the current level and shows evidence matching the next career level's expectations |
+| — | Insufficient evidence for this period | No period-relevant evidence was found for this competency, so no rating is assigned |
 
 # Abstraction & Modeling
 
 **Dimension evaluation:** Not yet meeting expectations
 
-**Rationale:** Pattern recognition meets expectations, with repeated evidence of anticipating downstream documentation impact before making changes. System design is below bar: the period contains no example of modeling a scalable process or delivering a scoped solution independently, only individually-scoped page work. Per the conservative roll-up, one at-bar competency does not compensate for a below-bar one, so the dimension is rated at the lower level. Closing the system design gap is the single highest-leverage change in this dimension.
+**Rationale:** Pattern recognition meets expectations, with repeated evidence of anticipating downstream documentation impact before making changes. System design is below bar: the period contains no example of modeling a scalable process or delivering a scoped solution independently, only individually-scoped page work. System design is the lowest rating in the dimension and therefore sets it. Closing the system design gap is the single highest-leverage change in this dimension.
 
 ## Pattern recognition
 
@@ -83,7 +84,7 @@ This analysis is based on the **VTEX Technical Writer Career Path**, using the *
 
 **Dimension evaluation:** Meets expectations
 
-**Rationale:** Domain mastery exceeds expectations, with end-to-end ownership of the FastStore WebOps surface that is closer to L3 breadth than L2. Ecosystem collaboration and operational excellence both meet expectations, supported by consistent peer review and process contributions but without the go-to-person or process-ownership signal that would lift them. Because the competencies are a mix of "Exceeds" and "Meets" rather than consistently above bar, the dimension rolls up to "Meets expectations".
+**Rationale:** Domain mastery exceeds expectations, with end-to-end ownership of the FastStore WebOps surface that is closer to L3 breadth than L2. Ecosystem collaboration and operational excellence both meet expectations, supported by consistent peer review and process contributions but without the go-to-person or process-ownership signal that would lift them. The two "Meets" ratings are the lowest in the dimension, so the dimension rolls up to "Meets expectations".
 
 ## Domain mastery
 
